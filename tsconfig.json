@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "strictNullChecks": false,
+        "jsx": "preserve",
+        "module": "ES6",
+        "moduleResolution": "Node",
+        "declaration": true,
+        "declarationDir": "./es",
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
+        "composite": true,
+        "target": "ES6",
+        "allowJs": false,
+        "rootDir": "src",
+        "outDir": "./es",
+        "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ]
+    },
+    "files": [
+        "./src/index.ts"
+    ],
+    "include": [
+        "./src/**/*.ts"
+    ]
+}
