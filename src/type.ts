@@ -25,15 +25,61 @@ export interface ImportResource {
     isDefaultImport?: boolean;
     aliasName?: string;
 }
-
 export interface ContainerComponent {
     componentName: 'Page' | 'Block' | 'Component';
     dir: string;
     fileName: string;
-    ref?: string;
+    children: Component[];
+    constantExpressions?: ConstantsExpression[];
+    reactiveExpressions?: ReactiveExpression[];
+    watchExpressions?: WatchExpression[];
+    functions?: DefineFunction[];
     css?: CSS;
+    importResources?: ImportResource[];
+    propDefinitions?: ComponentPropDefinition[];
+}
 
-    condition?: boolean | string;
+export interface Component {
+    id: string;
+    componentName: string;
+    children?: Component[];
+}
+
+export interface ConstantsExpression {
+    name: string;
+    constent: string;
+}
+
+export interface ReactiveExpression {
+    type: 'ref' | 'computed' | 'reactive';
+    name: string;
+    content: string;
+}
+
+export interface WatchExpression {
+    target: string;
+    content: string;
+    options: Record<string, string | number | boolean>;
+}
+
+export interface DefineFunction {
+    name: string;
+    content: string;
+}
+
+export type PropType =
+    | 'Boolean'
+    | 'String'
+    | 'Array'
+    | 'Object'
+    | 'Function'
+    | 'Number';
+
+export interface ComponentPropDefinition {
+    name: string;
+    propType: PropType;
+    description: string;
+    defaultValue: any;
 }
 
 export interface DependentResource {
