@@ -25,7 +25,8 @@ export interface ImportResource {
     isDefaultImport?: boolean;
     aliasName?: string;
 }
-export interface ContainerComponent {
+
+export interface SFCComponent {
     componentName: 'Page' | 'Block' | 'Component';
     dir: string;
     fileName: string;
@@ -39,10 +40,59 @@ export interface ContainerComponent {
     propDefinitions?: ComponentPropDefinition[];
 }
 
+export enum ExtensionType {
+    JSFunction = 'JSFunction',
+    JSExpression = 'JSExpression',
+    JSSlot = 'JSSlot',
+}
+
 export interface Component {
     id: string;
     componentName: string;
+    props: ComponentProps;
+    events: ComponentEvents;
+    constantExpressions?: ConstantsExpression[];
+    reactiveExpressions?: ReactiveExpression[];
+    watchExpressions?: WatchExpression[];
+    functions?: DefineFunction[];
+    parentId?: string;
+    loop?: [];
+    loopArgs?: [string, string]; // default [“item”, “index”]
+    condition?: boolean | ExtensionType.JSExpression;
     children?: Component[];
+    slots?: ComponentSlots;
+}
+
+export interface ComponentSlots {
+    id: string;
+    parentId: string;
+    slots: ComponentSlot[];
+    scoped: string;
+    component: Component;
+}
+
+export interface ComponentSlot {
+    name: string;
+    scoped: string;
+    component: Component;
+}
+
+export interface ComponentProps {
+    id?: string;
+    class?: string;
+    style?: string | object;
+    ref?: string;
+    [key: string]:
+        | number
+        | string
+        | boolean
+        | object
+        | []
+        | ExtensionType.JSExpression;
+}
+
+export interface ComponentEvents {
+    [key: string]: ExtensionType.JSExpression;
 }
 
 export interface ConstantsExpression {
