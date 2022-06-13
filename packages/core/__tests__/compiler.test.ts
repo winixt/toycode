@@ -12,6 +12,22 @@ export const schema: Schema = {
         pageDir: 'pages',
         componentsDir: 'components',
     },
+    SFCComponent: {
+        componentName: 'Page',
+        fileName: 'simpleTable.vue',
+        importResources: [
+            {
+                importName: 'FTable',
+                package: '@fesjs/fes-design',
+            },
+        ],
+        children: [
+            {
+                id: '1',
+                componentName: 'FTable',
+            },
+        ],
+    },
 };
 
 test('adds 1 + 2 to equal 3', () => {

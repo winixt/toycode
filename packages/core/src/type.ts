@@ -1,5 +1,6 @@
 export interface Schema {
     config: SchemaConfig;
+    SFCComponent: SFCComponent;
     css?: CSS;
     utils?: DefineFunction[];
     uses?: DefineFunction[];
@@ -21,14 +22,14 @@ export interface DefineFunction {
 
 export interface ImportResource {
     importName: string;
-    pakage: string;
+    package: string;
     isDefaultImport?: boolean;
     aliasName?: string;
 }
 
 export interface SFCComponent {
     componentName: 'Page' | 'Component';
-    dir: string;
+    dir?: string;
     fileName: string;
     children: Component[];
     constantExpressions?: ConstantsExpression[];
@@ -49,8 +50,8 @@ export enum ExtensionType {
 export interface Component {
     id: string;
     componentName: string;
-    props: ComponentProps;
-    events: ComponentEvents;
+    props?: ComponentProps;
+    events?: ComponentEvents;
     constantExpressions?: ConstantsExpression[];
     reactiveExpressions?: ReactiveExpression[];
     watchExpressions?: WatchExpression[];
