@@ -1,14 +1,21 @@
 lockfileVersion: 5.3
 
-specifiers:
-  '@webank/eslint-config-ts': ^1.0.5
-  typescript: ^4.7.3
+importers:
 
-dependencies:
-  typescript: 4.7.3
+  .:
+    specifiers:
+      '@webank/eslint-config-ts': ^1.0.5
+      typescript: ^4.7.3
+    dependencies:
+      typescript: 4.7.3
+    devDependencies:
+      '@webank/eslint-config-ts': 1.0.5_typescript@4.7.3
 
-devDependencies:
-  '@webank/eslint-config-ts': 1.0.5_typescript@4.7.3
+  packages/core:
+    specifiers:
+      typescript: ^4.7.3
+    dependencies:
+      typescript: 4.7.3
 
 packages:
 

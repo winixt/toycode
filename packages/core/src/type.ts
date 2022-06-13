@@ -27,7 +27,7 @@ export interface ImportResource {
 }
 
 export interface SFCComponent {
-    componentName: 'Page' | 'Block' | 'Component';
+    componentName: 'Page' | 'Component';
     dir: string;
     fileName: string;
     children: Component[];
