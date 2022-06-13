@@ -13,8 +13,8 @@
         "composite": true,
         "target": "ES6",
         "allowJs": false,
-        "rootDir": "src",
         "outDir": "./es",
+        "types": ["node", "jest"],
         "tsBuildInfoFile": "tsconfig.tsbuildinfo",
         "lib": [
             "ESNext",

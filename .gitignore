@@ -10,6 +10,8 @@ lib
 package-lock.json
 yarn.lock
 
+coverage
+
 tsconfig.tsbuildinfo
 
 example/node/tmp
