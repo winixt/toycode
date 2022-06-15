@@ -4,6 +4,7 @@
   "description": "代码生成",
   "main": "index.js",
   "scripts": {
+    "test:watch": "jest --watch",
     "test": "jest"
   },
   "repository": {

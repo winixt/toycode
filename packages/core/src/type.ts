@@ -52,6 +52,7 @@ export interface Component {
     componentName: string;
     props?: ComponentProps;
     events?: ComponentEvents;
+    directives?: ComponentDirectives;
     constantExpressions?: ConstantsExpression[];
     reactiveExpressions?: ReactiveExpression[];
     watchExpressions?: WatchExpression[];
@@ -78,22 +79,30 @@ export interface ComponentSlot {
     component: Component;
 }
 
-export interface ComponentProps {
-    id?: string;
-    class?: string;
-    style?: string | object;
-    ref?: string;
-    [key: string]:
-        | number
-        | string
-        | boolean
-        | object
-        | []
+interface PropValue {
+    type:
+        | 'string'
+        | 'number'
+        | 'boolean'
+        | 'object'
         | ExtensionType.JSExpression;
+    value: string | number | boolean | object;
+}
+
+export interface ComponentProps {
+    id?: PropValue;
+    class?: PropValue;
+    style?: PropValue;
+    ref?: PropValue;
+    [key: string]: PropValue;
 }
 
 export interface ComponentEvents {
-    [key: string]: ExtensionType.JSExpression;
+    [key: string]: string;
+}
+
+export interface ComponentDirectives {
+    [key: string]: string;
 }
 
 export interface ConstantsExpression {

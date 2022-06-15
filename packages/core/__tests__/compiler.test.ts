@@ -1,4 +1,4 @@
-import { compiler } from '../src/compiler/index';
+import { compiler, compilerProps, compilerEvents } from '../src/compiler/index';
 import { Schema } from '../src/type';
 
 export const schema: Schema = {
@@ -30,6 +30,7 @@ export const schema: Schema = {
     },
 };
 
-test('adds 1 + 2 to equal 3', () => {
-    expect(compiler(schema)).toBe('');
+test('compilerProps: empty props', () => {
+    expect(compilerProps()).toBe('');
+    expect(compilerProps({})).toBe('');
 });
