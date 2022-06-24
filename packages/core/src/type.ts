@@ -2,16 +2,11 @@ export interface Schema {
     config: SchemaConfig;
     SFCComponent: SFCComponent[];
     css?: CSS;
-    common?: DefineFunction[];
+    common?: DefineScript[];
     dependencies?: DependentResource[];
 }
 
-export interface DefineConstants {
-    exportName: string;
-    content: string;
-}
-
-export interface DefineFunction {
+export interface DefineScript {
     exportName: string;
     content: string;
     importResources?: ImportResource[];

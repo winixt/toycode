@@ -1,14 +1,20 @@
 import { join } from 'path';
 import fse from 'fs-extra';
 import postcss, { Rule } from 'postcss';
-import { getSrcPath, getFileName, readTextFile, formatCode } from '../utils';
+import {
+    getSrcPath,
+    getAbsSrcPath,
+    getFileName,
+    readTextFile,
+    formatCode,
+} from '../utils';
 import { CSS, PreChangeFile } from '../type';
 
 export function genGlobalCss(css: CSS): PreChangeFile {
     if (!css.content) return;
 
     const fileName = getFileName(css.fileName, `.${css.lang}`);
-    const cssPath = join(getSrcPath(), fileName);
+    const cssPath = join(getAbsSrcPath(), fileName);
 
     if (fse.existsSync(cssPath)) {
         const oldCssAST = postcss.parse(readTextFile(cssPath));
@@ -38,12 +44,12 @@ export function genGlobalCss(css: CSS): PreChangeFile {
 
         oldCssAST.nodes = topLevelNodes;
         return {
-            file: cssPath,
+            file: join(getSrcPath(), fileName),
             content: formatCode(oldCssAST.toResult().css, 'css'),
         };
     }
     return {
-        file: cssPath,
+        file: join(getSrcPath(), fileName),
         content: formatCode(css.content, 'css'),
     };
 }
