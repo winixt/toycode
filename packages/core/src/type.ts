@@ -1,6 +1,6 @@
 export interface Schema {
     config: SchemaConfig;
-    SFCComponent: SFCComponent;
+    SFCComponent: SFCComponent[];
     css?: CSS;
     utils?: DefineFunction[];
     uses?: DefineFunction[];
@@ -69,8 +69,6 @@ export interface ComponentSlots {
     id: string;
     parentId: string;
     slots: ComponentSlot[];
-    scoped: string;
-    component: Component;
 }
 
 export interface ComponentSlot {
@@ -159,7 +157,7 @@ interface SchemaConfig {
 }
 
 interface CSS {
-    lang: 'css' | 'less' | 'scss';
+    lang: 'css' | 'less';
     content: string;
     dir?: string;
     fileName?: string;

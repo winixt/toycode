@@ -1,14 +1,12 @@
-// import type { Schema } from './type';
+import { Schema } from '@qlin/toycode-core';
+import { JSONSchema7 } from 'json-schema';
+import { defaultSchema } from './config';
 
-// export const schema: Schema = {
-//     config: {
-//         common: {
-//             useDir: 'common/use',
-//             serviceDir: 'common/service',
-//             constantsPath: 'common/constants.js',
-//             utilsDir: 'common/utils',
-//         },
-//         pageDir: 'pages',
-//         componentsDir: 'components',
-//     },
-// };
+export interface APISchema {
+    url: string;
+    headers: Record<string, string>;
+    requestBody: JSONSchema7;
+    reponseBody: JSONSchema7;
+}
+
+export function genSchema() {}

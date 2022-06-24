@@ -1,0 +1,24 @@
+html, body {
+    margin: 0;
+}
+
+.common-page {
+    padding: 20px;
+    margin: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    &-form {
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #f1f1f2;
+        .fes-btn {
+            + .fes-btn {
+                margin-left: 8px;
+            }
+        }
+    }
+    &-pagination {
+        margin-top: 20px;
+        justify-content: flex-end;
+    }
+}

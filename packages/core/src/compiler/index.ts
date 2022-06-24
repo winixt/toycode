@@ -6,6 +6,8 @@ import {
     ExtensionType,
     ComponentEvents,
     ComponentDirectives,
+    ComponentSlots,
+    ComponentSlot,
 } from '../type';
 
 export function compilerProps(props?: ComponentProps) {
@@ -65,11 +67,33 @@ export function compilerDirectives(directives?: ComponentDirectives) {
         .join(' ');
 }
 
-export function compilerTemplate(component: Component) {
-    return `<${component} ${compilerDirectives(
+export function compilerSlots(slots: ComponentSlots): string[] {
+    return slots.slots.map((item: ComponentSlot) => {
+        if (item.scoped) {
+            return `<template #${item.name}="${item.scoped}">
+            ${compilerTemplate(item.component)}
+        </template>`;
+        }
+        return `<template #${item.name}>
+            ${compilerTemplate(item.component)}
+        </template>`;
+    });
+}
+
+export function compilerTemplate(component: Component): string {
+    return `<${component.componentName} ${compilerDirectives(
         component.directives,
     )} ${compilerProps(component.props)} ${compilerEvents(component.events)} ${
-        component.children || component.slots ? `></${component}>` : ' />'
+        component.children || component.slots
+            ? `>
+                ${
+                    component.children
+                        ? component.children.map(compilerTemplate)
+                        : ''
+                }
+                ${component.slots ? compilerSlots(component.slots) : ''}
+                </${component.componentName}>`
+            : ' />'
     }`;
 }
 
