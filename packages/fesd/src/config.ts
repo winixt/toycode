@@ -19,7 +19,7 @@ export const defaultSchema: Schema = {
             margin: 20px;
             border-radius: 4px;
             background-color: #fff;
-            &-form {
+            &-form { 
                 padding-bottom: 20px;
                 margin-bottom: 20px;
                 border-bottom: 1px solid #f1f1f2;

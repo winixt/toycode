@@ -2,10 +2,7 @@ export interface Schema {
     config: SchemaConfig;
     SFCComponent: SFCComponent[];
     css?: CSS;
-    utils?: DefineFunction[];
-    uses?: DefineFunction[];
-    services?: DefineFunction[];
-    constants?: DefineConstants[];
+    common?: DefineFunction[];
     dependencies?: DependentResource[];
 }
 
@@ -18,6 +15,8 @@ export interface DefineFunction {
     exportName: string;
     content: string;
     importResources?: ImportResource[];
+    dir?: string;
+    fileName: string;
 }
 
 export interface ImportResource {
@@ -145,7 +144,7 @@ export interface DependentResource {
     version: string;
 }
 
-interface SchemaConfig {
+export interface SchemaConfig {
     common: {
         useDir: string;
         serviceDir: string;
@@ -156,11 +155,16 @@ interface SchemaConfig {
     pageDir: string;
 }
 
-interface CSS {
+export interface CSS {
     lang: 'css' | 'less';
     content: string;
     dir?: string;
     fileName?: string;
     scoped?: boolean;
     injectSFC?: boolean;
+}
+
+export interface PreChangeFile {
+    file: string;
+    content: string;
 }

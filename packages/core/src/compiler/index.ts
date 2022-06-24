@@ -101,7 +101,9 @@ export function compilerComponent(component: Component) {
     return {};
 }
 
-export function compilerSFC(sfc: SFCComponent) {}
+export function compilerSFC(sfc: SFCComponent) {
+    return {};
+}
 
 export function compiler(schema: Schema) {
     return 1;
