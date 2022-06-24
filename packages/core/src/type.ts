@@ -2,11 +2,12 @@ export interface Schema {
     config: SchemaConfig;
     SFCComponent: SFCComponent[];
     css?: CSS;
-    common?: DefineScript[];
+    commonCode?: JSCode[];
     dependencies?: DependentResource[];
 }
 
-export interface DefineScript {
+export interface JSCode {
+    type: ExtensionType;
     exportName: string;
     content: string;
     importResources?: ImportResource[];
@@ -16,7 +17,7 @@ export interface DefineScript {
 
 export interface ImportResource {
     importName: string;
-    package: string;
+    resoure: string;
     isDefaultImport?: boolean;
     aliasName?: string;
 }
@@ -36,6 +37,7 @@ export interface SFCComponent {
 }
 
 export enum ExtensionType {
+    JSDeclaration = 'JSDeclaration',
     JSFunction = 'JSFunction',
     JSExpression = 'JSExpression',
     JSSlot = 'JSSlot',
