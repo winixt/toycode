@@ -12,7 +12,10 @@ export const useNormalModel = (
     const usingProp = config?.prop ?? 'modelValue';
     const currentValue = ref(props[usingProp]);
     const pureUpdateCurrentValue = (value) => {
-        if (value === currentValue.value || (config.isEqual && isEqual(value, currentValue.value))) {
+        if (
+            value === currentValue.value ||
+            (config.isEqual && isEqual(value, currentValue.value))
+        ) {
             return;
         }
         currentValue.value = value;

@@ -1,7 +1,21 @@
 import { join } from 'path';
 import fse from 'fs-extra';
-import { JSCode, PreChangeFile, ExtensionType } from '../type';
-import { getSrcPath, getAbsSrcPath, genImportCode, formatCode } from '../utils';
+import { File, Identifier } from '@babel/types';
+import { parse, ParseResult } from '@babel/parser';
+import {
+    JSCode,
+    PreChangeFile,
+    ExtensionType,
+    ImportSource,
+    ImportType,
+} from '../type';
+import {
+    getSrcPath,
+    getAbsSrcPath,
+    genImportCode,
+    formatCode,
+    readTextFile,
+} from '../utils';
 
 export function genCode(jsCode: JSCode): string {
     if (jsCode.type === ExtensionType.JSFunction) {
@@ -22,6 +36,33 @@ export function genJSFile(jsCodes: JSCode[] = []) {
     return `${importCode} \n ${codes.join('\n')}`;
 }
 
+export function parseImportCode(ast: ParseResult<File>) {
+    const result: ImportSource[] = [];
+    for (const node of ast.program.body) {
+        if (node.type === 'ImportDeclaration') {
+            const source = node.source.value;
+            for (const specifier of node.specifiers) {
+                if (specifier.type === 'ImportSpecifier') {
+                    result.push({
+                        local: specifier.local.name,
+                        imported: (specifier.imported as Identifier).name,
+                        source,
+                        type: ImportType.ImportSpecifier,
+                    });
+                } else if (specifier.type === 'ImportDefaultSpecifier') {
+                    result.push({
+                        local: specifier.local.name,
+                        source,
+                        type: ImportType.ImportDefaultSpecifier,
+                    });
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
     const map = new Map<string, JSCode[]>();
     for (const item of jsCodes) {
@@ -38,6 +79,8 @@ export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
         const absFilePath = join(getAbsSrcPath(), filePath);
         if (fse.existsSync(absFilePath)) {
             // 已有文件
+            const ast = parse(readTextFile(absFilePath));
+            const importsCode = parseImportCode(ast);
         } else {
             result.push({
                 file: join(getSrcPath(), filePath),

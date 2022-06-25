@@ -10,16 +10,21 @@ export interface JSCode {
     type: ExtensionType;
     exportName: string;
     content: string;
-    importResources?: ImportResource[];
+    importResources?: ImportSource[];
     dir?: string;
     fileName: string;
 }
 
-export interface ImportResource {
-    importName: string;
-    resoure: string;
-    isDefaultImport?: boolean;
-    aliasName?: string;
+export enum ImportType {
+    ImportDefaultSpecifier = 'ImportDefaultSpecifier',
+    ImportSpecifier = 'ImportSpecifier',
+}
+
+export interface ImportSource {
+    imported?: string;
+    source: string;
+    type: ImportType;
+    local?: string;
 }
 
 export interface SFCComponent {
@@ -32,7 +37,7 @@ export interface SFCComponent {
     watchExpressions?: WatchExpression[];
     functions?: DefineFunction[];
     css?: CSS;
-    importResources?: ImportResource[];
+    importResources?: ImportSource[];
     propDefinitions?: ComponentPropDefinition[];
 }
 

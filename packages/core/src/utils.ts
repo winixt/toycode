@@ -1,7 +1,7 @@
 import { join, extname } from 'path';
 import prettier from 'prettier';
 import fse from 'fs-extra';
-import { ImportResource } from './type';
+import { ImportSource, ImportType } from './type';
 
 export function getProjectPath() {
     return process.cwd();
@@ -26,46 +26,45 @@ export function readTextFile(filePath: string) {
     return fse.readFileSync(filePath, 'utf-8');
 }
 
-export function genSingleImport(imports: ImportResource[]) {
+export function genSingleImport(imports: ImportSource[]) {
     if (!imports.length) return '';
-    const resoure = imports[0].resoure;
+    const source = imports[0].source;
     const importNames: string[] = [];
     let defaultImport: string;
     for (const imp of imports) {
-        if (imp.isDefaultImport) {
-            defaultImport = imp.importName;
-            return `import ${imp.importName}} from '${imp.resoure}'`;
-        } else if (imp.aliasName) {
-            importNames.push(`${imp.importName} as ${imp.aliasName}`);
+        if (imp.type === ImportType.ImportDefaultSpecifier) {
+            defaultImport = imp.imported;
+        } else if (imp.local && imp.local !== imp.imported) {
+            importNames.push(`${imp.imported} as ${imp.local}`);
         } else {
-            importNames.push(imp.importName);
+            importNames.push(imp.imported);
         }
     }
 
     if (defaultImport && !importNames.length) {
-        return `import ${defaultImport}} from '${resoure}';`;
+        return `import ${defaultImport}} from '${source}';`;
     }
     if (!defaultImport && importNames.length) {
-        return `import {${importNames.join(', ')}} from '${resoure}';`;
+        return `import {${importNames.join(', ')}} from '${source}';`;
     }
     return `import ${defaultImport}, {${importNames.join(
         ', ',
-    )}} from '${resoure}';`;
+    )}} from '${source}';`;
 }
 
-export function genImportCode(imports: ImportResource[]) {
-    const categorizeImports = new Map<string, ImportResource[]>();
+export function genImportCode(imports: ImportSource[]) {
+    const categorizeImports = new Map<string, ImportSource[]>();
 
     for (const imp of imports) {
-        if (categorizeImports.has(imp.resoure)) {
-            categorizeImports.get(imp.resoure).push(imp);
+        if (categorizeImports.has(imp.source)) {
+            categorizeImports.get(imp.source).push(imp);
         } else {
-            categorizeImports.set(imp.resoure, [imp]);
+            categorizeImports.set(imp.source, [imp]);
         }
     }
 
     const result: string[] = [];
-    for (const [resoure, imps] of categorizeImports) {
+    for (const [source, imps] of categorizeImports) {
         result.push(genSingleImport(imps));
     }
 
