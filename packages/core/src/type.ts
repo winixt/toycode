@@ -2,15 +2,12 @@ export interface Schema {
     config: SchemaConfig;
     SFCComponent: SFCComponent[];
     css?: CSS;
-    commonCode?: JSCode[];
+    jsCodes?: JSCode[];
     dependencies?: DependentResource[];
 }
 
 export interface JSCode {
-    type: ExtensionType;
-    exportName: string;
     content: string;
-    importResources?: ImportSource[];
     dir?: string;
     fileName: string;
 }

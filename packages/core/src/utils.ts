@@ -29,25 +29,27 @@ export function readTextFile(filePath: string) {
 export function genSingleImport(imports: ImportSource[]) {
     if (!imports.length) return '';
     const source = imports[0].source;
-    const importNames: string[] = [];
+    const importNames = new Set<string>();
     let defaultImport: string;
     for (const imp of imports) {
         if (imp.type === ImportType.ImportDefaultSpecifier) {
-            defaultImport = imp.imported;
+            defaultImport = imp.local || imp.imported;
         } else if (imp.local && imp.local !== imp.imported) {
-            importNames.push(`${imp.imported} as ${imp.local}`);
+            importNames.add(`${imp.imported} as ${imp.local}`);
         } else {
-            importNames.push(imp.imported);
+            importNames.add(imp.imported);
         }
     }
 
-    if (defaultImport && !importNames.length) {
+    if (defaultImport && importNames.size) {
         return `import ${defaultImport}} from '${source}';`;
     }
-    if (!defaultImport && importNames.length) {
-        return `import {${importNames.join(', ')}} from '${source}';`;
+    if (!defaultImport && importNames.size) {
+        return `import {${Array.from(importNames).join(
+            ', ',
+        )}} from '${source}';`;
     }
-    return `import ${defaultImport}, {${importNames.join(
+    return `import ${defaultImport}, {${Array.from(importNames).join(
         ', ',
     )}} from '${source}';`;
 }
@@ -64,7 +66,7 @@ export function genImportCode(imports: ImportSource[]) {
     }
 
     const result: string[] = [];
-    for (const [source, imps] of categorizeImports) {
+    for (const imps of categorizeImports.values()) {
         result.push(genSingleImport(imps));
     }
 
