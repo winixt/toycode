@@ -1,16 +1,6 @@
 import { Schema } from '@qlin/toycode-core';
 
 export const defaultSchema: Schema = {
-    config: {
-        common: {
-            useDir: 'common/use',
-            serviceDir: 'common/service',
-            constantsPath: 'common/constants.js',
-            utilsDir: 'common/utils',
-        },
-        pageDir: 'pages',
-        componentsDir: 'components',
-    },
     SFCComponent: [],
     dependencies: [
         {

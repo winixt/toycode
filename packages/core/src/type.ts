@@ -1,5 +1,4 @@
 export interface Schema {
-    config: SchemaConfig;
     SFCComponent: SFCComponent[];
     css?: CSS;
     jsCodes?: JSCode[];
@@ -141,17 +140,6 @@ export interface ComponentPropDefinition {
 export interface DependentResource {
     package: string;
     version: string;
-}
-
-export interface SchemaConfig {
-    common: {
-        useDir: string;
-        serviceDir: string;
-        constantsPath: string;
-        utilsDir: string;
-    };
-    componentsDir: string;
-    pageDir: string;
 }
 
 export interface CSS {
