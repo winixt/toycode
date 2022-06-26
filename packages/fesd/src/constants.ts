@@ -1,3 +1,4 @@
+export const COMMON_DIR = 'common';
 export const COMMON_USE_DIR = 'common/use';
 export const COMMON_SERVICES_DIR = 'common/services';
 export const COMMON_CONSTANTS_PATH = 'common/constants.js';

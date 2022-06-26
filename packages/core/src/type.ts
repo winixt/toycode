@@ -33,8 +33,9 @@ export interface SFCComponent {
     watchExpressions?: WatchExpression[];
     functions?: DefineFunction[];
     css?: CSS;
-    importResources?: ImportSource[];
-    propDefinitions?: ComponentPropDefinition[];
+    importSources?: ImportSource[];
+    propsDefinition?: ComponentPropDefinition[];
+    title?: string; // 页面 title
 }
 
 export enum ExtensionType {
@@ -50,10 +51,6 @@ export interface Component {
     props?: ComponentProps;
     events?: ComponentEvents;
     directives?: ComponentDirectives;
-    constantExpressions?: ConstantsExpression[];
-    reactiveExpressions?: ReactiveExpression[];
-    watchExpressions?: WatchExpression[];
-    functions?: DefineFunction[];
     parentId?: string;
     loop?: [];
     loopArgs?: [string, string]; // default [“item”, “index”]

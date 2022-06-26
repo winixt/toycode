@@ -1,5 +1,4 @@
 import {
-    Schema,
     SFCComponent,
     Component,
     ComponentProps,
@@ -103,8 +102,4 @@ export function compilerComponent(component: Component) {
 
 export function compilerSFC(sfc: SFCComponent) {
     return {};
-}
-
-export function compiler(schema: Schema) {
-    return 1;
 }

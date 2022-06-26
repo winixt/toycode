@@ -1,4 +1,30 @@
-import { Schema } from '@qlin/toycode-core';
+import { Schema, CSS } from '@qlin/toycode-core';
+import { COMMON_DIR } from './constants';
+
+export const defaultPageCss: CSS = {
+    lang: 'less',
+    content: `.common-page {
+            padding: 20px;
+            margin: 20px;
+            border-radius: 4px;
+            background-color: #fff;
+            &-form { 
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #f1f1f2;
+                .fes-btn {
+                    + .fes-btn {
+                        margin-left: 8px;
+                    }
+                }
+            }
+            &-pagination {
+                margin-top: 20px;
+                justify-content: flex-end;
+            }
+        }`,
+    fileName: 'global.less',
+};
 
 export const defaultSchema: Schema = {
     SFCComponent: [],
@@ -24,28 +50,16 @@ export const defaultSchema: Schema = {
             version: '0.5.13',
         },
     ],
-    css: {
-        lang: 'less',
-        content: `.common-page {
-            padding: 20px;
-            margin: 20px;
-            border-radius: 4px;
-            background-color: #fff;
-            &-form { 
-                padding-bottom: 20px;
-                margin-bottom: 20px;
-                border-bottom: 1px solid #f1f1f2;
-                .fes-btn {
-                    + .fes-btn {
-                        margin-left: 8px;
-                    }
-                }
+    jsCodes: [
+        {
+            content: `export function getTargetLabel(map, value) {
+                const target = map.find((item) => item.value === value);
+            
+                return target ? target.label : value;
             }
-            &-pagination {
-                margin-top: 20px;
-                justify-content: flex-end;
-            }
-        }`,
-        fileName: 'global.less',
-    },
+    `,
+            dir: COMMON_DIR,
+            fileName: 'utils.js',
+        },
+    ],
 };
