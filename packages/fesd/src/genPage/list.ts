@@ -18,6 +18,7 @@ import {
     findPaginationField,
     findTableDataField,
     genSFCFileName,
+    isReactiveSearch,
 } from '../utils';
 import { PAGE_DIR } from '../constants';
 
@@ -144,8 +145,8 @@ export function genPaginationComp() {
 }
 
 function genTemplate(query: APISchema) {
-    const paginationSchema = findPaginationSchema(query.reponseBody);
-    const tableDataSchema = findTableDataSchema(query.reponseBody);
+    const paginationSchema = findPaginationSchema(query.responseBody);
+    const tableDataSchema = findTableDataSchema(query.responseBody);
 
     if (!tableDataSchema) {
         throw new Error(
@@ -268,14 +269,52 @@ function genPageMeta(meta: PageMeta) {
     };
 }
 
+function genSearchFormSetupCode(requestBody: JSONSchema7): SetupCode {
+    const importSources: ImportSource[] = [
+        {
+            imported: 'reactive',
+            type: ImportType.ImportSpecifier,
+            source: 'vue',
+        },
+    ];
+    let watchCode = '';
+    if (isReactiveSearch(requestBody)) {
+        importSources.push({
+            imported: 'watch',
+            type: ImportType.ImportSpecifier,
+            source: 'vue',
+        });
+
+        watchCode = `
+        watch(searchParams, () => {
+            refresh(searchParams);
+        });
+        `;
+    }
+
+    const fields = Object.keys(requestBody.properties).map((key) => {
+        return `${key}: null`;
+    });
+
+    return {
+        importSources,
+        code: `
+        const searchParams = reactive({
+            ${fields.join(', ')}
+        });
+        ${watchCode}
+        `,
+    };
+}
+
 function genSetupCode(pageConfig: ListPageConfig) {
-    const paginationField = findPaginationField(pageConfig.query.reponseBody);
-    const tableDataField = findTableDataField(pageConfig.query.reponseBody);
+    const paginationField = findPaginationField(pageConfig.query.responseBody);
+    const tableDataField = findTableDataField(pageConfig.query.responseBody);
+    const hasSearchFlag = hasSearch(pageConfig.query.requestBody);
     const setupCodes: SetupCode[] = [
-        genPageMeta(pageConfig.meta),
         genTableSetupCode({
             url: pageConfig.query.url,
-            hasSearch: hasSearch(pageConfig.query.requestBody),
+            hasSearch: hasSearchFlag,
             dataField:
                 tableDataField === pageConfig.commonDataField
                     ? ''
@@ -283,6 +322,12 @@ function genSetupCode(pageConfig: ListPageConfig) {
             pagination: paginationField,
         }),
     ];
+
+    if (hasSearchFlag) {
+        setupCodes.push(genSearchFormSetupCode(pageConfig.query.requestBody));
+    }
+
+    setupCodes.push(genPageMeta(pageConfig.meta));
 
     return setupCodes;
 }

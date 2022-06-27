@@ -1,12 +1,27 @@
 import { JSONSchema7 } from 'json-schema';
 import { camelCase } from 'lodash-es';
 
+export function isPaginationField(field: string) {
+    return field === 'pagination' || field === 'page' || field === 'pager';
+}
+
 export function hasSearch(requestBody: JSONSchema7) {
-    return !!Object.keys(requestBody.properties).length;
+    return !!Object.keys(requestBody.properties).filter((key) => {
+        return !isPaginationField(key);
+    }).length;
+}
+
+export function isReactiveSearch(requestBody: JSONSchema7) {
+    const searchFieldCount = Object.keys(requestBody.properties).filter(
+        (key) => {
+            return !isPaginationField(key);
+        },
+    ).length;
+    return searchFieldCount <= 3;
 }
 
 export function findPagination(
-    reponseBody: JSONSchema7,
+    responseBody: JSONSchema7,
     level = 0,
 ): {
     field: string;
@@ -15,10 +30,10 @@ export function findPagination(
     // 只找到第二层
     if (level > 1) return null;
 
-    if (reponseBody.type === 'object') {
-        const properties = reponseBody.properties;
+    if (responseBody.type === 'object') {
+        const properties = responseBody.properties;
         for (const key in properties) {
-            if (key === 'pagination' || key === 'page' || key === 'pager') {
+            if (isPaginationField(key)) {
                 return {
                     field: key,
                     jsonSchema: properties[key] as JSONSchema7,
@@ -36,18 +51,18 @@ export function findPagination(
     return null;
 }
 
-export function findPaginationSchema(reponseBody: JSONSchema7): JSONSchema7 {
-    const result = findPagination(reponseBody);
+export function findPaginationSchema(responseBody: JSONSchema7): JSONSchema7 {
+    const result = findPagination(responseBody);
     return result ? result.jsonSchema : null;
 }
 
-export function findPaginationField(reponseBody: JSONSchema7) {
-    const result = findPagination(reponseBody);
+export function findPaginationField(responseBody: JSONSchema7) {
+    const result = findPagination(responseBody);
     return result ? result.field : null;
 }
 
 export function findTableData(
-    reponseBody: JSONSchema7,
+    responseBody: JSONSchema7,
     level = 0,
 ): {
     field: string;
@@ -56,8 +71,8 @@ export function findTableData(
     // 只找到第二层
     if (level > 1) return null;
 
-    if (reponseBody.type === 'object') {
-        const properties = reponseBody.properties;
+    if (responseBody.type === 'object') {
+        const properties = responseBody.properties;
         for (const key in properties) {
             if (
                 (properties[key] as JSONSchema7)?.type === 'array' &&
@@ -80,13 +95,13 @@ export function findTableData(
     return null;
 }
 
-export function findTableDataSchema(reponseBody: JSONSchema7) {
-    const result = findTableData(reponseBody);
+export function findTableDataSchema(responseBody: JSONSchema7) {
+    const result = findTableData(responseBody);
     return result ? result.jsonSchema : null;
 }
 
-export function findTableDataField(reponseBody: JSONSchema7) {
-    const result = findTableData(reponseBody);
+export function findTableDataField(responseBody: JSONSchema7) {
+    const result = findTableData(responseBody);
     return result ? result.field : null;
 }
 
