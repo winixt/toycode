@@ -23,18 +23,20 @@ export interface ImportSource {
     local?: string;
 }
 
+export interface SetupCode {
+    importSources?: ImportSource[];
+    code: string;
+}
+
 export interface SFCComponent {
     componentName: 'Page' | 'Component';
     dir?: string;
     fileName: string;
     children: Component[];
-    importSources?: ImportSource[];
-    constantExpressions?: ConstantsExpression[];
-    reactiveExpressions?: ReactiveExpression[];
-    watchExpressions?: WatchExpression[];
-    functions?: DefineFunction[];
+    setupCodes: SetupCode[];
     css?: CSS;
     propsDefinition?: ComponentPropDefinition[];
+    emitsDefinitions?: string[] | Record<string, (...args: any[]) => boolean>[];
     title?: string; // 页面 title
 }
 
@@ -113,11 +115,6 @@ export interface WatchExpression {
     options: Record<string, string | number | boolean>;
 }
 
-export interface DefineFunction {
-    name: string;
-    content: string;
-}
-
 export type PropType =
     | 'Boolean'
     | 'String'
@@ -129,8 +126,8 @@ export type PropType =
 export interface ComponentPropDefinition {
     name: string;
     propType: PropType;
-    description: string;
-    defaultValue: any;
+    description?: string;
+    defaultValue?: any;
 }
 
 export interface DependentResource {

@@ -6,3 +6,8 @@ export interface APISchema {
     requestBody: JSONSchema7;
     reponseBody: JSONSchema7;
 }
+
+export interface PageMeta {
+    name: string;
+    title: string;
+}
