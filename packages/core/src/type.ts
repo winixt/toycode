@@ -28,12 +28,12 @@ export interface SFCComponent {
     dir?: string;
     fileName: string;
     children: Component[];
+    importSources?: ImportSource[];
     constantExpressions?: ConstantsExpression[];
     reactiveExpressions?: ReactiveExpression[];
     watchExpressions?: WatchExpression[];
     functions?: DefineFunction[];
     css?: CSS;
-    importSources?: ImportSource[];
     propsDefinition?: ComponentPropDefinition[];
     title?: string; // 页面 title
 }
@@ -46,7 +46,6 @@ export enum ExtensionType {
 }
 
 export interface Component {
-    id: string;
     componentName: string;
     props?: ComponentProps;
     events?: ComponentEvents;

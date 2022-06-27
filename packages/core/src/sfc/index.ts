@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash-es';
 import {
     SFCComponent,
     Component,
@@ -83,7 +84,7 @@ export function compilerTemplate(component: Component): string {
     return `<${component.componentName} ${compilerDirectives(
         component.directives,
     )} ${compilerProps(component.props)} ${compilerEvents(component.events)} ${
-        component.children || component.slots
+        !isEmpty(component.children) || !isEmpty(component.slots)
             ? `>
                 ${
                     component.children
