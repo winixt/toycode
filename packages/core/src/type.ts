@@ -36,8 +36,7 @@ export interface SFCComponent {
     setupCodes: SetupCode[];
     css?: CSS;
     propsDefinition?: ComponentPropDefinition[];
-    emitsDefinitions?: string[] | Record<string, (...args: any[]) => boolean>[];
-    title?: string; // 页面 title
+    emitsDefinition?: string[] | Record<string, string>[];
 }
 
 export enum ExtensionType {
@@ -98,23 +97,6 @@ export interface ComponentDirectives {
     [key: string]: string;
 }
 
-export interface ConstantsExpression {
-    name: string;
-    constent: string;
-}
-
-export interface ReactiveExpression {
-    type: 'ref' | 'computed' | 'reactive';
-    name: string;
-    content: string;
-}
-
-export interface WatchExpression {
-    target: string;
-    content: string;
-    options: Record<string, string | number | boolean>;
-}
-
 export type PropType =
     | 'Boolean'
     | 'String'
@@ -141,7 +123,6 @@ export interface CSS {
     dir?: string;
     fileName?: string;
     scoped?: boolean;
-    injectSFC?: boolean;
 }
 
 export interface PreChangeFile {

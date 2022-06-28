@@ -1,4 +1,6 @@
 import { isEmpty } from 'lodash-es';
+import { join } from 'path';
+import { genImportCode } from '../utils';
 import {
     SFCComponent,
     Component,
@@ -8,6 +10,8 @@ import {
     ComponentDirectives,
     ComponentSlots,
     ComponentSlot,
+    PreChangeFile,
+    ImportSource,
 } from '../type';
 
 export function compilerProps(props?: ComponentProps) {
@@ -71,16 +75,16 @@ export function compilerSlots(slots: ComponentSlots): string[] {
     return slots.slots.map((item: ComponentSlot) => {
         if (item.scoped) {
             return `<template #${item.name}="${item.scoped}">
-            ${compilerTemplate(item.component)}
+            ${compilerComponent(item.component)}
         </template>`;
         }
         return `<template #${item.name}>
-            ${compilerTemplate(item.component)}
+            ${compilerComponent(item.component)}
         </template>`;
     });
 }
 
-export function compilerTemplate(component: Component): string {
+export function compilerComponent(component: Component): string {
     return `<${component.componentName} ${compilerDirectives(
         component.directives,
     )} ${compilerProps(component.props)} ${compilerEvents(component.events)} ${
@@ -88,7 +92,7 @@ export function compilerTemplate(component: Component): string {
             ? `>
                 ${
                     component.children
-                        ? component.children.map(compilerTemplate)
+                        ? component.children.map(compilerComponent)
                         : ''
                 }
                 ${component.slots ? compilerSlots(component.slots) : ''}
@@ -97,10 +101,85 @@ export function compilerTemplate(component: Component): string {
     }`;
 }
 
-export function compilerComponent(component: Component) {
-    return {};
+export function genPropsDefinition(sfc: SFCComponent) {
+    if (!isEmpty(sfc.propsDefinition)) {
+        const props = sfc.propsDefinition.map((item) => {
+            return `${item.name}: ${item.propType}`;
+        });
+        const propsDefaultValue = sfc.propsDefinition
+            .filter((item) => item.defaultValue != null)
+            .map((item) => {
+                return `${item.name}: ${item.defaultValue}`;
+            });
+        return `
+        const props = withDefaults(defineProps({
+            ${props.join(',')}
+        }), {
+            ${propsDefaultValue.join(',')}
+        })
+        `;
+    }
+    return '';
 }
 
-export function compilerSFC(sfc: SFCComponent) {
-    return {};
+export function genEmitsDefinition(sfc: SFCComponent) {
+    if (!isEmpty(sfc.emitsDefinition)) {
+        if (Array.isArray(sfc.emitsDefinition)) {
+            return `
+            const emit = defineEmits([${sfc.emitsDefinition.join(', ')}])
+            `;
+        }
+        return `
+        const emit = defineEmits({
+            ${Object.keys(sfc.emitsDefinition)
+                .map((key: string) => {
+                    return `${key}: ${sfc.emitsDefinition[key as any]}`;
+                })
+                .join(', ')}
+        })
+        `;
+    }
+    return '';
+}
+
+export function genSetupCode(sfc: SFCComponent) {
+    const importSources = genImportCode(
+        sfc.setupCodes.reduce((acc, cur) => {
+            return acc.concat(cur.importSources);
+        }, [] as ImportSource[]),
+    );
+
+    return `
+    <script setup>
+    ${importSources}
+
+    ${genEmitsDefinition(sfc)}
+
+    ${sfc.setupCodes.map((item) => item.content).join('\n')}
+    </script>
+    `;
+}
+
+// TODO 支持独立 css 文件
+export function genStyle(sfc: SFCComponent) {
+    const css = sfc.css;
+    if (!css) return '';
+    return `<style lang="${css.lang}" ${css.scoped ? 'scoped' : ''}>
+    ${css.content}
+    </style>`;
+}
+
+export function compilerSFC(sfc: SFCComponent): PreChangeFile {
+    return {
+        file: join(sfc.dir || '', sfc.fileName),
+        content: `
+        <template>
+            ${sfc.children.map(compilerComponent).join('\n')}
+        </template>
+
+        ${genSetupCode(sfc)}
+
+        ${genStyle(sfc)}
+        `,
+    };
 }

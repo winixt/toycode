@@ -338,7 +338,6 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         componentName: 'Page',
         dir: PAGE_DIR,
         fileName: `${genSFCFileName(pageConfig.meta.name)}.vue`,
-        title: pageConfig.meta.title,
         setupCodes: genSetupCode(pageConfig),
         children: [
             {
