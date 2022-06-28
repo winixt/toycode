@@ -1,5 +1,5 @@
 export * from './type';
-
+export * from './compiler';
 /**
  * TODO
  * 对于生成的 共享代码

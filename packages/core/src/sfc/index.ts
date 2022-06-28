@@ -14,7 +14,7 @@ import {
     ImportSource,
 } from '../type';
 
-export function compilerProps(props?: ComponentProps) {
+function compileProps(props?: ComponentProps) {
     if (!props) {
         return '';
     }
@@ -41,7 +41,7 @@ export function compilerProps(props?: ComponentProps) {
         .join(' ');
 }
 
-export function compilerEvents(events?: ComponentEvents) {
+function compileEvents(events?: ComponentEvents) {
     if (!events) {
         return '';
     }
@@ -56,7 +56,7 @@ export function compilerEvents(events?: ComponentEvents) {
         .join(' ');
 }
 
-export function compilerDirectives(directives?: ComponentDirectives) {
+function compileDirectives(directives?: ComponentDirectives) {
     if (!directives) {
         return '';
     }
@@ -71,37 +71,37 @@ export function compilerDirectives(directives?: ComponentDirectives) {
         .join(' ');
 }
 
-export function compilerSlots(slots: ComponentSlots): string[] {
+function compileSlots(slots: ComponentSlots): string[] {
     return slots.slots.map((item: ComponentSlot) => {
         if (item.scoped) {
             return `<template #${item.name}="${item.scoped}">
-            ${compilerComponent(item.component)}
+            ${compileComponent(item.component)}
         </template>`;
         }
         return `<template #${item.name}>
-            ${compilerComponent(item.component)}
+            ${compileComponent(item.component)}
         </template>`;
     });
 }
 
-export function compilerComponent(component: Component): string {
-    return `<${component.componentName} ${compilerDirectives(
+function compileComponent(component: Component): string {
+    return `<${component.componentName} ${compileDirectives(
         component.directives,
-    )} ${compilerProps(component.props)} ${compilerEvents(component.events)} ${
+    )} ${compileProps(component.props)} ${compileEvents(component.events)} ${
         !isEmpty(component.children) || !isEmpty(component.slots)
             ? `>
                 ${
                     component.children
-                        ? component.children.map(compilerComponent)
+                        ? component.children.map(compileComponent)
                         : ''
                 }
-                ${component.slots ? compilerSlots(component.slots) : ''}
+                ${component.slots ? compileSlots(component.slots) : ''}
                 </${component.componentName}>`
             : ' />'
     }`;
 }
 
-export function genPropsDefinition(sfc: SFCComponent) {
+function genPropsDefinition(sfc: SFCComponent) {
     if (!isEmpty(sfc.propsDefinition)) {
         const props = sfc.propsDefinition.map((item) => {
             return `${item.name}: ${item.propType}`;
@@ -122,7 +122,7 @@ export function genPropsDefinition(sfc: SFCComponent) {
     return '';
 }
 
-export function genEmitsDefinition(sfc: SFCComponent) {
+function genEmitsDefinition(sfc: SFCComponent) {
     if (!isEmpty(sfc.emitsDefinition)) {
         if (Array.isArray(sfc.emitsDefinition)) {
             return `
@@ -142,7 +142,7 @@ export function genEmitsDefinition(sfc: SFCComponent) {
     return '';
 }
 
-export function genSetupCode(sfc: SFCComponent) {
+function genSetupCode(sfc: SFCComponent) {
     const importSources = genImportCode(
         sfc.setupCodes.reduce((acc, cur) => {
             return acc.concat(cur.importSources);
@@ -152,7 +152,8 @@ export function genSetupCode(sfc: SFCComponent) {
     return `
     <script setup>
     ${importSources}
-
+    
+    ${genPropsDefinition(sfc)}
     ${genEmitsDefinition(sfc)}
 
     ${sfc.setupCodes.map((item) => item.content).join('\n')}
@@ -161,7 +162,7 @@ export function genSetupCode(sfc: SFCComponent) {
 }
 
 // TODO 支持独立 css 文件
-export function genStyle(sfc: SFCComponent) {
+function genStyle(sfc: SFCComponent) {
     const css = sfc.css;
     if (!css) return '';
     return `<style lang="${css.lang}" ${css.scoped ? 'scoped' : ''}>
@@ -169,12 +170,12 @@ export function genStyle(sfc: SFCComponent) {
     </style>`;
 }
 
-export function compilerSFC(sfc: SFCComponent): PreChangeFile {
+export function compileSFC(sfc: SFCComponent): PreChangeFile {
     return {
         file: join(sfc.dir || '', sfc.fileName),
         content: `
         <template>
-            ${sfc.children.map(compilerComponent).join('\n')}
+            ${sfc.children.map(compileComponent).join('\n')}
         </template>
 
         ${genSetupCode(sfc)}

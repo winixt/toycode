@@ -33,7 +33,7 @@ interface ListPageConfig {
     remove?: APISchema;
 }
 
-export function genSearchForm(requestBody: JSONSchema7) {
+function genSearchForm(requestBody: JSONSchema7) {
     const tableComp: Component = {
         componentName: 'FForm',
         props: {
@@ -74,7 +74,7 @@ export function genSearchForm(requestBody: JSONSchema7) {
     return tableComp;
 }
 
-export function genTableComponent(tableDataSchema: JSONSchema7) {
+function genTableComponent(tableDataSchema: JSONSchema7) {
     const tableComp: Component = {
         componentName: 'FTable',
         props: {
@@ -107,7 +107,7 @@ export function genTableComponent(tableDataSchema: JSONSchema7) {
     return tableComp;
 }
 
-export function genPaginationComp() {
+function genPaginationComp() {
     const paginationComp: Component = {
         componentName: 'FPagination',
         props: {
@@ -356,7 +356,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
     const jsCodes = getJsCode(join(__dirname, '../template', 'common'));
 
     return {
-        SFCComponent: [sfc],
+        sfc: [sfc],
         css: defaultPageCss,
         jsCodes,
         dependencies: defaultDependencies,

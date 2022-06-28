@@ -18,7 +18,7 @@ function getAST(code: string) {
     });
 }
 
-export function parseImportCode(ast: ParseResult<File>) {
+function parseImportCode(ast: ParseResult<File>) {
     const result: ImportSource[] = [];
     for (const node of ast.program.body) {
         if (node.type === 'ImportDeclaration') {
@@ -126,9 +126,9 @@ export function getTopLevelDeclarations(ast: ParseResult<File>) {
 
 function getJsCodeDeclaration(jsCodes: JSCode[]) {
     return jsCodes.map((jsCode) => {
-        const declations = getTopLevelDeclarations(getAST(jsCode.content));
+        const declarations = getTopLevelDeclarations(getAST(jsCode.content));
         return {
-            declations,
+            declarations,
             jsCode,
         };
     });
@@ -160,7 +160,7 @@ export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
             const newStatements: Statement[] = [];
             for (const declaration of jsCodeDeclaration) {
                 let hasNewCode = false;
-                for (const item of declaration.declations) {
+                for (const item of declaration.declarations) {
                     if (
                         !topLevelDeclarations.find(
                             (d) => d.declaration === item.declaration,

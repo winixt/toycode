@@ -2,10 +2,13 @@
   "name": "fesd",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "lib"
+  ],
   "keywords": [],
   "dependencies": {
     "@qlin/toycode-core": "^0.1.0",
@@ -18,5 +21,6 @@
     "typescript": "^4.7.3"
   },
   "author": "qlin",
-  "license": "ISC"
+  "license": "ISC",
+  "types": "./lib/index.d.ts"
 }

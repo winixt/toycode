@@ -1,5 +1,5 @@
 export interface Schema {
-    SFCComponent: SFCComponent[];
+    sfc: SFCComponent[];
     css?: CSS;
     jsCodes?: JSCode[];
     dependencies?: DependentResource[];
