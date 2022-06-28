@@ -60,15 +60,19 @@ importers:
   packages/fesd:
     specifiers:
       '@qlin/toycode-core': ^0.1.0
+      '@types/fs-extra': ^9.0.13
       '@types/json-schema': ^7.0.11
       '@types/lodash-es': ^4.17.6
+      fs-extra: ^10.1.0
       json-schema: ^0.4.0
       lodash-es: ^4.17.21
       typescript: ^4.7.3
     dependencies:
       '@qlin/toycode-core': link:../core
+      '@types/fs-extra': 9.0.13
       '@types/json-schema': 7.0.11
       '@types/lodash-es': 4.17.6
+      fs-extra: 10.1.0
       json-schema: 0.4.0
       lodash-es: 4.17.21
       typescript: 4.7.3

@@ -25,7 +25,7 @@ export interface ImportSource {
 
 export interface SetupCode {
     importSources?: ImportSource[];
-    code: string;
+    content: string;
 }
 
 export interface SFCComponent {

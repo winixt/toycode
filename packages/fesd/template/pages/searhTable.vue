@@ -2,10 +2,10 @@
     <div class="common-page">
         <FForm class="common-page-form" layout="inline">
             <FFormItem label="用户名">
-                <FInput placeholder="请输入用户名" />
+                <FInput v-model="searchParams.name" placeholder="请输入用户名" />
             </FFormItem>
             <FFormItem label="部门">
-                <FInput placeholder="请输入部门" />
+                <FInput v-model="searchParams.name" placeholder="请输入部门" />
             </FFormItem>
             <FFormItem>
                 <FButton type="primary">查询</FButton>
@@ -31,6 +31,7 @@
 </template>
 
 <script setup>
+import { watch, reactive } from 'vue';
 import { FTable, FTableColumn, FForm, FFormItem, FInput, FButton, FPagination } from '@fesjs/fes-design';
 import { defineRouteMeta } from '@fesjs/fes';
 import { useTable } from '@/common/use/useTable';
@@ -40,7 +41,16 @@ defineRouteMeta({
     title: '带搜索列表',
 });
 
-const { dataSource, pagination, changePage, changePageSize } = useTable({
+const { dataSource, pagination, refresh, changePage, changePageSize } = useTable({
     url: '/tablePage',
+});
+
+const searchParams = reactive({
+    name: '',
+    department: '',
+});
+
+watch(searchParams, () => {
+    refresh(searchParams);
 });
 </script>

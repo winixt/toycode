@@ -8,9 +8,8 @@ import {
     SetupCode,
 } from '@qlin/toycode-core';
 import { JSONSchema7 } from 'json-schema';
-import { camelCase } from 'lodash-es';
 import { APISchema, PageMeta } from '../type';
-import { defaultPageCss } from '../config';
+import { defaultPageCss, defaultDependencies } from '../config';
 import {
     hasSearch,
     findPaginationSchema,
@@ -19,15 +18,17 @@ import {
     findTableDataField,
     genSFCFileName,
     isReactiveSearch,
+    getJsCode,
 } from '../utils';
 import { PAGE_DIR } from '../constants';
+import { join } from 'path';
 
 interface ListPageConfig {
     meta: PageMeta;
     commonDataField: string;
     query: APISchema;
     add?: APISchema;
-    modiry?: APISchema;
+    modify?: APISchema;
     simpleModify?: APISchema;
     remove?: APISchema;
 }
@@ -245,7 +246,7 @@ function genTableSetupCode(options: {
 
     return {
         importSources,
-        code: genUseTable(options),
+        content: genUseTable(options),
     };
 }
 
@@ -260,7 +261,7 @@ function genPageMeta(meta: PageMeta) {
 
     return {
         importSources,
-        code: `
+        content: `
         defineRouteMeta({
             name: '${genSFCFileName(meta.name)}',
             title: '${meta.title}',
@@ -298,7 +299,7 @@ function genSearchFormSetupCode(requestBody: JSONSchema7): SetupCode {
 
     return {
         importSources,
-        code: `
+        content: `
         const searchParams = reactive({
             ${fields.join(', ')}
         });
@@ -332,7 +333,7 @@ function genSetupCode(pageConfig: ListPageConfig) {
     return setupCodes;
 }
 
-export function genListPageSchema(pageConfig: ListPageConfig) {
+export function genListPageSchema(pageConfig: ListPageConfig): Schema {
     const sfc: SFCComponent = {
         componentName: 'Page',
         dir: PAGE_DIR,
@@ -353,5 +354,12 @@ export function genListPageSchema(pageConfig: ListPageConfig) {
         ],
     };
 
-    return sfc;
+    const jsCodes = getJsCode(join(__dirname, '../template', 'common'));
+
+    return {
+        SFCComponent: [sfc],
+        css: defaultPageCss,
+        jsCodes,
+        dependencies: defaultDependencies,
+    };
 }
