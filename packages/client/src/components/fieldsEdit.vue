@@ -1,31 +1,24 @@
 <template>
-    <FCheckboxGroup v-model="selectedFields">
-        <FDraggable v-model="innerFields">
-            <template #default="{ item }">
-                <div class="field-item">
-                    <FCheckbox :value="item.id"></FCheckbox>
-                    <FInput v-model="item.name" placeholder="字段" />
-                    <FInput v-model="item.title" placeholder="字段(中文)" />
-                    <slot name="advance" :field="item"></slot>
-                </div>
-            </template>
-        </FDraggable>
-    </FCheckboxGroup>
+    <FDraggable v-model="innerFields">
+        <template #default="{ item }">
+            <div class="field-item">
+                <FCheckbox v-model="item.checked"></FCheckbox>
+                <FInput v-model="item.name" placeholder="字段" />
+                <FInput v-model="item.title" placeholder="字段(中文)" />
+                <slot name="advance" :field="item"></slot>
+            </div>
+        </template>
+    </FDraggable>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, PropType } from 'vue';
-import {
-    FCheckboxGroup,
-    FCheckbox,
-    FInput,
-    FDraggable,
-} from '@fesjs/fes-design';
+import { defineComponent, watch, PropType } from 'vue';
+import { FCheckbox, FInput, FDraggable } from '@fesjs/fes-design';
 import { Field } from '@/common/interface';
+import { useNormalModel } from '@/common/use/useModel';
 
 export default defineComponent({
     components: {
-        FCheckboxGroup,
         FCheckbox,
         FInput,
         FDraggable,
@@ -36,32 +29,24 @@ export default defineComponent({
             default: () => [],
         },
     },
-    setup(props) {
-        const innerFields = ref<Field[]>([]);
-        const selectedFields = ref<string[]>([]);
-        watch(
-            () => props.fields,
-            () => {
-                innerFields.value = props.fields.map((item) => {
-                    return {
-                        ...item,
-                    };
-                });
+    emits: ['update:fields'],
+    setup(props, { emit }) {
+        const [innerFields, updateFields] = useNormalModel(props, emit, {
+            prop: 'fields',
+        });
 
-                for (let item of props.fields) {
-                    if (item.checked) {
-                        selectedFields.value.push(item.id);
-                    }
-                }
+        watch(
+            innerFields,
+            () => {
+                updateFields(innerFields.value);
             },
             {
-                immediate: true,
+                deep: true,
             },
         );
 
         return {
             innerFields,
-            selectedFields,
         };
     },
 });
