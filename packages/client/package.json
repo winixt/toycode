@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@fesjs/fes": "^3.0.0-beta.0",
-    "@fesjs/fes-design": "^0.5.12",
+    "@fesjs/fes-design": "^0.5.14",
     "@fesjs/builder-vite": "^3.0.0-beta.0",
     "vue": "^3.2.37",
     "core-js": "^3.19.2"

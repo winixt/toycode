@@ -41,14 +41,14 @@ importers:
     specifiers:
       '@fesjs/builder-vite': ^3.0.0-beta.0
       '@fesjs/fes': ^3.0.0-beta.0
-      '@fesjs/fes-design': ^0.5.12
+      '@fesjs/fes-design': ^0.5.14
       '@vue/compiler-sfc': ^3.2.37
       core-js: ^3.19.2
       vue: ^3.2.37
     dependencies:
       '@fesjs/builder-vite': 3.0.0-beta.1_88c6520f264388468397e59bd0252c0e
       '@fesjs/fes': 3.0.0-beta.4_d630c6e62e57883073e01353ac259b01
-      '@fesjs/fes-design': 0.5.13_vue@3.2.37
+      '@fesjs/fes-design': 0.5.14_vue@3.2.37
       core-js: 3.23.3
       vue: 3.2.37
     devDependencies:
@@ -1299,8 +1299,8 @@ packages:
       - supports-color
     dev: false
 
-  /@fesjs/fes-design/0.5.13_vue@3.2.37:
-    resolution: {integrity: sha512-Xy+xfoFWGxv4TtnRextX8DJ90Fatumiw51PgCGGHymnBH5jYOuLAjQYYY9zdLASWGSsEADbdaZHxEetOiucvlA==}
+  /@fesjs/fes-design/0.5.14_vue@3.2.37:
+    resolution: {integrity: sha512-oLPpb5+0i7MSpH/EM34yGHY7EUnVDKiGzYXs2GJDd3prR813t+/vXGQ9EO+RyGz2aH9Qa7j9ndnfPb9YVD1f5A==}
     peerDependencies:
       vue: ^3.2.7
     dependencies:
