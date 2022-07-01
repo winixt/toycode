@@ -43,12 +43,14 @@ importers:
       '@fesjs/fes': ^3.0.0-beta.0
       '@fesjs/fes-design': ^0.5.14
       '@vue/compiler-sfc': ^3.2.37
+      '@vueuse/core': ^8.7.5
       core-js: ^3.19.2
       vue: ^3.2.37
     dependencies:
       '@fesjs/builder-vite': 3.0.0-beta.1_88c6520f264388468397e59bd0252c0e
       '@fesjs/fes': 3.0.0-beta.4_d630c6e62e57883073e01353ac259b01
       '@fesjs/fes-design': 0.5.14_vue@3.2.37
+      '@vueuse/core': 8.7.5_vue@3.2.37
       core-js: 3.23.3
       vue: 3.2.37
     devDependencies:
@@ -1872,6 +1874,10 @@ packages:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
     dev: true
 
+  /@types/web-bluetooth/0.0.14:
+    resolution: {integrity: sha512-5d2RhCard1nQUC3aHcq/gHzWYO6K0WJmAbjO7mQJgCQKtZpgXxv1rOM6O/dBDhDYYVutk1sciOgNSe+5YyfM8A==}
+    dev: false
+
   /@types/yargs-parser/21.0.0:
     resolution: {integrity: sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==}
     dev: true
@@ -2151,8 +2157,45 @@ packages:
       vue-demi: 0.13.1_vue@3.2.37
     dev: false
 
+  /@vueuse/core/8.7.5_vue@3.2.37:
+    resolution: {integrity: sha512-tqgzeZGoZcXzoit4kOGLWJibDMLp0vdm6ZO41SSUQhkhtrPhAg6dbIEPiahhUu6sZAmSYvVrZgEr5aKD51nrLA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.0
+      vue: ^2.6.0 || ^3.2.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      vue:
+        optional: true
+    dependencies:
+      '@types/web-bluetooth': 0.0.14
+      '@vueuse/metadata': 8.7.5
+      '@vueuse/shared': 8.7.5_vue@3.2.37
+      vue: 3.2.37
+      vue-demi: 0.13.1_vue@3.2.37
+    dev: false
+
+  /@vueuse/metadata/8.7.5:
+    resolution: {integrity: sha512-emJZKRQSaEnVqmlu39NpNp8iaW+bPC2kWykWoWOZMSlO/0QVEmO/rt8A5VhOEJTKLX3vwTevqbiRy9WJRwVOQg==}
+    dev: false
+
   /@vueuse/shared/6.9.2_vue@3.2.37:
-    resolution: {integrity: sha512-lAiMh6XROs0kSKVd0Yb/6GKoQMxC1fYrFDi6opvQWISPtcqRNluRrQxLUZ3WTI78ovtoKRLktjhkFAtydcfFDg==, tarball: '@vueuse/shared/download/@vueuse/shared-6.9.2.tgz'}
+    resolution: {integrity: sha512-lAiMh6XROs0kSKVd0Yb/6GKoQMxC1fYrFDi6opvQWISPtcqRNluRrQxLUZ3WTI78ovtoKRLktjhkFAtydcfFDg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.0
+      vue: ^2.6.0 || ^3.2.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      vue:
+        optional: true
+    dependencies:
+      vue: 3.2.37
+      vue-demi: 0.13.1_vue@3.2.37
+    dev: false
+
+  /@vueuse/shared/8.7.5_vue@3.2.37:
+    resolution: {integrity: sha512-THXPvMBFmg6Gf6AwRn/EdTh2mhqwjGsB2Yfp374LNQSQVKRHtnJ0I42bsZTn7nuEliBxqUrGQm/lN6qUHmhJLw==}
     peerDependencies:
       '@vue/composition-api': ^1.1.0
       vue: ^2.6.0 || ^3.2.0

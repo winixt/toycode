@@ -3,7 +3,7 @@
         <FieldsEdit :fields="columns">
             <template #advance="{ field }">
                 <SettingOutlined
-                    style="color: #52c41a"
+                    style="color: #52c41a; padding: 8px"
                     @click="showModal(field)"
                 />
             </template>

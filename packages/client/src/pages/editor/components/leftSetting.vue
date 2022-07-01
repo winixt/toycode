@@ -35,7 +35,7 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .left-setting {
-    width: 320px;
+    width: 360px;
     padding: 12px;
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 }

@@ -14,10 +14,14 @@ export function useSimpleTable(options) {
     const dataSource = ref([]);
 
     const queryDataSource = () => {
-        request(options.url, options.params ? unref(options.params) : {}).then((res) => {
-            const result = options.dataField ? res[options.dataField] : res;
-            dataSource.value = options.transform ? options.transform(result) : result;
-        });
+        request(options.url, options.params ? unref(options.params) : {}).then(
+            (res) => {
+                const result = options.dataField ? res[options.dataField] : res;
+                dataSource.value = options.transform
+                    ? options.transform(result, res)
+                    : result;
+            },
+        );
     };
 
     queryDataSource();
@@ -64,7 +68,9 @@ export function useTable(options) {
             },
         }).then((res) => {
             const result = res[options.dataField];
-            dataSource.value = options.transform ? options.transform(result) : result;
+            dataSource.value = options.transform
+                ? options.transform(result, res)
+                : result;
             pagination.totalCount = res[options.pageField].totalCount;
         });
     };
