@@ -7,19 +7,9 @@ import {
     ImportSource,
     SetupCode,
 } from '@qlin/toycode-core';
-import { JSONSchema7 } from 'json-schema';
-import { APISchema, PageMeta } from '../type';
+import { APISchema, FormField, Field, PageMeta } from '../type';
 import { defaultPageCss, defaultDependencies } from '../config';
-import {
-    hasSearch,
-    findPaginationSchema,
-    findTableDataSchema,
-    findPaginationField,
-    findTableDataField,
-    genSFCFileName,
-    isReactiveSearch,
-    getJsCode,
-} from '../utils';
+import { genSFCFileName, isReactiveSearch, getJsCode } from '../utils';
 import { PAGE_DIR } from '../constants';
 import { join } from 'path';
 
@@ -33,8 +23,8 @@ interface ListPageConfig {
     remove?: APISchema;
 }
 
-function genSearchForm(requestBody: JSONSchema7) {
-    const tableComp: Component = {
+function genSearchForm(params: FormField[]) {
+    const form: Component = {
         componentName: 'FForm',
         props: {
             layout: {
@@ -44,9 +34,8 @@ function genSearchForm(requestBody: JSONSchema7) {
         },
         children: [],
     };
-    for (const key in requestBody.properties) {
-        const item = requestBody.properties[key] as any;
-        tableComp.children.push({
+    for (const item of params) {
+        form.children.push({
             componentName: 'FFormItem',
             props: {
                 label: {
@@ -65,16 +54,16 @@ function genSearchForm(requestBody: JSONSchema7) {
                         },
                     },
                     directives: {
-                        'v-model': `searchParams.${key}`,
+                        'v-model': `searchParams.${item.name}`,
                     },
                 },
             ],
         });
     }
-    return tableComp;
+    return form;
 }
 
-function genTableComponent(tableDataSchema: JSONSchema7) {
+function genTableComponent(columns: Field[]) {
     const tableComp: Component = {
         componentName: 'FTable',
         props: {
@@ -86,16 +75,13 @@ function genTableComponent(tableDataSchema: JSONSchema7) {
         children: [],
     };
     // TODO table slots
-    for (const key in (tableDataSchema.items as JSONSchema7).properties) {
-        const item = (tableDataSchema.items as JSONSchema7).properties[
-            key
-        ] as any;
+    for (const item of columns) {
         tableComp.children.push({
             componentName: 'FTableColumn',
             props: {
                 prop: {
                     type: 'string',
-                    value: key,
+                    value: item.name,
                 },
                 label: {
                     type: 'string',
@@ -146,21 +132,13 @@ function genPaginationComp() {
 }
 
 function genTemplate(query: APISchema) {
-    const paginationSchema = findPaginationSchema(query.responseBody);
-    const tableDataSchema = findTableDataSchema(query.responseBody);
-
-    if (!tableDataSchema) {
-        throw new Error(
-            '获取数据列表的接口 Schema 解析失败，没有识别到到列表数据字段',
-        );
-    }
     const children: Component[] = [];
 
-    if (hasSearch(query.requestBody)) {
-        children.push(genSearchForm(query.requestBody));
+    if (query.params?.length) {
+        children.push(genSearchForm(query.params));
     }
-    children.push(genTableComponent(tableDataSchema));
-    if (paginationSchema) {
+    children.push(genTableComponent(query.resData.fields));
+    if (query.page) {
         children.push(genPaginationComp());
     }
 
@@ -176,8 +154,8 @@ function genTemplate(query: APISchema) {
 function genUseTable(options: {
     url: string;
     hasSearch: boolean;
-    dataField: string;
-    pagination?: string;
+    dataField: string[];
+    pagination?: string[];
 }): string {
     const result: string[] = ['dataSource'];
     if (options.pagination) {
@@ -189,17 +167,18 @@ function genUseTable(options: {
 
     const functionName = options.pagination ? 'useTable' : 'useSimpleTable';
 
+    // TODO pick 支持数组
     return `
     const { ${result.join(', ')} } = ${functionName}({
         url: '${options.url}',
         ${
-            options.dataField !== 'cycle'
-                ? `dataField='${options.dataField}',`
+            options.dataField[0] !== 'cycle'
+                ? `dataField='${options.dataField[0]}',`
                 : ''
         }
         ${
-            options.pagination !== 'page'
-                ? `dataField='${options.pagination}',`
+            options.pagination[0] !== 'page'
+                ? `dataField='${options.pagination[0]}',`
                 : ''
         }
     })
@@ -209,8 +188,8 @@ function genUseTable(options: {
 function genTableSetupCode(options: {
     url: string;
     hasSearch: boolean;
-    dataField: string;
-    pagination?: string;
+    dataField: string[];
+    pagination?: string[];
 }) {
     const importSources: ImportSource[] = [
         {
@@ -270,7 +249,7 @@ function genPageMeta(meta: PageMeta) {
     };
 }
 
-function genSearchFormSetupCode(requestBody: JSONSchema7): SetupCode {
+function genSearchFormSetupCode(params: FormField[]): SetupCode {
     const importSources: ImportSource[] = [
         {
             imported: 'reactive',
@@ -279,7 +258,7 @@ function genSearchFormSetupCode(requestBody: JSONSchema7): SetupCode {
         },
     ];
     let watchCode = '';
-    if (isReactiveSearch(requestBody)) {
+    if (isReactiveSearch(params)) {
         importSources.push({
             imported: 'watch',
             type: ImportType.ImportSpecifier,
@@ -293,8 +272,8 @@ function genSearchFormSetupCode(requestBody: JSONSchema7): SetupCode {
         `;
     }
 
-    const fields = Object.keys(requestBody.properties).map((key) => {
-        return `${key}: null`;
+    const fields = params.map((item) => {
+        return `${item.name}: null`;
     });
 
     return {
@@ -309,23 +288,18 @@ function genSearchFormSetupCode(requestBody: JSONSchema7): SetupCode {
 }
 
 function genSetupCode(pageConfig: ListPageConfig) {
-    const paginationField = findPaginationField(pageConfig.query.responseBody);
-    const tableDataField = findTableDataField(pageConfig.query.responseBody);
-    const hasSearchFlag = hasSearch(pageConfig.query.requestBody);
+    const queryInterface = pageConfig.query;
     const setupCodes: SetupCode[] = [
         genTableSetupCode({
-            url: pageConfig.query.url,
-            hasSearch: hasSearchFlag,
-            dataField:
-                tableDataField === pageConfig.commonDataField
-                    ? ''
-                    : tableDataField,
-            pagination: paginationField,
+            url: queryInterface.url,
+            hasSearch: !!queryInterface.params.length,
+            dataField: queryInterface.resData.pick,
+            pagination: queryInterface.page?.pick,
         }),
     ];
 
-    if (hasSearchFlag) {
-        setupCodes.push(genSearchFormSetupCode(pageConfig.query.requestBody));
+    if (queryInterface.params.length) {
+        setupCodes.push(genSearchFormSetupCode(queryInterface.params));
     }
 
     setupCodes.push(genPageMeta(pageConfig.meta));

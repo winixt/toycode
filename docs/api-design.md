@@ -1,54 +1,90 @@
-# 对接口的要求
+# api design
 
-请求参数类型 `string` `number` `array`。
-
-响应内容类型 `string` `number` `object` `array`。
-
-```json
+```js
 {
-    "url": "api/query/data",
-    "headers": {
-        "name": "value"
+    url: '/query/data',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
     },
-    "requestBody": {
-        "type": "object",
-        "properties": {
-            "param1": {
-                "type": "number",
-                "title": "参数1"
-            },
-            "param2": {
-                "type": "string",
-                "title": "参数2",
-                "options": [
-                    {
-                        "value": "xxxx",
-                        "label": "xxx"
-                    }
-                ]
-            }
+    reqBody: [
+        {
+            name: 'fieldName',
+            title: '产品ID',
+            type: 'string',
+            required: true,
+            defaultValue: null,
+            maxlength: null,
+            minLength: null,
         }
+    ],
+    resBody: [
+
+    ]
+}
+
+```
+
+## 列表接口
+
+```js
+{
+    url: '/query/data',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
     },
-    "responseBody": {
-        "type": "object",
-        "properties": {
-            "code": {
-                "type": "string",
-                "title": "响应码"
+    params: [
+        {
+            name: 'fieldName',
+            title: '产品ID',
+            type: 'string',
+            required: true,
+            defaultValue: null,
+            maxlength: null,
+            minLength: null,
+            checked: true,
+            componentName: 'input',
+            props: {
+
             },
-            "result": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "faqId": {
-                            "type": "string",
-                            "title": "faqId"
-                        }
-                    }
+            mappingId: 'xxx',
+            options: [
+                {
+                    label: 'xxx',
+                    value: 'xxx'
                 }
-            }
+            ],
         }
+    ],
+    page: {
+        pick: ['page'],
+        fields: [
+            {
+                name: 'fieldName',
+                title: '产品ID',
+                type: 'string',
+                required: true,
+                defaultValue: null,
+            }
+        ]
+    }
+    resData: {
+        pick: ['cycle'],
+        fields: [
+            {
+                name: 'fieldName',
+                title: '产品ID',
+                type: 'string',
+                required: true,
+                defaultValue: null,
+                maxlength: null,
+                minLength: null,
+                checked: true,
+                mappingId: 'xxx',
+            }
+        ]
     }
 }
+
 ```
