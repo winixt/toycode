@@ -45,6 +45,7 @@
             minLength: null,
             checked: true,
             componentName: 'input',
+            appendAll: false,
             props: {
 
             },

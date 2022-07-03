@@ -46,6 +46,7 @@ function genSearchForm(params: FormField[]) {
             // TODO
             // 1. 根据类型生成不同的 form 组件
             // 2. 合并 xxxTimeStart xxxTimeEnd 到 date-picker Range
+            // 3. appendAll 的实现
             children: [
                 {
                     componentName: 'FInput',
