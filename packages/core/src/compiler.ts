@@ -5,11 +5,16 @@ import { genDependencies } from './dependencies';
 import { Schema } from './type';
 
 export function compileSchema(schema: Schema) {
+    const containers = schema.componentsTree.map((item) => {
+        if (item.componentName === 'SFCComponent') {
+            return compileSFC(item);
+        }
+    });
     const result = [
         genDependencies(schema.dependencies),
         genGlobalCss(schema.css),
         ...genJsCode(schema.jsCodes),
-        ...schema.sfc.map(compileSFC),
+        ...containers,
     ];
 
     // TODO 代码写入

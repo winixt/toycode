@@ -57,8 +57,8 @@
             ],
         }
     ],
-    page: {
-        pick: ['page'],
+    pagination: {
+        pick: ['pagination'],
         fields: [
             {
                 name: 'fieldName',

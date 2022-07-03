@@ -1,5 +1,6 @@
+type ContainerComponent = SFCComponent;
 export interface Schema {
-    sfc: SFCComponent[];
+    componentsTree: ContainerComponent[];
     css?: CSS;
     jsCodes?: JSCode[];
     dependencies?: DependentResource[];
@@ -29,7 +30,7 @@ export interface SetupCode {
 }
 
 export interface SFCComponent {
-    componentName: 'Page' | 'Component';
+    componentName: 'SFCComponent';
     dir?: string;
     fileName: string;
     children: Component[];

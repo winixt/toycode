@@ -7,10 +7,15 @@ import { ref, unref, reactive } from 'vue';
  *  params: object | reactiveObject,
  *  transform: function 格式化响应内容,
  *  dataField: string;
+ *  isInit: boolean | 'true'
  * } options
  *
  */
 export function useSimpleTable(options) {
+    options = {
+        ...options,
+        isInit: true,
+    };
     const dataSource = ref([]);
 
     const queryDataSource = () => {
@@ -24,7 +29,9 @@ export function useSimpleTable(options) {
         );
     };
 
-    queryDataSource();
+    if (options.isInit) {
+        queryDataSource();
+    }
 
     return {
         dataSource,

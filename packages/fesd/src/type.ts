@@ -32,7 +32,7 @@ export interface APISchema {
         pick: string[];
         fields: Field[];
     };
-    page?: {
+    pagination?: {
         pick: string[];
         fields: Field[];
     };

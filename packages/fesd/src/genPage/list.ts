@@ -43,7 +43,9 @@ function genSearchForm(params: FormField[]) {
                     value: item.title,
                 },
             },
-            // TODO 根据类型生成不同的 form 组件
+            // TODO
+            // 1. 根据类型生成不同的 form 组件
+            // 2. 合并 xxxTimeStart xxxTimeEnd 到 date-picker Range
             children: [
                 {
                     componentName: 'FInput',
@@ -138,7 +140,7 @@ function genTemplate(query: APISchema) {
         children.push(genSearchForm(query.params));
     }
     children.push(genTableComponent(query.resData.fields));
-    if (query.page) {
+    if (query.pagination) {
         children.push(genPaginationComp());
     }
 
@@ -294,7 +296,7 @@ function genSetupCode(pageConfig: ListPageConfig) {
             url: queryInterface.url,
             hasSearch: !!queryInterface.params.length,
             dataField: queryInterface.resData.pick,
-            pagination: queryInterface.page?.pick,
+            pagination: queryInterface.pagination?.pick,
         }),
     ];
 
@@ -309,7 +311,7 @@ function genSetupCode(pageConfig: ListPageConfig) {
 
 export function genListPageSchema(pageConfig: ListPageConfig): Schema {
     const sfc: SFCComponent = {
-        componentName: 'Page',
+        componentName: 'SFCComponent',
         dir: PAGE_DIR,
         fileName: `${genSFCFileName(pageConfig.meta.name)}.vue`,
         setupCodes: genSetupCode(pageConfig),
@@ -330,7 +332,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
     const jsCodes = getJsCode(join(__dirname, '../template', 'common'));
 
     return {
-        sfc: [sfc],
+        componentsTree: [sfc],
         css: defaultPageCss,
         jsCodes,
         dependencies: defaultDependencies,
