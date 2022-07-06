@@ -11,11 +11,10 @@
         {
             name: 'fieldName',
             title: '产品ID',
+            desc: '备注',
             type: 'string',
             required: true,
             defaultValue: null,
-            maxlength: null,
-            minLength: null,
         }
     ],
     resBody: [
@@ -38,11 +37,10 @@
         {
             name: 'fieldName',
             title: '产品ID',
+            desc: '备注',
             type: 'string',
             required: true,
             defaultValue: null,
-            maxlength: null,
-            minLength: null,
             checked: true,
             componentName: 'input',
             appendAll: false,
@@ -64,6 +62,7 @@
             {
                 name: 'fieldName',
                 title: '产品ID',
+                desc: '备注',
                 type: 'string',
                 required: true,
                 defaultValue: null,
@@ -76,11 +75,10 @@
             {
                 name: 'fieldName',
                 title: '产品ID',
+                desc: '备注',
                 type: 'string',
                 required: true,
                 defaultValue: null,
-                maxlength: null,
-                minLength: null,
                 checked: true,
                 mappingId: 'xxx',
             }

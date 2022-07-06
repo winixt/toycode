@@ -12,6 +12,7 @@ import {
     ComponentSlot,
     PreChangeFile,
     ImportSource,
+    CustomPropType,
 } from '../type';
 
 function compileProps(props?: ComponentProps) {
@@ -20,21 +21,25 @@ function compileProps(props?: ComponentProps) {
     }
     return Object.keys(props)
         .map((key) => {
-            const prop = props[key];
-            if (prop.type === ExtensionType.JSExpression) {
-                return `:${key}="${prop.value}"`;
+            const propValue = props[key];
+            if (typeof propValue === 'number') {
+                return `:${key}="${propValue}"`;
             }
-            if (prop.type === 'boolean' && prop.value) {
-                return `${key}`;
-            }
-            if (prop.type === 'boolean' && !prop.value) {
+            if (typeof propValue === 'boolean' && propValue) {
+                if (propValue) {
+                    return key;
+                }
                 return `:${key}="false"`;
             }
-            if (prop.type === 'number') {
-                return `:${key}="${prop.value}"`;
+            if (
+                typeof propValue === 'object' &&
+                (propValue as CustomPropType).type ===
+                    ExtensionType.JSExpression
+            ) {
+                return `:${key}="${(propValue as CustomPropType).value}"`;
             }
-            if (prop.value) {
-                return `${key}="${prop.value}"`;
+            if (propValue) {
+                return `${key}="${propValue}"`;
             }
             return '';
         })

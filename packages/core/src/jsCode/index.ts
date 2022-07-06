@@ -171,7 +171,7 @@ export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
                     }
                 }
                 if (hasNewCode) {
-                    // TODO 如果一个 jscode 代码片段存在多个声明函数，有可能导致 import 进不需要的 变量
+                    // TODO 如果一个 js code 代码片段存在多个声明函数，有可能导致 import 进不需要的 变量
                     jsCodeImportCode = jsCodeImportCode.concat(
                         parseImportCode(getAST(declaration.jsCode.content)),
                     );

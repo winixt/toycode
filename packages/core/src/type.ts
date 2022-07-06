@@ -72,15 +72,12 @@ export interface ComponentSlot {
     component: Component;
 }
 
-interface PropValue {
-    type:
-        | 'string'
-        | 'number'
-        | 'boolean'
-        | 'object'
-        | ExtensionType.JSExpression;
-    value: string | number | boolean | object;
+export interface CustomPropType {
+    type: ExtensionType.JSExpression;
+    value: string | object;
 }
+
+type PropValue = string | number | [] | object | boolean | CustomPropType;
 
 export interface ComponentProps {
     id?: PropValue;

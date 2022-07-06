@@ -12,6 +12,7 @@ import { defaultPageCss, defaultDependencies } from '../config';
 import { genSFCFileName, isReactiveSearch, getJsCode } from '../utils';
 import { PAGE_DIR } from '../constants';
 import { join } from 'path';
+import { componentMap } from '../componentMap';
 
 interface ListPageConfig {
     meta: PageMeta;
@@ -27,21 +28,16 @@ function genSearchForm(params: FormField[]) {
     const form: Component = {
         componentName: 'FForm',
         props: {
-            layout: {
-                type: 'string',
-                value: 'inline',
-            },
+            layout: 'inline',
         },
         children: [],
     };
     for (const item of params) {
+        const comp = componentMap(item.componentName);
         form.children.push({
             componentName: 'FFormItem',
             props: {
-                label: {
-                    type: 'string',
-                    value: item.title,
-                },
+                label: item.title,
             },
             // TODO
             // 1. 根据类型生成不同的 form 组件
@@ -49,12 +45,10 @@ function genSearchForm(params: FormField[]) {
             // 3. appendAll 的实现
             children: [
                 {
-                    componentName: 'FInput',
+                    componentName: comp.name,
                     props: {
-                        placeholder: {
-                            type: 'string',
-                            value: '请输入',
-                        },
+                        placeholder: '请输入',
+                        ...comp.props,
                     },
                     directives: {
                         'v-model': `searchParams.${item.name}`,
@@ -82,14 +76,8 @@ function genTableComponent(columns: Field[]) {
         tableComp.children.push({
             componentName: 'FTableColumn',
             props: {
-                prop: {
-                    type: 'string',
-                    value: item.name,
-                },
-                label: {
-                    type: 'string',
-                    value: item.title,
-                },
+                prop: item.name,
+                label: item.title,
             },
         });
     }
@@ -100,10 +88,7 @@ function genPaginationComp() {
     const paginationComp: Component = {
         componentName: 'FPagination',
         props: {
-            class: {
-                type: 'string',
-                value: 'common-page-pagination',
-            },
+            class: 'common-page-pagination',
             currentPage: {
                 type: ExtensionType.JSExpression,
                 value: 'pagination.currentPage',
@@ -116,14 +101,8 @@ function genPaginationComp() {
                 type: ExtensionType.JSExpression,
                 value: 'pagination.pageSize',
             },
-            showSizeChanger: {
-                type: 'boolean',
-                value: true,
-            },
-            showTotal: {
-                type: 'boolean',
-                value: true,
-            },
+            showSizeChanger: true,
+            showTotal: true,
         },
         events: {
             change: 'change',
@@ -320,10 +299,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
             {
                 componentName: 'div',
                 props: {
-                    class: {
-                        type: 'string',
-                        value: 'common-page',
-                    },
+                    class: 'common-page',
                 },
                 children: genTemplate(pageConfig.query),
             },
