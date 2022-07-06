@@ -7,7 +7,7 @@ import {
     ImportSource,
     SetupCode,
 } from '@qlin/toycode-core';
-import { APISchema, FormField, Field, PageMeta } from '../type';
+import { APISchema, FormField, Option, Field, PageMeta } from '../type';
 import { defaultPageCss, defaultDependencies } from '../config';
 import { genSFCFileName, isReactiveSearch, getJsCode } from '../utils';
 import { PAGE_DIR } from '../constants';
@@ -24,6 +24,18 @@ interface ListPageConfig {
     remove?: APISchema;
 }
 
+function handleComponentOptions(options: Option[], componentName: string) {
+    return options.map((option) => {
+        return {
+            componentName,
+            props: {
+                label: option.label,
+                value: option.value,
+            },
+        };
+    });
+}
+
 function genSearchForm(params: FormField[]) {
     const form: Component = {
         componentName: 'FForm',
@@ -34,25 +46,50 @@ function genSearchForm(params: FormField[]) {
     };
     for (const item of params) {
         const comp = componentMap(item.componentName);
+        const formCompProps: Record<string, any> = {
+            ...item.props,
+            ...comp.props,
+        };
+        let children = null;
+        if (item.mappingId) {
+            if (item.appendAll) {
+                formCompProps.options = {
+                    type: ExtensionType.JSExpression,
+                    value: `appendAll(${item.mappingId})`,
+                };
+            } else {
+                formCompProps.options = {
+                    type: ExtensionType.JSExpression,
+                    value: item.mappingId,
+                };
+            }
+        } else if (item.options?.length) {
+            children = handleComponentOptions(item.options, comp.subName);
+            if (item.appendAll) {
+                children.unshift({
+                    componentName: comp.subName,
+                    props: {
+                        label: '全部',
+                        value: null,
+                    },
+                });
+            }
+        }
         form.children.push({
             componentName: 'FFormItem',
             props: {
                 label: item.title,
             },
             // TODO
-            // 1. 根据类型生成不同的 form 组件
-            // 2. 合并 xxxTimeStart xxxTimeEnd 到 date-picker Range
-            // 3. appendAll 的实现
+            // 合并 xxxTimeStart xxxTimeEnd 到 date-picker Range
             children: [
                 {
                     componentName: comp.name,
-                    props: {
-                        placeholder: '请输入',
-                        ...comp.props,
-                    },
+                    props: formCompProps,
                     directives: {
                         'v-model': `searchParams.${item.name}`,
                     },
+                    children,
                 },
             ],
         });
@@ -269,9 +306,48 @@ function genSearchFormSetupCode(params: FormField[]): SetupCode {
     };
 }
 
+function genMappingCode(query: APISchema) {
+    const importSources: ImportSource[] = [];
+    const fields: Field[] = (query.resData.fields || []).concat(
+        query.params || [],
+    );
+    fields.forEach((item) => {
+        if (item.mappingId) {
+            importSources.push({
+                imported: item.mappingId,
+                type: ImportType.ImportSpecifier,
+                source: '@/common/use/useTable',
+            });
+        }
+    });
+
+    return {
+        importSources,
+        content: '',
+    };
+}
+
+function genAppendAllCode(query: APISchema) {
+    const importSources: ImportSource[] = [];
+    if (query.params.find((item) => item.appendAll)) {
+        importSources.push({
+            imported: 'appendAll',
+            type: ImportType.ImportSpecifier,
+            source: '@/common/use/useTable',
+        });
+    }
+
+    return {
+        importSources,
+        content: '',
+    };
+}
+
 function genSetupCode(pageConfig: ListPageConfig) {
     const queryInterface = pageConfig.query;
     const setupCodes: SetupCode[] = [
+        genMappingCode(queryInterface),
+        genAppendAllCode(queryInterface),
         genTableSetupCode({
             url: queryInterface.url,
             hasSearch: !!queryInterface.params.length,

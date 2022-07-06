@@ -1,4 +1,7 @@
-const COMPONENT_MAP = {
+const COMPONENT_MAP: Record<
+    string,
+    { name: string; props: Record<string, any>; subName?: string }
+> = {
     input: {
         name: 'Input',
         props: {},
@@ -36,7 +39,7 @@ const COMPONENT_MAP = {
         name: 'FTimePicker',
         props: {},
     },
-} as const;
+};
 
 export function componentMap(component: string) {
     return COMPONENT_MAP[component as keyof typeof COMPONENT_MAP];

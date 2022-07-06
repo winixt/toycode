@@ -41,6 +41,9 @@ function compileProps(props?: ComponentProps) {
             if (propValue) {
                 return `${key}="${propValue}"`;
             }
+            if (propValue === null) {
+                return `:${key}="null"`;
+            }
             return '';
         })
         .join(' ');

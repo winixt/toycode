@@ -1,3 +1,8 @@
+export interface Option {
+    label: string;
+    value: string;
+}
+
 export interface Field {
     name: string;
     title: string;
@@ -5,22 +10,17 @@ export interface Field {
     required: boolean;
     checked: boolean;
     mappingId?: string;
+    options?: Option[];
     defaultValue?: boolean;
     maxLength?: number;
     minLength?: number;
-}
-
-export interface Option {
-    label: string;
-    value: string;
 }
 
 export interface FormField extends Field {
     checked: boolean;
     componentName: string;
     props: Record<string, any>;
-    mappingId?: string;
-    options?: Option[];
+    appendAll?: boolean;
 }
 
 export interface APISchema {
