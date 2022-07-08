@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import { JSCode } from '@qlin/toycode-core';
 import { join } from 'path';
 import { camelCase } from 'lodash-es';
-import { FormField } from './type';
+import { FormField, APISchema } from './type';
 
 export function isPaginationField(field: string) {
     return field === 'pagination' || field === 'page' || field === 'pager';
@@ -33,4 +33,16 @@ export function getJsCode(rootDir: string, subDir = '', result: JSCode[] = []) {
         }
     }
     return result;
+}
+
+export function formatPick(apiDesign: APISchema, commonDataField: string) {
+    if (
+        apiDesign.pagination &&
+        apiDesign.pagination.pick[0] === commonDataField
+    ) {
+        apiDesign.pagination.pick.shift();
+    }
+    if (apiDesign.resData && apiDesign.resData.pick[0] === commonDataField) {
+        apiDesign.resData.pick.shift();
+    }
 }

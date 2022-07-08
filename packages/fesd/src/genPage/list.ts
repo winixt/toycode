@@ -9,12 +9,17 @@ import {
 } from '@qlin/toycode-core';
 import { APISchema, FormField, Option, Field, PageMeta } from '../type';
 import { defaultPageCss, defaultDependencies } from '../config';
-import { genSFCFileName, isReactiveSearch, getJsCode } from '../utils';
+import {
+    genSFCFileName,
+    isReactiveSearch,
+    getJsCode,
+    formatPick,
+} from '../utils';
 import { PAGE_DIR } from '../constants';
 import { join } from 'path';
 import { componentMap } from '../componentMap';
 
-interface ListPageConfig {
+export interface ListPageConfig {
     meta: PageMeta;
     commonDataField: string;
     query: APISchema;
@@ -316,7 +321,7 @@ function genMappingCode(query: APISchema) {
             importSources.push({
                 imported: item.mappingId,
                 type: ImportType.ImportSpecifier,
-                source: '@/common/use/useTable',
+                source: '@/common/constants',
             });
         }
     });
@@ -333,7 +338,7 @@ function genAppendAllCode(query: APISchema) {
         importSources.push({
             imported: 'appendAll',
             type: ImportType.ImportSpecifier,
-            source: '@/common/use/useTable',
+            source: '@/common/utils',
         });
     }
 
@@ -366,6 +371,8 @@ function genSetupCode(pageConfig: ListPageConfig) {
 }
 
 export function genListPageSchema(pageConfig: ListPageConfig): Schema {
+    formatPick(pageConfig.query, pageConfig.commonDataField);
+
     const sfc: SFCComponent = {
         componentName: 'SFCComponent',
         dir: PAGE_DIR,
