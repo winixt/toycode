@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash';
 import { join } from 'path';
 import { genImportCode } from '../utils';
 import {

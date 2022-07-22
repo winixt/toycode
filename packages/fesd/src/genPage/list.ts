@@ -389,7 +389,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         ],
     };
 
-    const jsCodes = getJsCode(join(__dirname, '../template', 'common'));
+    const jsCodes = getJsCode(join(__dirname, '../../template', 'common'));
 
     return {
         componentsTree: [sfc],

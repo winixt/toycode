@@ -1,6 +1,6 @@
 import { join, extname } from 'path';
-import prettier from 'prettier';
-import fse from 'fs-extra';
+import { format } from 'prettier';
+import { readFileSync } from 'fs-extra';
 import { ImportSource, ImportType } from './type';
 
 export function getProjectPath() {
@@ -23,7 +23,7 @@ export function getFileName(fileName: string, ext: string) {
 }
 
 export function readTextFile(filePath: string) {
-    return fse.readFileSync(filePath, 'utf-8');
+    return readFileSync(filePath, 'utf-8');
 }
 
 export function genSingleImport(imports: ImportSource[]) {
@@ -75,7 +75,7 @@ export function genImportCode(imports: ImportSource[]) {
 
 // TODO 自定义格式化代码
 export const formatCode = (code: string, parser?: string) => {
-    return prettier.format(code, {
+    return format(code, {
         parser: parser ?? 'babel',
         semi: true,
         trailingComma: 'all',
