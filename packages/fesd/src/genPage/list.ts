@@ -15,7 +15,7 @@ import {
     getJsCode,
     formatPick,
 } from '../utils';
-import { PAGE_DIR } from '../constants';
+import { PAGE_DIR, COMMON_DIR } from '../constants';
 import { join } from 'path';
 import { componentMap } from '../componentMap';
 
@@ -389,7 +389,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         ],
     };
 
-    const jsCodes = getJsCode(join(__dirname, '../../template', 'common'));
+    const jsCodes = getJsCode(join(__dirname, '../../template'), COMMON_DIR);
 
     return {
         componentsTree: [sfc],

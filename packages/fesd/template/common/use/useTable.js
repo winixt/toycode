@@ -67,7 +67,7 @@ export function useTable(options) {
     });
 
     const queryDataSource = () => {
-        request('/tablePage', {
+        request(options.url, {
             ...(options.params ? unref(options.params) : {}),
             page: {
                 current: pagination.currentPage,

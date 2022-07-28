@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { join } from 'path';
-import { genImportCode } from '../utils';
+import { genImportCode, getSrcPath } from '../utils';
 import {
     SFCComponent,
     Component,
@@ -180,7 +180,7 @@ function genStyle(sfc: SFCComponent) {
 
 export function compileSFC(sfc: SFCComponent): PreChangeFile {
     return {
-        file: join(sfc.dir || '', sfc.fileName),
+        file: join(getSrcPath(), sfc.dir || '', sfc.fileName),
         content: `
         <template>
             ${sfc.children.map(compileComponent).join('\n')}

@@ -18,7 +18,7 @@ export function genSFCFileName(fileName: string) {
 
 export function getJsCode(rootDir: string, subDir = '', result: JSCode[] = []) {
     const dir = join(rootDir, subDir);
-    const files = readdirSync(join(rootDir, subDir));
+    const files = readdirSync(dir);
     for (const file of files) {
         const filePath = join(dir, file);
         const fileStats = lstatSync(filePath);
