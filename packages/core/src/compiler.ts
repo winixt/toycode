@@ -2,18 +2,18 @@ import { compileSFC } from './sfc';
 import { genJsCode } from './jsCode';
 import { genGlobalCss } from './css';
 import { genDependencies } from './dependencies';
-import { Schema } from './type';
+import { Schema, Config } from './type';
 
-export function compileSchema(schema: Schema) {
+export function compileSchema(schema: Schema, config?: Config) {
     const containers = schema.componentsTree.map((item) => {
         if (item.componentName === 'SFCComponent') {
             return compileSFC(item);
         }
     });
     const result = [
-        genDependencies(schema.dependencies),
-        genGlobalCss(schema.css),
-        ...genJsCode(schema.jsCodes),
+        genDependencies(schema.dependencies, config),
+        genGlobalCss(schema.css, config),
+        ...genJsCode(schema.jsCodes, config),
         ...containers,
     ];
 

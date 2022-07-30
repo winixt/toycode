@@ -3,7 +3,13 @@ import { existsSync } from 'fs-extra';
 import { File, Identifier, VariableDeclaration, Statement } from '@babel/types';
 import generate from '@babel/generator';
 import { parse, ParseResult } from '@babel/parser';
-import { JSCode, PreChangeFile, ImportSource, ImportType } from '../type';
+import {
+    JSCode,
+    PreChangeFile,
+    ImportSource,
+    ImportType,
+    Config,
+} from '../type';
 import {
     getSrcPath,
     getAbsSrcPath,
@@ -134,7 +140,10 @@ function getJsCodeDeclaration(jsCodes: JSCode[]) {
     });
 }
 
-export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
+export function genJsCode(
+    jsCodes: JSCode[] = [],
+    config: Config = {},
+): PreChangeFile[] {
     const map = new Map<string, JSCode[]>();
     for (const item of jsCodes) {
         const filePath = join(item.dir, item.fileName);
@@ -147,7 +156,7 @@ export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
 
     const result: PreChangeFile[] = [];
     for (const [filePath, value] of map) {
-        const absFilePath = join(getAbsSrcPath(), filePath);
+        const absFilePath = join(getAbsSrcPath(config.projectDir), filePath);
         if (existsSync(absFilePath)) {
             // 已有文件
             const ast = getAST(readTextFile(absFilePath));

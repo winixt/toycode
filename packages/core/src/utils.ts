@@ -3,16 +3,16 @@ import { format } from 'prettier';
 import { readFileSync } from 'fs-extra';
 import { ImportSource, ImportType } from './type';
 
-export function getProjectPath() {
-    return process.cwd();
+export function getProjectPath(projectDir?: string) {
+    return projectDir || process.cwd();
 }
 
 export function getSrcPath() {
     return 'src';
 }
 
-export function getAbsSrcPath() {
-    return join(getProjectPath(), 'src');
+export function getAbsSrcPath(projectDir?: string) {
+    return join(getProjectPath(projectDir), 'src');
 }
 
 export function getFileName(fileName: string, ext: string) {

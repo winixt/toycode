@@ -6,6 +6,10 @@ export interface Schema {
     dependencies?: DependentResource[];
 }
 
+export interface Config {
+    projectDir?: string;
+}
+
 export interface JSCode {
     content: string;
     dir?: string;

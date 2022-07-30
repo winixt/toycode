@@ -8,7 +8,7 @@ importers:
       '@babel/preset-env': ^7.18.2
       '@babel/preset-typescript': ^7.17.12
       '@types/jest': ^28.1.1
-      '@types/lodash': ^4.14.182
+      '@types/lodash': ^4.14.21
       '@types/node': ^17.0.42
       '@webank/eslint-config-ts': ^1.0.8
       babel-jest: ^28.1.1
@@ -69,11 +69,11 @@ importers:
       '@babel/types': ^7.18.4
       '@types/babel__generator': ^7.6.4
       '@types/fs-extra': ^9.0.13
-      '@types/lodash-es': ^4.17.6
+      '@types/lodash': ^4.14.21
       '@types/node': ^17.0.42
       '@types/prettier': ^2.6.3
       fs-extra: ^10.1.0
-      lodash-es: ^4.17.21
+      lodash: ^4.17.21
       postcss: ^8.4.14
       prettier: ^2.7.1
       typescript: ^4.7.3
@@ -83,11 +83,11 @@ importers:
       '@babel/types': 7.18.4
       '@types/babel__generator': 7.6.4
       '@types/fs-extra': 9.0.13
-      '@types/lodash-es': 4.17.6
+      '@types/lodash': 4.14.182
       '@types/node': 17.0.42
       '@types/prettier': 2.6.3
       fs-extra: 10.1.0
-      lodash-es: 4.17.21
+      lodash: 4.17.21
       postcss: 8.4.14
       prettier: 2.7.1
       typescript: 4.7.3
@@ -96,16 +96,16 @@ importers:
     specifiers:
       '@qlin/toycode-core': ^0.1.0
       '@types/fs-extra': ^9.0.13
-      '@types/lodash-es': ^4.17.6
+      '@types/lodash': ^4.14.21
       fs-extra: ^10.1.0
-      lodash-es: ^4.17.21
+      lodash: ^4.17.21
       typescript: ^4.7.3
     dependencies:
       '@qlin/toycode-core': link:../core
       '@types/fs-extra': 9.0.13
-      '@types/lodash-es': 4.17.6
+      '@types/lodash': 4.14.182
       fs-extra: 10.1.0
-      lodash-es: 4.17.21
+      lodash: 4.17.21
       typescript: 4.7.3
 
 packages:

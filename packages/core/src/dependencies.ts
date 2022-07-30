@@ -1,12 +1,13 @@
 import { join } from 'path';
 import { getProjectPath } from './utils';
 import { readJSONSync } from 'fs-extra';
-import { DependentResource, PreChangeFile } from './type';
+import { DependentResource, PreChangeFile, Config } from './type';
 
 export function genDependencies(
     dependentResources: DependentResource[],
+    config: Config = {},
 ): PreChangeFile {
-    const pkgPath = join(getProjectPath(), 'package.json');
+    const pkgPath = join(getProjectPath(config.projectDir), 'package.json');
     const pkg = readJSONSync(pkgPath);
 
     for (const dep of dependentResources) {

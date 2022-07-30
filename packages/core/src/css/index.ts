@@ -8,13 +8,13 @@ import {
     readTextFile,
     formatCode,
 } from '../utils';
-import { CSS, PreChangeFile } from '../type';
+import { CSS, PreChangeFile, Config } from '../type';
 
-export function genGlobalCss(css: CSS): PreChangeFile {
+export function genGlobalCss(css: CSS, config: Config = {}): PreChangeFile {
     if (!css.content) return;
 
     const fileName = getFileName(css.fileName, `.${css.lang}`);
-    const cssPath = join(getAbsSrcPath(), fileName);
+    const cssPath = join(getAbsSrcPath(config.projectDir), fileName);
 
     if (existsSync(cssPath)) {
         const oldCssAST = postcss.parse(readTextFile(cssPath));

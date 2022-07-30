@@ -31,6 +31,9 @@ function compileProps(props?: ComponentProps) {
                 }
                 return `:${key}="false"`;
             }
+            if (propValue === null) {
+                return `:${key}="null"`;
+            }
             if (
                 typeof propValue === 'object' &&
                 (propValue as CustomPropType).type ===
@@ -40,9 +43,6 @@ function compileProps(props?: ComponentProps) {
             }
             if (propValue) {
                 return `${key}="${propValue}"`;
-            }
-            if (propValue === null) {
-                return `:${key}="null"`;
             }
             return '';
         })
@@ -100,7 +100,7 @@ function compileComponent(component: Component): string {
             ? `>
                 ${
                     component.children
-                        ? component.children.map(compileComponent)
+                        ? component.children.map(compileComponent).join('\n')
                         : ''
                 }
                 ${component.slots ? compileSlots(component.slots) : ''}
