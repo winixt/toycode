@@ -1,5 +1,5 @@
 import { join } from 'path';
-import fse from 'fs-extra';
+import { existsSync } from 'fs-extra';
 import postcss, { Rule } from 'postcss';
 import {
     getSrcPath,
@@ -16,7 +16,7 @@ export function genGlobalCss(css: CSS): PreChangeFile {
     const fileName = getFileName(css.fileName, `.${css.lang}`);
     const cssPath = join(getAbsSrcPath(), fileName);
 
-    if (fse.existsSync(cssPath)) {
+    if (existsSync(cssPath)) {
         const oldCssAST = postcss.parse(readTextFile(cssPath));
         const currentCssAST = postcss.parse(css.content);
 

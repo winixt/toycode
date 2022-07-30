@@ -1,5 +1,5 @@
 import { join } from 'path';
-import fse from 'fs-extra';
+import { existsSync } from 'fs-extra';
 import { File, Identifier, VariableDeclaration, Statement } from '@babel/types';
 import generate from '@babel/generator';
 import { parse, ParseResult } from '@babel/parser';
@@ -148,7 +148,7 @@ export function genJsCode(jsCodes: JSCode[] = []): PreChangeFile[] {
     const result: PreChangeFile[] = [];
     for (const [filePath, value] of map) {
         const absFilePath = join(getAbsSrcPath(), filePath);
-        if (fse.existsSync(absFilePath)) {
+        if (existsSync(absFilePath)) {
             // 已有文件
             const ast = getAST(readTextFile(absFilePath));
             const jsCodeDeclaration = getJsCodeDeclaration(value);

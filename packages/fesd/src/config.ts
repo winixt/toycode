@@ -31,7 +31,7 @@ export const defaultDependencies = [
         version: '3.2.37',
     },
     {
-        package: 'lodash-es',
+        package: 'lodash',
         version: '4.17.21',
     },
     {
