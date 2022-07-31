@@ -18,6 +18,6 @@ export function genDependencies(
 
     return {
         file: 'package.json',
-        content: JSON.stringify(pkg.dependencies, null, 4),
+        content: JSON.stringify(pkg, null, 4),
     };
 }
