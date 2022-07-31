@@ -7,27 +7,20 @@ import {
     ImportSource,
     SetupCode,
 } from '@qlin/toycode-core';
-import { APISchema, FormField, Option, Field, PageMeta } from '../type';
-import { defaultPageCss, defaultDependencies } from '../config';
-import {
-    genSFCFileName,
-    isReactiveSearch,
-    getJsCode,
-    formatPick,
-} from '../utils';
-import { PAGE_DIR, COMMON_DIR } from '../constants';
 import { join } from 'path';
+import {
+    APISchema,
+    FormField,
+    Option,
+    Field,
+    PageMeta,
+    ListPageConfig,
+} from '../type';
+import { defaultPageCss, defaultDependencies } from '../config';
+import { genSFCFileName, getJsCode, formatPick } from '../utils';
+import { PAGE_DIR, COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
-
-export interface ListPageConfig {
-    meta: PageMeta;
-    commonDataField: string;
-    query: APISchema;
-    add?: APISchema;
-    modify?: APISchema;
-    simpleModify?: APISchema;
-    remove?: APISchema;
-}
+import { handleSearchAction } from './searchAction';
 
 function handleComponentOptions(options: Option[], componentName: string) {
     return options.map((option) => {
@@ -147,7 +140,7 @@ function genPaginationComp() {
             showTotal: true,
         },
         events: {
-            change: 'change',
+            change: 'changePage',
             pageSizeChange: 'changePageSize',
         },
     };
@@ -197,14 +190,15 @@ function genUseTable(options: {
         url: '${options.url}',
         ${
             options.dataField[0] !== 'cycle'
-                ? `dataField='${options.dataField[0]}',`
+                ? `dataField: '${options.dataField[0]}',`
                 : ''
         }
         ${
             options.pagination[0] !== 'page'
-                ? `dataField='${options.pagination[0]}',`
+                ? `pageField: '${options.pagination[0]}',`
                 : ''
         }
+        ${options.hasSearch ? `params: {...initSearchParams},` : ''}
     })
     `;
 }
@@ -281,32 +275,28 @@ function genSearchFormSetupCode(params: FormField[]): SetupCode {
             source: 'vue',
         },
     ];
-    let watchCode = '';
-    if (isReactiveSearch(params)) {
+    for (const item of params) {
+        const comp = componentMap(item.componentName);
         importSources.push({
-            imported: 'watch',
+            imported: comp.name,
             type: ImportType.ImportSpecifier,
-            source: 'vue',
+            source: '@fesjs/fes-design',
         });
-
-        watchCode = `
-        watch(searchParams, () => {
-            refresh(searchParams);
-        });
-        `;
+        if (comp.subName) {
+            importSources.push({
+                imported: comp.subName,
+                type: ImportType.ImportSpecifier,
+                source: '@fesjs/fes-design',
+            });
+        }
     }
-
-    const fields = params.map((item) => {
-        return `${item.name}: null`;
-    });
 
     return {
         importSources,
         content: `
         const searchParams = reactive({
-            ${fields.join(', ')}
+            ...initSearchParams
         });
-        ${watchCode}
         `,
     };
 }
@@ -348,11 +338,30 @@ function genAppendAllCode(query: APISchema) {
     };
 }
 
+function genInitSearchParams(params: FormField[]): SetupCode {
+    let content = '';
+    if (params.length) {
+        const fields = params.map((item) => {
+            return `${item.name}: null`;
+        });
+        content = `
+        const initSearchParams = {
+            ${fields.join(', ')}
+        }
+        `;
+    }
+    return {
+        importSources: [],
+        content,
+    };
+}
+
 function genSetupCode(pageConfig: ListPageConfig) {
     const queryInterface = pageConfig.query;
     const setupCodes: SetupCode[] = [
         genMappingCode(queryInterface),
         genAppendAllCode(queryInterface),
+        genInitSearchParams(queryInterface.params),
         genTableSetupCode({
             url: queryInterface.url,
             hasSearch: !!queryInterface.params.length,
@@ -373,7 +382,7 @@ function genSetupCode(pageConfig: ListPageConfig) {
 export function genListPageSchema(pageConfig: ListPageConfig): Schema {
     formatPick(pageConfig.query, pageConfig.commonDataField);
 
-    const sfc: SFCComponent = {
+    const initSFC: SFCComponent = {
         componentName: 'SFCComponent',
         dir: PAGE_DIR,
         fileName: `${genSFCFileName(pageConfig.meta.name)}.vue`,
@@ -388,6 +397,10 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
             },
         ],
     };
+
+    const sfc = [handleSearchAction].reduce((acc, action) => {
+        return action(pageConfig, acc);
+    }, initSFC);
 
     const jsCodes = getJsCode(join(__dirname, '../../template'), COMMON_DIR);
 

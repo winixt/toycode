@@ -7,26 +7,26 @@ import { ref, unref, reactive } from 'vue';
  *  params: object | reactiveObject,
  *  transform: function 格式化响应内容,
  *  dataField: string;
- *  isInit: boolean | 'true'
  * } options
  *
  */
 export function useSimpleTable(options) {
     options = {
-        ...options,
         isInit: true,
+        ...options,
     };
     const dataSource = ref([]);
 
-    const queryDataSource = () => {
-        request(options.url, options.params ? unref(options.params) : {}).then(
-            (res) => {
-                const result = options.dataField ? res[options.dataField] : res;
-                dataSource.value = options.transform
-                    ? options.transform(result, res)
-                    : result;
-            },
-        );
+    const queryDataSource = (params) => {
+        request(options.url, {
+            ...options.params,
+            ...unref(params),
+        }).then((res) => {
+            const result = options.dataField ? res[options.dataField] : res;
+            dataSource.value = options.transform
+                ? options.transform(result)
+                : result;
+        });
     };
 
     if (options.isInit) {
@@ -53,10 +53,10 @@ export function useSimpleTable(options) {
  */
 export function useTable(options) {
     options = {
-        ...options,
         isInit: true,
         dataField: 'cycle',
         pageField: 'page',
+        ...options,
     };
     const dataSource = ref([]);
 
@@ -66,17 +66,30 @@ export function useTable(options) {
         totalCount: 1000,
     });
 
-    const queryDataSource = () => {
-        request(options.url, {
-            ...(options.params ? unref(options.params) : {}),
+    let preParams = {
+        ...options.params,
+    };
+    const getParams = (params) => {
+        if (params) {
+            preParams = {
+                ...preParams,
+                ...unref(params),
+            };
+        }
+        return {
+            ...preParams,
             page: {
                 current: pagination.currentPage,
                 pageSize: pagination.pageSize,
             },
-        }).then((res) => {
+        };
+    };
+
+    const queryDataSource = (params) => {
+        request('/tablePage', getParams(params)).then((res) => {
             const result = res[options.dataField];
             dataSource.value = options.transform
-                ? options.transform(result, res)
+                ? options.transform(result)
                 : result;
             pagination.totalCount = res[options.pageField].totalCount;
         });
@@ -92,9 +105,9 @@ export function useTable(options) {
         queryDataSource();
     };
 
-    const refresh = () => {
+    const refresh = (params) => {
         pagination.currentPage = 1;
-        queryDataSource();
+        queryDataSource(params);
     };
 
     if (options.isInit) {

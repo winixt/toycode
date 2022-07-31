@@ -11,7 +11,7 @@ export interface Field {
     checked: boolean;
     mappingId?: string;
     options?: Option[];
-    defaultValue?: boolean;
+    defaultValue?: any;
     maxLength?: number;
     minLength?: number;
 }
@@ -41,4 +41,14 @@ export interface APISchema {
 export interface PageMeta {
     name: string;
     title: string;
+}
+
+export interface ListPageConfig {
+    meta: PageMeta;
+    commonDataField: string;
+    query: APISchema;
+    add?: APISchema;
+    modify?: APISchema;
+    simpleModify?: APISchema;
+    remove?: APISchema;
 }

@@ -3,7 +3,7 @@ const COMPONENT_MAP: Record<
     { name: string; props: Record<string, any>; subName?: string }
 > = {
     input: {
-        name: 'Input',
+        name: 'FInput',
         props: {},
     },
     select: {

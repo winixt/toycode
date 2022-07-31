@@ -8,7 +8,6 @@ import {
     ExtensionType,
     ComponentEvents,
     ComponentDirectives,
-    ComponentSlots,
     ComponentSlot,
     PreChangeFile,
     ImportSource,
@@ -79,8 +78,8 @@ function compileDirectives(directives?: ComponentDirectives) {
         .join(' ');
 }
 
-function compileSlots(slots: ComponentSlots): string[] {
-    return slots.slots.map((item: ComponentSlot) => {
+function compileSlots(slots: ComponentSlot[]): string[] {
+    return slots.map((item: ComponentSlot) => {
         if (item.scoped) {
             return `<template #${item.name}="${item.scoped}">
             ${compileComponent(item.component)}

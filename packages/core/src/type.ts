@@ -61,18 +61,12 @@ export interface Component {
     loopArgs?: [string, string]; // default [“item”, “index”]
     condition?: boolean | ExtensionType.JSExpression;
     children?: Component[];
-    slots?: ComponentSlots;
-}
-
-export interface ComponentSlots {
-    id: string;
-    parentId: string;
-    slots: ComponentSlot[];
+    slots?: ComponentSlot[];
 }
 
 export interface ComponentSlot {
     name: string;
-    scoped: string;
+    scoped?: string;
     component: Component;
 }
 
