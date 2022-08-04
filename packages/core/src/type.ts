@@ -60,7 +60,7 @@ export interface Component {
     loop?: [];
     loopArgs?: [string, string]; // default [“item”, “index”]
     condition?: boolean | ExtensionType.JSExpression;
-    children?: Component[];
+    children?: (Component | string)[];
     slots?: ComponentSlot[];
 }
 

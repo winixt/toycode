@@ -11,7 +11,7 @@ function findSearchForm(components: Component[]): Component {
     return findSearchForm(
         components.reduce((acc, cur) => {
             if (cur.children) {
-                acc = acc.concat(cur.children);
+                acc = acc.concat(cur.children as Component[]);
             }
             return acc;
         }, [] as Component[]),
@@ -64,6 +64,7 @@ export function handleSearchAction(
             events: {
                 click: 'refresh(searchParams)',
             },
+            children: ['搜索'],
             slots: [
                 {
                     name: 'icon',
@@ -74,8 +75,9 @@ export function handleSearchAction(
             ],
         };
         const searchForm = findSearchForm(sfc.children);
-        const actionFormItem =
-            searchForm.children[searchForm.children.length - 1];
+        const actionFormItem = searchForm.children[
+            searchForm.children.length - 1
+        ] as Component;
         if (!actionFormItem.props?.label) {
             actionFormItem.children.unshift(actionTemplate);
         } else {

@@ -7,5 +7,5 @@ export function getTargetLabel(map, value) {
 }
 
 export function appendAll(options) {
-    return [{ value: null, value: '全部' }, ...options];
+    return [{ value: null, label: '全部' }, ...options];
 }

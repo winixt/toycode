@@ -99,7 +99,14 @@ function compileComponent(component: Component): string {
             ? `>
                 ${
                     component.children
-                        ? component.children.map(compileComponent).join('\n')
+                        ? component.children
+                              .map((children: Component | string) => {
+                                  if (typeof children === 'string') {
+                                      return children;
+                                  }
+                                  return compileComponent(children);
+                              })
+                              .join('\n')
                         : ''
                 }
                 ${component.slots ? compileSlots(component.slots) : ''}

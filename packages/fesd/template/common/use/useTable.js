@@ -3,7 +3,7 @@ import { ref, unref, reactive } from 'vue';
 /**
  *
  * @param {
- *  url: string;
+ *  api: string;
  *  params: object | reactiveObject,
  *  transform: function 格式化响应内容,
  *  dataField: string;
@@ -18,7 +18,7 @@ export function useSimpleTable(options) {
     const dataSource = ref([]);
 
     const queryDataSource = (params) => {
-        request(options.url, {
+        request(options.api, {
             ...options.params,
             ...unref(params),
         }).then((res) => {
@@ -42,7 +42,7 @@ export function useSimpleTable(options) {
 /**
  *
  * @param {
- *  url: string;
+ *  api: string;
  *  params: object | reactiveObject,
  *  transform: function 格式化响应内容,
  *  dataField: string | 'cycle'
@@ -63,7 +63,7 @@ export function useTable(options) {
     const pagination = reactive({
         currentPage: 1,
         pageSize: 10,
-        totalCount: 1000,
+        totalCount: 0,
     });
 
     let preParams = {
@@ -86,7 +86,7 @@ export function useTable(options) {
     };
 
     const queryDataSource = (params) => {
-        request('/tablePage', getParams(params)).then((res) => {
+        request(options.api, getParams(params)).then((res) => {
             const result = res[options.dataField];
             dataSource.value = options.transform
                 ? options.transform(result)

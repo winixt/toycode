@@ -187,7 +187,7 @@ function genUseTable(options: {
     // TODO pick 支持数组
     return `
     const { ${result.join(', ')} } = ${functionName}({
-        url: '${options.url}',
+        api: '${options.url}',
         ${
             options.dataField[0] !== 'cycle'
                 ? `dataField: '${options.dataField[0]}',`
@@ -273,6 +273,16 @@ function genSearchFormSetupCode(params: FormField[]): SetupCode {
             imported: 'reactive',
             type: ImportType.ImportSpecifier,
             source: 'vue',
+        },
+        {
+            imported: 'FForm',
+            type: ImportType.ImportSpecifier,
+            source: '@fesjs/fes-design',
+        },
+        {
+            imported: 'FFormItem',
+            type: ImportType.ImportSpecifier,
+            source: '@fesjs/fes-design',
         },
     ];
     for (const item of params) {
