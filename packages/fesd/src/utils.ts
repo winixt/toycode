@@ -46,3 +46,20 @@ export function formatPick(apiDesign: APISchema, commonDataField: string) {
         apiDesign.resData.pick.shift();
     }
 }
+
+// TODO pick 支持数组
+export function getDataField(apiDesign: APISchema) {
+    const dataField = apiDesign.resData.pick[0];
+    if (!dataField || dataField === 'cycle') return null;
+
+    return dataField;
+}
+
+// TODO pick 支持数组
+export function getPageField(apiDesign: APISchema) {
+    if (!apiDesign.pagination) return null;
+    const pageField = apiDesign.pagination.pick[0];
+    if (!pageField || pageField === 'page') return null;
+
+    return pageField;
+}

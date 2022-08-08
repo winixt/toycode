@@ -5,6 +5,7 @@ export interface Option {
 
 export interface Field {
     name: string;
+    alias?: string;
     title: string;
     type: string;
     required: boolean;

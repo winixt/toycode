@@ -17,7 +17,13 @@ import {
     ListPageConfig,
 } from '../type';
 import { defaultPageCss, defaultDependencies } from '../config';
-import { genSFCFileName, getJsCode, formatPick } from '../utils';
+import {
+    genSFCFileName,
+    getJsCode,
+    formatPick,
+    getPageField,
+    getDataField,
+} from '../utils';
 import { PAGE_DIR, COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
 import { handleSearchAction } from './searchAction';
@@ -111,7 +117,7 @@ function genTableComponent(columns: Field[]) {
         tableComp.children.push({
             componentName: 'FTableColumn',
             props: {
-                prop: item.name,
+                prop: item.alias || item.name,
                 label: item.title,
             },
         });
@@ -162,53 +168,52 @@ function genTemplate(query: APISchema) {
     return children;
 }
 
-// *  url: string;
-// *  params: object | reactiveObject,
-// *  transform: function 格式化响应内容,
-// *  dataField: string | 'cycle'
-// *  pageField: string | 'page'
+function genTransform(query: APISchema) {
+    const code = query.resData.fields
+        .map((item) => {
+            if (item.mappingId) {
+                return `item.${item.alias} = getTargetLabel(${item.mappingId}, item.${item.name})`;
+            }
+            return null;
+        })
+        .filter(Boolean);
+    if (code.length) {
+        return `transform(data) {
+            return data.map((item) => {
+                ${code.join(';\n')}
+                return item;
+            })
+        },`;
+    }
+    return '';
+}
+
 // TODO transform 的处理
-function genUseTable(options: {
-    url: string;
-    hasSearch: boolean;
-    dataField: string[];
-    pagination?: string[];
-}): string {
+function genUseTable(query: APISchema): string {
     const result: string[] = ['dataSource'];
-    if (options.pagination) {
+    if (query.pagination) {
         result.push('pagination', 'changePage', 'changePageSize');
     }
-    if (options.hasSearch) {
+    if (query.params.length) {
         result.push('refresh');
     }
 
-    const functionName = options.pagination ? 'useTable' : 'useSimpleTable';
+    const functionName = query.pagination ? 'useTable' : 'useSimpleTable';
+    const dataField = getDataField(query);
+    const pageField = getPageField(query);
 
-    // TODO pick 支持数组
     return `
     const { ${result.join(', ')} } = ${functionName}({
-        api: '${options.url}',
-        ${
-            options.dataField[0] !== 'cycle'
-                ? `dataField: '${options.dataField[0]}',`
-                : ''
-        }
-        ${
-            options.pagination[0] !== 'page'
-                ? `pageField: '${options.pagination[0]}',`
-                : ''
-        }
-        ${options.hasSearch ? `params: {...initSearchParams},` : ''}
+        api: '${query.url}',
+        ${dataField ? `dataField: '${dataField}',` : ''}
+        ${pageField ? `pageField: '${pageField}',` : ''}
+        ${query.params.length ? `params: {...initSearchParams},` : ''}
+        ${genTransform(query)}
     })
     `;
 }
 
-function genTableSetupCode(options: {
-    url: string;
-    hasSearch: boolean;
-    dataField: string[];
-    pagination?: string[];
-}) {
+function genTableSetupCode(query: APISchema) {
     const importSources: ImportSource[] = [
         {
             imported: 'FTable',
@@ -222,7 +227,15 @@ function genTableSetupCode(options: {
         },
     ];
 
-    if (options.pagination) {
+    if (query.resData.fields.find((field) => field.mappingId)) {
+        importSources.push({
+            imported: 'getTargetLabel',
+            type: ImportType.ImportSpecifier,
+            source: '@/common/utils',
+        });
+    }
+
+    if (query.pagination) {
         importSources.push({
             imported: 'FPagination',
             type: ImportType.ImportSpecifier,
@@ -243,7 +256,7 @@ function genTableSetupCode(options: {
 
     return {
         importSources,
-        content: genUseTable(options),
+        content: genUseTable(query),
     };
 }
 
@@ -372,12 +385,7 @@ function genSetupCode(pageConfig: ListPageConfig) {
         genMappingCode(queryInterface),
         genAppendAllCode(queryInterface),
         genInitSearchParams(queryInterface.params),
-        genTableSetupCode({
-            url: queryInterface.url,
-            hasSearch: !!queryInterface.params.length,
-            dataField: queryInterface.resData.pick,
-            pagination: queryInterface.pagination?.pick,
-        }),
+        genTableSetupCode(queryInterface),
     ];
 
     if (queryInterface.params.length) {
@@ -389,7 +397,17 @@ function genSetupCode(pageConfig: ListPageConfig) {
     return setupCodes;
 }
 
+function formatResData(query: APISchema) {
+    query.resData.fields = query.resData.fields.map((item) => {
+        return {
+            alias: item.mappingId ? `${item.name}Text` : null,
+            ...item,
+        };
+    });
+}
+
 export function genListPageSchema(pageConfig: ListPageConfig): Schema {
+    formatResData(pageConfig.query);
     formatPick(pageConfig.query, pageConfig.commonDataField);
 
     const initSFC: SFCComponent = {
