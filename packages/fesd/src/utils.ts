@@ -35,30 +35,30 @@ export function getJsCode(rootDir: string, subDir = '', result: JSCode[] = []) {
     return result;
 }
 
-export function formatPick(apiDesign: APISchema, commonDataField: string) {
+export function formatPick(apiSchema: APISchema, commonDataField: string) {
     if (
-        apiDesign.pagination &&
-        apiDesign.pagination.pick[0] === commonDataField
+        apiSchema.pagination &&
+        apiSchema.pagination.pick[0] === commonDataField
     ) {
-        apiDesign.pagination.pick.shift();
+        apiSchema.pagination.pick.shift();
     }
-    if (apiDesign.resData && apiDesign.resData.pick[0] === commonDataField) {
-        apiDesign.resData.pick.shift();
+    if (apiSchema.resData && apiSchema.resData.pick[0] === commonDataField) {
+        apiSchema.resData.pick.shift();
     }
 }
 
 // TODO pick 支持数组
-export function getDataField(apiDesign: APISchema) {
-    const dataField = apiDesign.resData.pick[0];
+export function getDataField(apiSchema: APISchema) {
+    const dataField = apiSchema.resData.pick[0];
     if (!dataField || dataField === 'cycle') return null;
 
     return dataField;
 }
 
 // TODO pick 支持数组
-export function getPageField(apiDesign: APISchema) {
-    if (!apiDesign.pagination) return null;
-    const pageField = apiDesign.pagination.pick[0];
+export function getPageField(apiSchema: APISchema) {
+    if (!apiSchema.pagination) return null;
+    const pageField = apiSchema.pagination.pick[0];
     if (!pageField || pageField === 'page') return null;
 
     return pageField;

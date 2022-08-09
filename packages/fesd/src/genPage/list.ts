@@ -154,22 +154,22 @@ function genPaginationComp() {
     return paginationComp;
 }
 
-function genTemplate(query: APISchema) {
+function genTemplate(apiSchema: APISchema) {
     const children: Component[] = [];
 
-    if (query.params?.length) {
-        children.push(genSearchForm(query.params));
+    if (apiSchema.params?.length) {
+        children.push(genSearchForm(apiSchema.params));
     }
-    children.push(genTableComponent(query.resData.fields));
-    if (query.pagination) {
+    children.push(genTableComponent(apiSchema.resData.fields));
+    if (apiSchema.pagination) {
         children.push(genPaginationComp());
     }
 
     return children;
 }
 
-function genTransform(query: APISchema) {
-    const code = query.resData.fields
+function genTransform(apiSchema: APISchema) {
+    const code = apiSchema.resData.fields
         .map((item) => {
             if (item.mappingId) {
                 return `item.${item.alias} = getTargetLabel(${item.mappingId}, item.${item.name})`;
@@ -188,7 +188,6 @@ function genTransform(query: APISchema) {
     return '';
 }
 
-// TODO transform 的处理
 function genUseTable(query: APISchema): string {
     const result: string[] = ['dataSource'];
     if (query.pagination) {
@@ -324,10 +323,10 @@ function genSearchFormSetupCode(params: FormField[]): SetupCode {
     };
 }
 
-function genMappingCode(query: APISchema) {
+function genMappingCode(apiSchema: APISchema) {
     const importSources: ImportSource[] = [];
-    const fields: Field[] = (query.resData.fields || []).concat(
-        query.params || [],
+    const fields: Field[] = (apiSchema.resData.fields || []).concat(
+        apiSchema.params || [],
     );
     fields.forEach((item) => {
         if (item.mappingId) {
@@ -345,9 +344,9 @@ function genMappingCode(query: APISchema) {
     };
 }
 
-function genAppendAllCode(query: APISchema) {
+function genAppendAllCode(apiSchema: APISchema) {
     const importSources: ImportSource[] = [];
-    if (query.params.find((item) => item.appendAll)) {
+    if (apiSchema.params.find((item) => item.appendAll)) {
         importSources.push({
             imported: 'appendAll',
             type: ImportType.ImportSpecifier,
@@ -380,16 +379,16 @@ function genInitSearchParams(params: FormField[]): SetupCode {
 }
 
 function genSetupCode(pageConfig: ListPageConfig) {
-    const queryInterface = pageConfig.query;
+    const queryApiSchema = pageConfig.apiSchema;
     const setupCodes: SetupCode[] = [
-        genMappingCode(queryInterface),
-        genAppendAllCode(queryInterface),
-        genInitSearchParams(queryInterface.params),
-        genTableSetupCode(queryInterface),
+        genMappingCode(queryApiSchema),
+        genAppendAllCode(queryApiSchema),
+        genInitSearchParams(queryApiSchema.params),
+        genTableSetupCode(queryApiSchema),
     ];
 
-    if (queryInterface.params.length) {
-        setupCodes.push(genSearchFormSetupCode(queryInterface.params));
+    if (queryApiSchema.params.length) {
+        setupCodes.push(genSearchFormSetupCode(queryApiSchema.params));
     }
 
     setupCodes.push(genPageMeta(pageConfig.meta));
@@ -397,8 +396,8 @@ function genSetupCode(pageConfig: ListPageConfig) {
     return setupCodes;
 }
 
-function formatResData(query: APISchema) {
-    query.resData.fields = query.resData.fields.map((item) => {
+function formatResData(apiSchema: APISchema) {
+    apiSchema.resData.fields = apiSchema.resData.fields.map((item) => {
         return {
             alias: item.mappingId ? `${item.name}Text` : null,
             ...item,
@@ -407,8 +406,8 @@ function formatResData(query: APISchema) {
 }
 
 export function genListPageSchema(pageConfig: ListPageConfig): Schema {
-    formatResData(pageConfig.query);
-    formatPick(pageConfig.query, pageConfig.commonDataField);
+    formatResData(pageConfig.apiSchema);
+    formatPick(pageConfig.apiSchema, pageConfig.commonDataField);
 
     const initSFC: SFCComponent = {
         componentName: 'SFCComponent',
@@ -421,7 +420,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
                 props: {
                     class: 'common-page',
                 },
-                children: genTemplate(pageConfig.query),
+                children: genTemplate(pageConfig.apiSchema),
             },
         ],
     };

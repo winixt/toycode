@@ -22,7 +22,7 @@ export function handleSearchAction(
     pageConfig: ListPageConfig,
     sfc: SFCComponent,
 ) {
-    const params = pageConfig.query.params;
+    const params = pageConfig.apiSchema.params;
     if (!params?.length) return sfc;
 
     if (isReactiveSearch(params)) {
