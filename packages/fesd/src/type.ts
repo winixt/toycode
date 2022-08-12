@@ -3,32 +3,29 @@ export interface Option {
     value: string;
 }
 
+export interface RenderComponent {
+    componentName: string;
+    props: Record<string, any>;
+    defaultValue?: any;
+    appendAll?: boolean;
+    required: boolean;
+}
+
 export interface Field {
     name: string;
     alias?: string;
     title: string;
     type: string;
-    required: boolean;
     checked: boolean;
     mappingId?: string;
     options?: Option[];
-    defaultValue?: any;
-    maxLength?: number;
-    minLength?: number;
+    component: RenderComponent;
 }
-
-export interface FormField extends Field {
-    checked: boolean;
-    componentName: string;
-    props: Record<string, any>;
-    appendAll?: boolean;
-}
-
 export interface APISchema {
     url: string;
     method: string;
     headers: Record<string, string>;
-    params: FormField[];
+    params: Field[];
     resData: {
         pick: string[];
         fields: Field[];

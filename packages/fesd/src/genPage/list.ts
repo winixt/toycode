@@ -8,14 +8,7 @@ import {
     SetupCode,
 } from '@qlin/toycode-core';
 import { join } from 'path';
-import {
-    APISchema,
-    FormField,
-    Option,
-    Field,
-    PageMeta,
-    ListPageConfig,
-} from '../type';
+import { APISchema, Option, Field, PageMeta, ListPageConfig } from '../type';
 import { defaultPageCss, defaultDependencies } from '../config';
 import {
     genSFCFileName,
@@ -40,7 +33,7 @@ function handleComponentOptions(options: Option[], componentName: string) {
     });
 }
 
-function genSearchForm(params: FormField[]) {
+function genSearchForm(params: Field[]) {
     const form: Component = {
         componentName: 'FForm',
         props: {
@@ -49,14 +42,14 @@ function genSearchForm(params: FormField[]) {
         children: [],
     };
     for (const item of params) {
-        const comp = componentMap(item.componentName);
+        const comp = componentMap(item.component.componentName);
         const formCompProps: Record<string, any> = {
-            ...item.props,
+            ...item.component.props,
             ...comp.props,
         };
         let children = null;
         if (item.mappingId) {
-            if (item.appendAll) {
+            if (item.component.appendAll) {
                 formCompProps.options = {
                     type: ExtensionType.JSExpression,
                     value: `appendAll(${item.mappingId})`,
@@ -69,7 +62,7 @@ function genSearchForm(params: FormField[]) {
             }
         } else if (item.options?.length) {
             children = handleComponentOptions(item.options, comp.subName);
-            if (item.appendAll) {
+            if (item.component.appendAll) {
                 children.unshift({
                     componentName: comp.subName,
                     props: {
@@ -279,7 +272,7 @@ function genPageMeta(meta: PageMeta) {
     };
 }
 
-function genSearchFormSetupCode(params: FormField[]): SetupCode {
+function genSearchFormSetupCode(params: Field[]): SetupCode {
     const importSources: ImportSource[] = [
         {
             imported: 'reactive',
@@ -298,7 +291,7 @@ function genSearchFormSetupCode(params: FormField[]): SetupCode {
         },
     ];
     for (const item of params) {
-        const comp = componentMap(item.componentName);
+        const comp = componentMap(item.component.componentName);
         importSources.push({
             imported: comp.name,
             type: ImportType.ImportSpecifier,
@@ -346,7 +339,7 @@ function genMappingCode(apiSchema: APISchema) {
 
 function genAppendAllCode(apiSchema: APISchema) {
     const importSources: ImportSource[] = [];
-    if (apiSchema.params.find((item) => item.appendAll)) {
+    if (apiSchema.params.find((item) => item.component.appendAll)) {
         importSources.push({
             imported: 'appendAll',
             type: ImportType.ImportSpecifier,
@@ -360,7 +353,7 @@ function genAppendAllCode(apiSchema: APISchema) {
     };
 }
 
-function genInitSearchParams(params: FormField[]): SetupCode {
+function genInitSearchParams(params: Field[]): SetupCode {
     let content = '';
     if (params.length) {
         const fields = params.map((item) => {

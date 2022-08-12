@@ -2,13 +2,13 @@ import { readdirSync, lstatSync, readFileSync } from 'fs-extra';
 import { JSCode } from '@qlin/toycode-core';
 import { join } from 'path';
 import { camelCase } from 'lodash';
-import { FormField, APISchema } from './type';
+import { Field, APISchema } from './type';
 
 export function isPaginationField(field: string) {
     return field === 'pagination' || field === 'page' || field === 'pager';
 }
 
-export function isReactiveSearch(params: FormField[]) {
+export function isReactiveSearch(params: Field[]) {
     return params.length <= 3;
 }
 
