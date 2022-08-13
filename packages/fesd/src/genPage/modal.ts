@@ -52,20 +52,20 @@ function getModalComponent(title: string): Component {
     };
 }
 
-function genAddModalCodeSnippet(addModal: RelationModal): CodeSnippet {
+function genAddModalCodeSnippet(modal: RelationModal): CodeSnippet {
     return {
         setup: {
             importSources: COMMON_MODAL_IMPORT_SOURCES,
             content: `
             const onConfirm = async (data) => {
-                const res = await request('${addModal.apiSchema.url}', data);
+                const res = await request('${modal.apiSchema.url}', data);
                 FMessage.success('新增成功');
                 props.onSuccess(data, res);
             };
             const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, initData, onConfirm });
             `,
         },
-        component: getModalComponent('新增'),
+        component: getModalComponent(modal.title || '新增'),
     };
 }
 
@@ -129,7 +129,7 @@ function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
             const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, computed(() => props.data), onConfirm });
             `,
         },
-        component: getModalComponent('编辑'),
+        component: getModalComponent(modal.title || '编辑'),
     };
 }
 

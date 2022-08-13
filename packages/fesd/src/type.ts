@@ -69,11 +69,14 @@ export interface PageMeta {
 /**
  * modify 处理新增和修改相同接口的场景
  * simpleUpdate 处理简单修改的场景，例如：设置为有效/无效
+ *
+ * TODO
+ * 实现 modify 的编译
  */
 export interface RelationModal {
     title: string; // 当 type === 'modify, title 动态生成
     type: 'add' | 'delete' | 'update' | 'simpleUpdate' | 'modify';
-    meta: Record<string, string>; // 存放一些附加信息
+    meta?: Record<string, string>; // 存放一些附加信息
     apiSchema: APISchema;
 }
 
