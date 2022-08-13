@@ -112,3 +112,44 @@ export function insertActionInSearchForm(
         });
     }
 }
+
+function findTable(components: Component[]): Component {
+    for (const component of components) {
+        if (component.componentName === 'FTable') {
+            return component;
+        }
+    }
+    return findTable(
+        components.reduce((acc, cur) => {
+            if (cur.children) {
+                acc = acc.concat(cur.children as Component[]);
+            }
+            return acc;
+        }, [] as Component[]),
+    );
+}
+
+export function insertActionInTable(
+    components: Component[],
+    actionComponent: Component,
+) {
+    const tableComponent = findTable(components);
+    const tableActionColumn = tableComponent.children.find((comp) => {
+        return (comp as Component).props?.label === '操作';
+    });
+    if (tableActionColumn) {
+        (tableActionColumn as Component).children.push(actionComponent);
+    } else {
+        tableComponent.children.push({
+            componentName: 'FTableColumn',
+            props: {
+                align: 'center',
+                label: '操作',
+            },
+            directives: {
+                'v-slot': '{ row }',
+            },
+            children: [actionComponent],
+        });
+    }
+}

@@ -49,3 +49,30 @@ export function useModal({ props, emit, initData, onConfirm }) {
         formModel,
     };
 }
+
+export function useAddModal() {
+    const visible = ref(false);
+    const show = () => {
+        visible.value = true;
+    };
+
+    return {
+        show,
+        visible,
+    };
+}
+
+export function useUpdateModal() {
+    const visible = ref(false);
+    const data = ref();
+    const show = (currentData) => {
+        visible.value = true;
+        data.value = currentData;
+    };
+
+    return {
+        visible,
+        data,
+        show,
+    };
+}

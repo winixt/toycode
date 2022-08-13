@@ -3,37 +3,59 @@ import {
     SetupCode,
     ImportType,
     genComponentId,
+    Component,
 } from '@qlin/toycode-core';
 import { RelationModal, ListPageConfig, CodeSnippet } from '../type';
 import { hasModal, genModalDir } from '../utils';
 import { getDefaultValue, mergeCodeSnippets } from './shared';
 import { genFormCodeSnippet } from './form';
 
+const COMMON_MODAL_IMPORT_SOURCES = [
+    {
+        imported: 'FModal',
+        type: ImportType.ImportSpecifier,
+        source: '@/common/constants',
+    },
+    {
+        imported: 'FMessage',
+        type: ImportType.ImportSpecifier,
+        source: '@/common/constants',
+    },
+    {
+        imported: 'useModal',
+        type: ImportType.ImportSpecifier,
+        source: '@/common/use/useModal',
+    },
+    {
+        imported: 'request',
+        type: ImportType.ImportSpecifier,
+        source: '@fesjs/fes',
+    },
+];
+
+function getModalComponent(title: string): Component {
+    return {
+        id: genComponentId(),
+        componentName: 'FModal',
+        props: {
+            title,
+            maskClosable: false,
+            top: 54,
+        },
+        events: {
+            ok: 'confirm',
+        },
+        directives: {
+            'v-model:show': 'innerVisible',
+        },
+        children: [],
+    };
+}
+
 function genAddModalCodeSnippet(addModal: RelationModal): CodeSnippet {
     return {
         setup: {
-            importSources: [
-                {
-                    imported: 'FModal',
-                    type: ImportType.ImportSpecifier,
-                    source: '@/common/constants',
-                },
-                {
-                    imported: 'FMessage',
-                    type: ImportType.ImportSpecifier,
-                    source: '@/common/constants',
-                },
-                {
-                    imported: 'useModal',
-                    type: ImportType.ImportSpecifier,
-                    source: '@/common/use/useModal',
-                },
-                {
-                    imported: 'request',
-                    type: ImportType.ImportSpecifier,
-                    source: '@fesjs/fes',
-                },
-            ],
+            importSources: COMMON_MODAL_IMPORT_SOURCES,
             content: `
             const onConfirm = async (data) => {
                 const res = await request('${addModal.apiSchema.url}', data);
@@ -43,22 +65,7 @@ function genAddModalCodeSnippet(addModal: RelationModal): CodeSnippet {
             const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, initData, onConfirm });
             `,
         },
-        component: {
-            id: genComponentId(),
-            componentName: 'FModal',
-            props: {
-                title: '新增',
-                maskClosable: false,
-                top: 54,
-            },
-            events: {
-                ok: 'confirm',
-            },
-            directives: {
-                'v-model:show': 'innerVisible',
-            },
-            children: [],
-        },
+        component: getModalComponent('新增'),
     };
 }
 
@@ -109,6 +116,60 @@ export function genAddModal(
     };
 }
 
+function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
+    return {
+        setup: {
+            importSources: COMMON_MODAL_IMPORT_SOURCES,
+            content: `
+            const onConfirm = async (data) => {
+                const res = await request('${modal.apiSchema.url}', data);
+                FMessage.success('新增成功');
+                props.onSuccess(data, res);
+            };
+            const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, computed(() => props.data), onConfirm });
+            `,
+        },
+        component: getModalComponent('编辑'),
+    };
+}
+
+export function genUpdateModal(
+    modal: RelationModal,
+    modalDir: string,
+): SFCComponent {
+    const modalSnippet = genUpdateModalCodeSnippet(modal);
+    const formSnippet = genFormCodeSnippet(
+        modal.apiSchema,
+        modalSnippet.component.id,
+    );
+    const { children, setupCodes } = mergeCodeSnippets([
+        modalSnippet,
+        formSnippet,
+    ]);
+    return {
+        componentName: 'SFCComponent',
+        dir: modalDir,
+        fileName: 'updateModal.vue',
+        children,
+        setupCodes: [...setupCodes],
+        propsDefinition: [
+            {
+                name: 'visible',
+                propType: 'Boolean',
+            },
+            {
+                name: 'data',
+                propType: 'Object',
+            },
+            {
+                name: 'onSuccess',
+                propType: 'Function',
+            },
+        ],
+        emitsDefinition: ['update:visible'],
+    };
+}
+
 export function genRelationModals(pageConfig: ListPageConfig): SFCComponent[] {
     const modals: SFCComponent[] = [];
     if (hasModal(pageConfig)) {
@@ -117,6 +178,8 @@ export function genRelationModals(pageConfig: ListPageConfig): SFCComponent[] {
         pageConfig.relationModals.forEach((modal) => {
             if (modal.type === 'add') {
                 modals.push(genAddModal(modal, modalDir));
+            } else if (modal.type === 'update') {
+                modals.push(genUpdateModal(modal, modalDir));
             }
         });
     }
