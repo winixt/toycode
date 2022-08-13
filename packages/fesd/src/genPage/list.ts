@@ -8,7 +8,7 @@ import {
     SetupCode,
 } from '@qlin/toycode-core';
 import { join } from 'path';
-import { APISchema, Option, Field, PageMeta, ListPageConfig } from '../type';
+import { APISchema, Field, PageMeta, ListPageConfig } from '../type';
 import { defaultPageCss, defaultDependencies } from '../config';
 import {
     genSFCFileName,
@@ -22,18 +22,8 @@ import { PAGE_DIR, COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
 import { handleSearchAction } from './searchAction';
 import { genRelationModals } from './modal';
-
-function handleComponentOptions(options: Option[], componentName: string) {
-    return options.map((option) => {
-        return {
-            componentName,
-            props: {
-                label: option.label,
-                value: option.value,
-            },
-        };
-    });
-}
+import { applyModal } from './useModal';
+import { handleComponentOptions } from './shared';
 
 function genSearchForm(params: Field[]) {
     const form: Component = {
@@ -183,31 +173,31 @@ function genTransform(apiSchema: APISchema) {
     return '';
 }
 
-function genUseTable(query: APISchema): string {
+function genUseTable(apiSchema: APISchema, pageConfig: ListPageConfig): string {
     const result: string[] = ['dataSource'];
-    if (query.pagination) {
+    if (apiSchema.pagination) {
         result.push('pagination', 'changePage', 'changePageSize');
     }
-    if (query.params.length) {
+    if (apiSchema.params.length || pageConfig.relationModals.length) {
         result.push('refresh');
     }
 
-    const functionName = query.pagination ? 'useTable' : 'useSimpleTable';
-    const dataField = getDataField(query);
-    const pageField = getPageField(query);
+    const functionName = apiSchema.pagination ? 'useTable' : 'useSimpleTable';
+    const dataField = getDataField(apiSchema);
+    const pageField = getPageField(apiSchema);
 
     return `
     const { ${result.join(', ')} } = ${functionName}({
-        api: '${query.url}',
+        api: '${apiSchema.url}',
         ${dataField ? `dataField: '${dataField}',` : ''}
         ${pageField ? `pageField: '${pageField}',` : ''}
-        ${query.params.length ? `params: {...initSearchParams},` : ''}
-        ${genTransform(query)}
+        ${apiSchema.params.length ? `params: {...initSearchParams},` : ''}
+        ${genTransform(apiSchema)}
     })
     `;
 }
 
-function genTableSetupCode(query: APISchema) {
+function genTableSetupCode(apiSchema: APISchema, pageConfig: ListPageConfig) {
     const importSources: ImportSource[] = [
         {
             imported: 'FTable',
@@ -221,7 +211,7 @@ function genTableSetupCode(query: APISchema) {
         },
     ];
 
-    if (query.resData.fields.find((field) => field.mappingId)) {
+    if (apiSchema.resData.fields.find((field) => field.mappingId)) {
         importSources.push({
             imported: 'getTargetLabel',
             type: ImportType.ImportSpecifier,
@@ -229,7 +219,7 @@ function genTableSetupCode(query: APISchema) {
         });
     }
 
-    if (query.pagination) {
+    if (apiSchema.pagination) {
         importSources.push({
             imported: 'FPagination',
             type: ImportType.ImportSpecifier,
@@ -250,7 +240,7 @@ function genTableSetupCode(query: APISchema) {
 
     return {
         importSources,
-        content: genUseTable(query),
+        content: genUseTable(apiSchema, pageConfig),
     };
 }
 
@@ -379,7 +369,7 @@ function genSetupCode(pageConfig: ListPageConfig) {
         genMappingCode(queryApiSchema),
         genAppendAllCode(queryApiSchema),
         genInitSearchParams(queryApiSchema.params),
-        genTableSetupCode(queryApiSchema),
+        genTableSetupCode(queryApiSchema, pageConfig),
     ];
 
     if (queryApiSchema.params.length) {
@@ -421,7 +411,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         ],
     };
 
-    const sfc = [handleSearchAction].reduce((acc, action) => {
+    const sfc = [handleSearchAction, applyModal].reduce((acc, action) => {
         return action(pageConfig, acc);
     }, initSFC);
 

@@ -1,7 +1,22 @@
 // 跟具体库和平台无关的共享代码
 import { isEmpty } from 'lodash';
 import { SetupCode, Component } from '@qlin/toycode-core';
-import { Field, CodeSnippet } from '../type';
+import { Field, CodeSnippet, Option } from '../type';
+
+export function handleComponentOptions(
+    options: Option[],
+    componentName: string,
+) {
+    return options.map((option) => {
+        return {
+            componentName,
+            props: {
+                label: option.label,
+                value: option.value,
+            },
+        };
+    });
+}
 
 export function getDefaultValue(field: Field) {
     if (isEmpty(field.component.defaultValue)) {
@@ -62,4 +77,38 @@ export function mergeCodeSnippets(codeSnippets: CodeSnippet[]) {
             setupCodes: SetupCode[];
         },
     );
+}
+
+function findSearchForm(components: Component[]): Component {
+    for (const component of components) {
+        if (component.componentName === 'FForm') {
+            return component;
+        }
+    }
+    return findSearchForm(
+        components.reduce((acc, cur) => {
+            if (cur.children) {
+                acc = acc.concat(cur.children as Component[]);
+            }
+            return acc;
+        }, [] as Component[]),
+    );
+}
+
+export function insertActionInSearchForm(
+    components: Component[],
+    actionComponent: Component,
+) {
+    const searchForm = findSearchForm(components);
+    const actionFormItem = searchForm.children[
+        searchForm.children.length - 1
+    ] as Component;
+    if (!actionFormItem.props?.label) {
+        actionFormItem.children.unshift(actionComponent);
+    } else {
+        searchForm.children.push({
+            componentName: 'FFormItem',
+            children: [actionComponent],
+        });
+    }
 }

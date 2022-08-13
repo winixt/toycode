@@ -10,12 +10,30 @@ export interface Option {
     value: string;
 }
 
+export enum RuleTypeEnum {
+    required = 'required',
+    integer = 'integer',
+    positiveInteger = 'positiveInteger',
+    numberRange = 'numberRange',
+    strLength = 'strLength',
+    email = 'email',
+    regexp = 'regexp',
+    custom = 'custom',
+}
+
+export interface Rule {
+    type: RuleTypeEnum;
+    message?: string;
+    [key: string]: any;
+}
+
 export interface RenderComponent {
     componentName: string;
     props: Record<string, any>;
     defaultValue?: any;
     appendAll?: boolean;
     required: boolean;
+    rules: Rule[];
 }
 
 export interface Field {

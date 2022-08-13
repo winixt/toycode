@@ -1,22 +1,7 @@
 import { ListPageConfig } from '../type';
 import { isReactiveSearch } from '../utils';
-import { SFCComponent, Component, ImportType } from '@qlin/toycode-core';
-
-function findSearchForm(components: Component[]): Component {
-    for (const component of components) {
-        if (component.componentName === 'FForm') {
-            return component;
-        }
-    }
-    return findSearchForm(
-        components.reduce((acc, cur) => {
-            if (cur.children) {
-                acc = acc.concat(cur.children as Component[]);
-            }
-            return acc;
-        }, [] as Component[]),
-    );
-}
+import { SFCComponent, ImportType } from '@qlin/toycode-core';
+import { insertActionInSearchForm } from './shared';
 
 export function handleSearchAction(
     pageConfig: ListPageConfig,
@@ -56,7 +41,7 @@ export function handleSearchAction(
             ],
             content: '',
         });
-        const actionTemplate = {
+        const actionComponent = {
             componentName: 'FButton',
             props: {
                 type: 'primary',
@@ -74,18 +59,7 @@ export function handleSearchAction(
                 },
             ],
         };
-        const searchForm = findSearchForm(sfc.children);
-        const actionFormItem = searchForm.children[
-            searchForm.children.length - 1
-        ] as Component;
-        if (!actionFormItem.props?.label) {
-            actionFormItem.children.unshift(actionTemplate);
-        } else {
-            searchForm.children.push({
-                componentName: 'FFormItem',
-                children: [actionTemplate],
-            });
-        }
+        insertActionInSearchForm(sfc.children, actionComponent);
     }
 
     return sfc;
