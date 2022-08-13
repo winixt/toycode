@@ -16,10 +16,12 @@ import {
     formatPick,
     getPageField,
     getDataField,
+    genPageDirAndFileName,
 } from '../utils';
 import { PAGE_DIR, COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
 import { handleSearchAction } from './searchAction';
+import { genRelationModals } from './modal';
 
 function handleComponentOptions(options: Option[], componentName: string) {
     return options.map((option) => {
@@ -406,6 +408,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         componentName: 'SFCComponent',
         dir: PAGE_DIR,
         fileName: `${genSFCFileName(pageConfig.meta.name)}.vue`,
+        ...genPageDirAndFileName(pageConfig),
         setupCodes: genSetupCode(pageConfig),
         children: [
             {
@@ -425,7 +428,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
     const jsCodes = getJsCode(join(__dirname, '../../template'), COMMON_DIR);
 
     return {
-        componentsTree: [sfc],
+        componentsTree: [sfc, ...genRelationModals(pageConfig)],
         css: defaultPageCss,
         jsCodes,
         dependencies: defaultDependencies,

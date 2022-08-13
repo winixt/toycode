@@ -56,6 +56,7 @@ export interface Component {
     props?: ComponentProps;
     events?: ComponentEvents;
     directives?: ComponentDirectives;
+    id?: string;
     parentId?: string;
     loop?: [];
     loopArgs?: [string, string]; // default [“item”, “index”]

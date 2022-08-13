@@ -1,5 +1,7 @@
 export * from './type';
 export * from './compiler';
+export { genComponentId } from './utils';
+
 /**
  * TODO
  * 对于生成的 共享代码

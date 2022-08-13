@@ -1,8 +1,10 @@
+// 跟 api-design fesjs 等强相关共享代码
 import { readdirSync, lstatSync, readFileSync } from 'fs-extra';
 import { JSCode } from '@qlin/toycode-core';
 import { join } from 'path';
 import { camelCase } from 'lodash';
-import { Field, APISchema } from './type';
+import { Field, APISchema, ListPageConfig } from './type';
+import { PAGE_DIR } from './constants';
 
 export function isPaginationField(field: string) {
     return field === 'pagination' || field === 'page' || field === 'pager';
@@ -14,6 +16,32 @@ export function isReactiveSearch(params: Field[]) {
 
 export function genSFCFileName(fileName: string) {
     return camelCase(fileName);
+}
+
+export function hasModal(pageConfig: ListPageConfig) {
+    return pageConfig.relationModals?.length > 0;
+}
+
+export function genModalDir(pageConfig: ListPageConfig) {
+    if (!hasModal(pageConfig)) {
+        return '';
+    }
+    const fileName = genSFCFileName(pageConfig.meta.name);
+    return `${PAGE_DIR}/${fileName}`;
+}
+
+export function genPageDirAndFileName(pageConfig: ListPageConfig) {
+    const fileName = genSFCFileName(pageConfig.meta.name);
+    if (!hasModal(pageConfig)) {
+        return {
+            dir: PAGE_DIR,
+            fileName: `${fileName}.vue`,
+        };
+    }
+    return {
+        dir: `${PAGE_DIR}/${fileName}`,
+        fileName: 'index.vue',
+    };
 }
 
 export function getJsCode(rootDir: string, subDir = '', result: JSCode[] = []) {

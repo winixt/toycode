@@ -1,3 +1,10 @@
+import type { SetupCode, Component } from '@qlin/toycode-core';
+
+export interface CodeSnippet {
+    setup: SetupCode;
+    component: Component;
+}
+
 export interface Option {
     label: string;
     value: string;
@@ -60,5 +67,5 @@ export interface ListPageConfig {
     meta: PageMeta;
     commonDataField: string;
     apiSchema: APISchema;
-    relationModal?: RelationModal[];
+    relationModals?: RelationModal[];
 }

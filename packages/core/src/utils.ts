@@ -1,6 +1,7 @@
 import { join, extname } from 'path';
 import { format } from 'prettier';
 import { readFileSync } from 'fs-extra';
+import { nanoid } from 'nanoid';
 import { ImportSource, ImportType } from './type';
 
 export function getProjectPath(projectDir?: string) {
@@ -84,4 +85,8 @@ export const formatCode = (code: string, parser?: string) => {
         useTabs: false,
         printWidth: 160,
     });
+};
+
+export const genComponentId = () => {
+    return 'node_' + nanoid(10);
 };
