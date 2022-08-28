@@ -18,7 +18,7 @@ import {
     getDataField,
     genPageDirAndFileName,
 } from '../utils';
-import { PAGE_DIR, COMMON_DIR } from '../constants';
+import { COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
 import { handleSearchAction } from './searchAction';
 import { genRelationModals } from './modal';
@@ -161,17 +161,69 @@ function genTransform(apiSchema: APISchema) {
         })
         .filter(Boolean);
     if (code.length) {
-        return `transform(data) {
-            return data.map((item) => {
-                ${code.join(';\n')}
-                return item;
-            })
-        },`;
+        return {
+            importSources: [
+                {
+                    imported: 'getTargetLabel',
+                    type: ImportType.ImportSpecifier,
+                    source: '@/common/utils',
+                },
+            ],
+            content: `transform(data) {
+                return data.map((item) => {
+                    ${code.join(';\n')}
+                    return item;
+                })
+            },`,
+        };
     }
-    return '';
+    return {
+        importSources: [],
+        content: '',
+    };
 }
 
-function genUseTable(ctx: Context, pageConfig: ListPageConfig): string {
+// FEATURE 没想明白以后 formatParams 还有那些形式，以后遇到再对这块代码进行优化
+function genFormatParams(ctx: Context, apiSchema: APISchema) {
+    const targetField = apiSchema.params.find((item) => !!item.mapFields);
+    if (targetField) {
+        ctx.dependence.addPackage({
+            package: 'date-fns',
+            version: '2.29.2',
+        });
+
+        const format =
+            targetField.component.props.type === 'daterangetime'
+                ? 'yyyy-MM-dd HH:mm:ss'
+                : 'yyyy-MM-dd';
+        return {
+            importSources: [
+                {
+                    imported: 'format',
+                    type: ImportType.ImportSpecifier,
+                    source: 'date-fns',
+                },
+            ],
+            content: `
+            formatParams(params) {
+                const rawData = params.${targetField.name};
+                delete params.${targetField.name};
+                params.${targetField.mapFields[0]} = format(rawData[0], '${format}');
+                params.${targetField.mapFields[1]} = format(rawData[1], '${format}');
+    
+                return params;
+            }
+            `,
+        };
+    }
+    return {
+        importSources: [],
+        content: '',
+    };
+}
+
+function genUseTable(ctx: Context, pageConfig: ListPageConfig) {
+    const importSources: ImportSource[] = [];
     const apiSchema = pageConfig.apiSchema;
     const result: string[] = ['dataSource'];
     if (apiSchema.pagination) {
@@ -185,19 +237,43 @@ function genUseTable(ctx: Context, pageConfig: ListPageConfig): string {
     const dataField = getDataField(apiSchema);
     const pageField = getPageField(apiSchema);
 
-    return `
-    const { ${result.join(', ')} } = ${functionName}({
-        api: '${apiSchema.url}',
-        ${dataField ? `dataField: '${dataField}',` : ''}
-        ${pageField ? `pageField: '${pageField}',` : ''}
-        ${apiSchema.params.length ? `params: {...initSearchParams},` : ''}
-        ${genTransform(apiSchema)}
-    })
-    `;
+    if (apiSchema.pagination) {
+        importSources.push({
+            imported: 'FPagination',
+            type: ImportType.ImportSpecifier,
+            source: '@fesjs/fes-design',
+        });
+    }
+
+    importSources.push({
+        imported: functionName,
+        type: ImportType.ImportSpecifier,
+        source: '@/common/use/useTable',
+    });
+
+    const transformCode = genTransform(apiSchema);
+    const formatCode = genFormatParams(ctx, apiSchema);
+
+    return {
+        importSources: [
+            ...importSources,
+            ...transformCode.importSources,
+            ...formatCode.importSources,
+        ],
+        content: `
+        const { ${result.join(', ')} } = ${functionName}({
+            api: '${apiSchema.url}',
+            ${dataField ? `dataField: '${dataField}',` : ''}
+            ${pageField ? `pageField: '${pageField}',` : ''}
+            ${apiSchema.params.length ? `params: {...initSearchParams},` : ''}
+            ${formatCode.content}
+            ${transformCode.content}
+        })
+        `,
+    };
 }
 
 function genTableSetupCode(ctx: Context, pageConfig: ListPageConfig) {
-    const apiSchema = pageConfig.apiSchema;
     const importSources: ImportSource[] = [
         {
             imported: 'FTable',
@@ -211,36 +287,11 @@ function genTableSetupCode(ctx: Context, pageConfig: ListPageConfig) {
         },
     ];
 
-    if (apiSchema.resData.fields.find((field) => field.mappingId)) {
-        importSources.push({
-            imported: 'getTargetLabel',
-            type: ImportType.ImportSpecifier,
-            source: '@/common/utils',
-        });
-    }
-
-    if (apiSchema.pagination) {
-        importSources.push({
-            imported: 'FPagination',
-            type: ImportType.ImportSpecifier,
-            source: '@fesjs/fes-design',
-        });
-        importSources.push({
-            imported: 'useTable',
-            type: ImportType.ImportSpecifier,
-            source: '@/common/use/useTable',
-        });
-    } else {
-        importSources.push({
-            imported: 'useSimpleTable',
-            type: ImportType.ImportSpecifier,
-            source: '@/common/use/useTable',
-        });
-    }
+    const table = genUseTable(ctx, pageConfig);
 
     return {
-        importSources,
-        content: genUseTable(ctx, pageConfig),
+        importSources: [...importSources, ...table.importSources],
+        content: table.content,
     };
 }
 
@@ -399,8 +450,6 @@ export function genListPageSchema(
 
     const initSFC: SFCComponent = {
         componentName: 'SFCComponent',
-        dir: PAGE_DIR,
-        fileName: `${genSFCFileName(pageConfig.meta.name)}.vue`,
         ...genPageDirAndFileName(pageConfig),
         setupCodes: genSetupCode(ctx, pageConfig),
         children: [

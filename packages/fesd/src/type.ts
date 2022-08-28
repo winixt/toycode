@@ -49,6 +49,7 @@ export interface Field {
     checked: boolean;
     mappingId?: string;
     options?: Option[];
+    mapFields?: string[];
     component: RenderComponent;
 }
 export interface APISchema {

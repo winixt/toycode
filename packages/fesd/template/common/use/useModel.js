@@ -1,5 +1,5 @@
 import { ref, watch, computed } from 'vue';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 
 export const useNormalModel = (
     props,
