@@ -17,6 +17,5 @@ export function compileSchema(schema: Schema, config?: Config) {
         ...containers,
     ];
 
-    // TODO 代码写入
     return result;
 }

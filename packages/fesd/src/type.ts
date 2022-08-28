@@ -1,5 +1,10 @@
 import type { SetupCode, Component } from '@qlin/toycode-core';
 
+export interface Package {
+    package: string;
+    version: string;
+}
+
 export interface CodeSnippet {
     setup: SetupCode;
     component: Component;

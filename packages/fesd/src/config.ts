@@ -31,7 +31,7 @@ export const defaultDependencies = [
         version: '3.2.37',
     },
     {
-        package: 'lodash',
+        package: 'lodash-es',
         version: '4.17.21',
     },
     {
@@ -40,6 +40,6 @@ export const defaultDependencies = [
     },
     {
         package: '@fesjs/fes-design',
-        version: '0.5.13',
+        version: '0.6.3',
     },
 ];

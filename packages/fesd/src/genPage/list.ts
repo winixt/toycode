@@ -9,7 +9,7 @@ import {
 } from '@qlin/toycode-core';
 import { join } from 'path';
 import { APISchema, Field, PageMeta, ListPageConfig } from '../type';
-import { defaultPageCss, defaultDependencies } from '../config';
+import { defaultPageCss } from '../config';
 import {
     genSFCFileName,
     getJsCode,
@@ -24,6 +24,7 @@ import { handleSearchAction } from './searchAction';
 import { genRelationModals } from './modal';
 import { applyModal } from './useModal';
 import { handleComponentOptions } from './shared';
+import { Context } from '../context';
 
 function genSearchForm(params: Field[]) {
     const form: Component = {
@@ -69,8 +70,6 @@ function genSearchForm(params: Field[]) {
             props: {
                 label: item.title,
             },
-            // TODO
-            // 合并 xxxTimeStart xxxTimeEnd 到 date-picker Range
             children: [
                 {
                     componentName: comp.name,
@@ -97,7 +96,6 @@ function genTableComponent(columns: Field[]) {
         },
         children: [],
     };
-    // TODO table slots
     for (const item of columns) {
         tableComp.children.push({
             componentName: 'FTableColumn',
@@ -173,7 +171,8 @@ function genTransform(apiSchema: APISchema) {
     return '';
 }
 
-function genUseTable(apiSchema: APISchema, pageConfig: ListPageConfig): string {
+function genUseTable(ctx: Context, pageConfig: ListPageConfig): string {
+    const apiSchema = pageConfig.apiSchema;
     const result: string[] = ['dataSource'];
     if (apiSchema.pagination) {
         result.push('pagination', 'changePage', 'changePageSize');
@@ -197,7 +196,8 @@ function genUseTable(apiSchema: APISchema, pageConfig: ListPageConfig): string {
     `;
 }
 
-function genTableSetupCode(apiSchema: APISchema, pageConfig: ListPageConfig) {
+function genTableSetupCode(ctx: Context, pageConfig: ListPageConfig) {
+    const apiSchema = pageConfig.apiSchema;
     const importSources: ImportSource[] = [
         {
             imported: 'FTable',
@@ -240,7 +240,7 @@ function genTableSetupCode(apiSchema: APISchema, pageConfig: ListPageConfig) {
 
     return {
         importSources,
-        content: genUseTable(apiSchema, pageConfig),
+        content: genUseTable(ctx, pageConfig),
     };
 }
 
@@ -363,13 +363,13 @@ function genInitSearchParams(params: Field[]): SetupCode {
     };
 }
 
-function genSetupCode(pageConfig: ListPageConfig) {
+function genSetupCode(ctx: Context, pageConfig: ListPageConfig) {
     const queryApiSchema = pageConfig.apiSchema;
     const setupCodes: SetupCode[] = [
         genMappingCode(queryApiSchema),
         genAppendAllCode(queryApiSchema),
         genInitSearchParams(queryApiSchema.params),
-        genTableSetupCode(queryApiSchema, pageConfig),
+        genTableSetupCode(ctx, pageConfig),
     ];
 
     if (queryApiSchema.params.length) {
@@ -390,7 +390,10 @@ function formatResData(apiSchema: APISchema) {
     });
 }
 
-export function genListPageSchema(pageConfig: ListPageConfig): Schema {
+export function genListPageSchema(
+    ctx: Context,
+    pageConfig: ListPageConfig,
+): Schema {
     formatResData(pageConfig.apiSchema);
     formatPick(pageConfig.apiSchema, pageConfig.commonDataField);
 
@@ -399,7 +402,7 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         dir: PAGE_DIR,
         fileName: `${genSFCFileName(pageConfig.meta.name)}.vue`,
         ...genPageDirAndFileName(pageConfig),
-        setupCodes: genSetupCode(pageConfig),
+        setupCodes: genSetupCode(ctx, pageConfig),
         children: [
             {
                 componentName: 'div',
@@ -421,6 +424,6 @@ export function genListPageSchema(pageConfig: ListPageConfig): Schema {
         componentsTree: [sfc, ...genRelationModals(pageConfig)],
         css: defaultPageCss,
         jsCodes,
-        dependencies: defaultDependencies,
+        dependencies: ctx.dependence.getPackages(),
     };
 }

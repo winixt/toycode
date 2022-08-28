@@ -5,6 +5,7 @@ import { ref, unref, reactive } from 'vue';
  * @param {
  *  api: string;
  *  params: object | reactiveObject,
+ *  formatParams: function 格式化请求参数
  *  transform: function 格式化响应内容,
  *  dataField: string;
  * } options
@@ -17,11 +18,18 @@ export function useSimpleTable(options) {
     };
     const dataSource = ref([]);
 
-    const queryDataSource = (params) => {
-        request(options.api, {
+    const getParams = (params) => {
+        const newParams = {
             ...options.params,
             ...unref(params),
-        }).then((res) => {
+        };
+        return options.formatParams
+            ? options.formatParams(newParams)
+            : newParams;
+    };
+
+    const queryDataSource = (params) => {
+        request(options.api, getParams(params)).then((res) => {
             const result = options.dataField ? res[options.dataField] : res;
             dataSource.value = options.transform
                 ? options.transform(result)
@@ -44,6 +52,7 @@ export function useSimpleTable(options) {
  * @param {
  *  api: string;
  *  params: object | reactiveObject,
+ *  formatParams: function 格式化请求参数
  *  transform: function 格式化响应内容,
  *  dataField: string | 'cycle'
  *  pageField: string | 'page'
@@ -66,14 +75,21 @@ export function useTable(options) {
         totalCount: 0,
     });
 
+    const innerFormatParams = (params) => {
+        if (params) {
+            return options.formatParams ? options.formatParams(params) : params;
+        }
+        return params;
+    };
+
     let preParams = {
-        ...options.params,
+        ...innerFormatParams(options.params),
     };
     const getParams = (params) => {
         if (params) {
             preParams = {
                 ...preParams,
-                ...unref(params),
+                ...unref(innerFormatParams(params)),
             };
         }
         return {
