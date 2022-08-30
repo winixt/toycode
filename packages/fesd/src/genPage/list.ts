@@ -97,13 +97,15 @@ function genTableComponent(columns: Field[]) {
         children: [],
     };
     for (const item of columns) {
-        tableComp.children.push({
-            componentName: 'FTableColumn',
-            props: {
-                prop: item.alias || item.name,
-                label: item.title,
-            },
-        });
+        if (item.checked) {
+            tableComp.children.push({
+                componentName: 'FTableColumn',
+                props: {
+                    prop: item.alias || item.name,
+                    label: item.title,
+                },
+            });
+        }
     }
     return tableComp;
 }
@@ -131,6 +133,9 @@ function genPaginationComp() {
         events: {
             change: 'changePage',
             pageSizeChange: 'changePageSize',
+        },
+        directives: {
+            'v-if': 'pagination.totalCount > 0',
         },
     };
 
@@ -206,10 +211,12 @@ function genFormatParams(ctx: Context, apiSchema: APISchema) {
             ],
             content: `
             formatParams(params) {
-                const rawData = params.${targetField.name};
-                delete params.${targetField.name};
-                params.${targetField.mapFields[0]} = format(rawData[0], '${format}');
-                params.${targetField.mapFields[1]} = format(rawData[1], '${format}');
+                if (params.${targetField.name}) {
+                    const rawData = params.${targetField.name};
+                    delete params.${targetField.name};
+                    params.${targetField.mapFields[0]} = format(rawData[0], '${format}');
+                    params.${targetField.mapFields[1]} = format(rawData[1], '${format}');
+                }
     
                 return params;
             }
