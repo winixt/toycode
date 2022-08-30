@@ -7,6 +7,7 @@ export function genDependencies(
     dependentResources: DependentResource[],
     config: Config = {},
 ): PreChangeFile {
+    console.log(config);
     const pkgPath = join(getProjectPath(config.projectDir), 'package.json');
     const pkg = readJSONSync(pkgPath);
 
