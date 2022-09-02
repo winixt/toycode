@@ -1,5 +1,5 @@
 import { SFCComponent, ImportType, ExtensionType } from '@qlin/toycode-core';
-import { ListPageConfig, RelationModal } from '../type';
+import { ModalConfig, RelationModal } from '../type';
 import { insertActionInSearchForm, insertActionInTable } from './shared';
 
 export function applyAddModal(sfc: SFCComponent) {
@@ -290,7 +290,7 @@ export function applySimpleUpdateModal(
     return sfc;
 }
 
-export function applyModal(pageConfig: ListPageConfig, sfc: SFCComponent) {
+export function applyModal(pageConfig: ModalConfig, sfc: SFCComponent) {
     pageConfig.relationModals.forEach((modal) => {
         if (modal.type === 'add') {
             applyAddModal(sfc);

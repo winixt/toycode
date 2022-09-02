@@ -105,7 +105,7 @@ export function useTable(options) {
         request(options.api, getParams(params)).then((res) => {
             const result = res[options.dataField];
             dataSource.value = options.transform
-                ? options.transform(result)
+                ? options.transform(result, res)
                 : result;
             pagination.totalCount = res[options.pageField].totalCount;
         });

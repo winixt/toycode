@@ -3,7 +3,7 @@ import { readdirSync, lstatSync, readFileSync } from 'fs-extra';
 import { JSCode } from '@qlin/toycode-core';
 import { join } from 'path';
 import { camelCase } from 'lodash';
-import { Field, APISchema, ListPageConfig } from './type';
+import { Field, APISchema, ModalConfig } from './type';
 import { PAGE_DIR } from './constants';
 
 export function isPaginationField(field: string) {
@@ -18,11 +18,11 @@ export function genSFCFileName(fileName: string) {
     return camelCase(fileName);
 }
 
-export function hasModal(pageConfig: ListPageConfig) {
+export function hasModal(pageConfig: ModalConfig) {
     return pageConfig.relationModals?.length > 0;
 }
 
-export function genModalDir(pageConfig: ListPageConfig) {
+export function genModalDir(pageConfig: ModalConfig) {
     if (!hasModal(pageConfig)) {
         return '';
     }
@@ -30,7 +30,7 @@ export function genModalDir(pageConfig: ListPageConfig) {
     return `${PAGE_DIR}/${fileName}`;
 }
 
-export function genPageDirAndFileName(pageConfig: ListPageConfig) {
+export function genPageDirAndFileName(pageConfig: ModalConfig) {
     const fileName = genSFCFileName(pageConfig.meta.name);
     if (!hasModal(pageConfig)) {
         return {
@@ -61,18 +61,6 @@ export function getJsCode(rootDir: string, subDir = '', result: JSCode[] = []) {
         }
     }
     return result;
-}
-
-export function formatPick(apiSchema: APISchema, commonDataField: string) {
-    if (
-        apiSchema.pagination &&
-        apiSchema.pagination.pick[0] === commonDataField
-    ) {
-        apiSchema.pagination.pick.shift();
-    }
-    if (apiSchema.resData && apiSchema.resData.pick[0] === commonDataField) {
-        apiSchema.resData.pick.shift();
-    }
 }
 
 // TODO pick 支持数组

@@ -58,6 +58,7 @@ export interface APISchema {
     headers: Record<string, string>;
     params: Field[];
     resData: {
+        type: string;
         pick: string[];
         fields: Field[];
     };
@@ -67,32 +68,28 @@ export interface APISchema {
     };
 }
 
-export interface PageMeta {
+export interface ModalMeta {
     name: string;
-    title: string;
+    type: string;
+    title?: string;
+    path?: string;
 }
 
 /**
  * modify 处理新增和修改相同接口的场景
  * simpleUpdate 处理简单修改的场景，例如：设置为有效/无效
- *
- * TODO
- * 实现 modify 的编译
  */
 export interface RelationModal {
     title: string; // 当 type === 'modify, title 动态生成
-    type: 'add' | 'delete' | 'update' | 'simpleUpdate' | 'modify';
+    type: 'add' | 'delete' | 'update' | 'simpleUpdate' | 'export' | 'view';
     meta?: Record<string, string>; // 存放一些附加信息
-    apiSchema: APISchema;
+    apiSchema?: APISchema;
+    viewProps?: [];
+    viewExtraData?: APISchema;
 }
 
-/**
- * TODO
- * 优化 commonDataField 字段，做为项目全局配置
- */
-export interface ListPageConfig {
-    meta: PageMeta;
-    commonDataField: string;
+export interface ModalConfig {
+    meta: ModalMeta;
     apiSchema: APISchema;
     relationModals?: RelationModal[];
 }

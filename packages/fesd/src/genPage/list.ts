@@ -8,12 +8,11 @@ import {
     SetupCode,
 } from '@qlin/toycode-core';
 import { join } from 'path';
-import { APISchema, Field, PageMeta, ListPageConfig } from '../type';
+import { APISchema, Field, ModalMeta, ModalConfig } from '../type';
 import { defaultPageCss } from '../config';
 import {
     genSFCFileName,
     getJsCode,
-    formatPick,
     getPageField,
     getDataField,
     genPageDirAndFileName,
@@ -229,7 +228,7 @@ function genFormatParams(ctx: Context, apiSchema: APISchema) {
     };
 }
 
-function genUseTable(ctx: Context, pageConfig: ListPageConfig) {
+function genUseTable(ctx: Context, pageConfig: ModalConfig) {
     const importSources: ImportSource[] = [];
     const apiSchema = pageConfig.apiSchema;
     const result: string[] = ['dataSource'];
@@ -280,7 +279,7 @@ function genUseTable(ctx: Context, pageConfig: ListPageConfig) {
     };
 }
 
-function genTableSetupCode(ctx: Context, pageConfig: ListPageConfig) {
+function genTableSetupCode(ctx: Context, pageConfig: ModalConfig) {
     const importSources: ImportSource[] = [
         {
             imported: 'FTable',
@@ -302,7 +301,7 @@ function genTableSetupCode(ctx: Context, pageConfig: ListPageConfig) {
     };
 }
 
-function genPageMeta(meta: PageMeta) {
+function genModalMeta(meta: ModalMeta) {
     const importSources: ImportSource[] = [
         {
             imported: 'defineRouteMeta',
@@ -421,7 +420,7 @@ function genInitSearchParams(params: Field[]): SetupCode {
     };
 }
 
-function genSetupCode(ctx: Context, pageConfig: ListPageConfig) {
+function genSetupCode(ctx: Context, pageConfig: ModalConfig) {
     const queryApiSchema = pageConfig.apiSchema;
     const setupCodes: SetupCode[] = [
         genMappingCode(queryApiSchema),
@@ -434,7 +433,7 @@ function genSetupCode(ctx: Context, pageConfig: ListPageConfig) {
         setupCodes.push(genSearchFormSetupCode(queryApiSchema.params));
     }
 
-    setupCodes.push(genPageMeta(pageConfig.meta));
+    setupCodes.push(genModalMeta(pageConfig.meta));
 
     return setupCodes;
 }
@@ -450,10 +449,9 @@ function formatResData(apiSchema: APISchema) {
 
 export function genListPageSchema(
     ctx: Context,
-    pageConfig: ListPageConfig,
+    pageConfig: ModalConfig,
 ): Schema {
     formatResData(pageConfig.apiSchema);
-    formatPick(pageConfig.apiSchema, pageConfig.commonDataField);
 
     const initSFC: SFCComponent = {
         componentName: 'SFCComponent',
