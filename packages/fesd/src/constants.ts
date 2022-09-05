@@ -5,3 +5,5 @@ export const COMMON_CONSTANTS_PATH = 'common/constants.js';
 export const COMMON_UTILS_DIR = 'common/utils';
 export const PAGE_DIR = 'pages';
 export const COMPONENTS_DIR = 'components';
+
+export const ROW_DATA_PROP_NAME = 'rowData';

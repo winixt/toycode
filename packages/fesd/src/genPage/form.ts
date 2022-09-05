@@ -7,7 +7,11 @@ import {
 import { isEmpty } from 'lodash';
 import { CodeSnippet, APISchema, Field, RuleTypeEnum } from '../type';
 import { componentMap } from '../componentMap';
-import { genLabelWidth, handleComponentOptions } from './shared';
+import {
+    genLabelWidth,
+    handleComponentOptions,
+    genImportedMappingCode,
+} from './shared';
 import { rulesHandler } from './rules';
 
 function genImportResources(apiSchema: APISchema): ImportSource[] {
@@ -45,15 +49,7 @@ function genImportResources(apiSchema: APISchema): ImportSource[] {
         }
     });
 
-    apiSchema.params.forEach((field) => {
-        if (field.mappingId) {
-            importSources.push({
-                imported: field.mappingId,
-                type: ImportType.ImportSpecifier,
-                source: '@/common/constants',
-            });
-        }
-    });
+    importSources.push(...genImportedMappingCode(apiSchema.params));
 
     return importSources;
 }

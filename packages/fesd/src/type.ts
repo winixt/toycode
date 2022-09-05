@@ -15,6 +15,11 @@ export interface Option {
     value: string;
 }
 
+export interface TableSetupOption {
+    hasRefresh?: boolean;
+    isInit?: boolean;
+}
+
 export enum RuleTypeEnum {
     required = 'required',
     integer = 'integer',
@@ -84,7 +89,7 @@ export interface RelationModal {
     type: 'add' | 'delete' | 'update' | 'simpleUpdate' | 'export' | 'view';
     meta?: Record<string, string>; // 存放一些附加信息
     apiSchema?: APISchema;
-    viewProps?: [];
+    viewProps?: Field[];
     viewExtraData?: APISchema;
 }
 

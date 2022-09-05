@@ -3,7 +3,7 @@ import { isReactiveSearch } from '../utils';
 import { SFCComponent, ImportType } from '@qlin/toycode-core';
 import { insertActionInSearchForm } from './shared';
 
-export function handleSearchAction(pageConfig: BlockSchema, sfc: SFCComponent) {
+export function applySearchAction(pageConfig: BlockSchema, sfc: SFCComponent) {
     const params = pageConfig.apiSchema.params;
     if (!params?.length) return sfc;
 

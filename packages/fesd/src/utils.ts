@@ -22,6 +22,11 @@ export function hasModal(pageConfig: BlockSchema) {
     return pageConfig.relationModals?.length > 0;
 }
 
+export function genFileNameByPath(apiPath: string) {
+    const splitResult = apiPath.split('/').slice(-2).join('_');
+    return camelCase(splitResult);
+}
+
 export function genModalDir(blockConfig: BlockSchema) {
     if (!hasModal(blockConfig)) {
         return '';

@@ -1,6 +1,11 @@
 // 跟具体库和平台无关的共享代码
 import { isEmpty } from 'lodash';
-import { SetupCode, Component } from '@qlin/toycode-core';
+import {
+    SetupCode,
+    Component,
+    ImportType,
+    ImportSource,
+} from '@qlin/toycode-core';
 import { Field, CodeSnippet, Option } from '../type';
 
 export function handleComponentOptions(
@@ -152,4 +157,28 @@ export function insertActionInTable(
             children: [actionComponent],
         });
     }
+}
+
+export function genImportedMappingCode(fields: Field[]) {
+    const importSources: ImportSource[] = [];
+    fields.forEach((item) => {
+        if (item.mappingId) {
+            importSources.push({
+                imported: item.mappingId,
+                type: ImportType.ImportSpecifier,
+                source: '@/common/constants',
+            });
+        }
+    });
+
+    return importSources;
+}
+
+export function formatResData(fields: Field[]) {
+    return fields.map((item) => {
+        return {
+            alias: item.mappingId ? `${item.name}Text` : null,
+            ...item,
+        };
+    });
 }

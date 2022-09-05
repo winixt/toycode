@@ -5,21 +5,27 @@ import {
     genComponentId,
     Component,
 } from '@qlin/toycode-core';
+import { isEmpty } from 'lodash';
 import { RelationModal, BlockSchema, CodeSnippet } from '../type';
 import { hasModal, genModalDir } from '../utils';
+import { ROW_DATA_PROP_NAME } from '../constants';
 import { getDefaultValue, mergeCodeSnippets } from './shared';
 import { genFormCodeSnippet } from './form';
+import { genDescriptionsSnippet } from './descriptions';
+import { Context } from '../context';
+
+import { genViewTableComponent } from './table';
 
 const COMMON_MODAL_IMPORT_SOURCES = [
     {
         imported: 'FModal',
         type: ImportType.ImportSpecifier,
-        source: '@/common/constants',
+        source: '@fesjs/fes-design',
     },
     {
         imported: 'FMessage',
         type: ImportType.ImportSpecifier,
-        source: '@/common/constants',
+        source: '@fesjs/fes-design',
     },
     {
         imported: 'useModal',
@@ -92,10 +98,8 @@ export function genAddModal(
         addModal.apiSchema,
         modalSnippet.component.id,
     );
-    const { children, setupCodes } = mergeCodeSnippets([
-        modalSnippet,
-        formSnippet,
-    ]);
+    const codeSnippets: CodeSnippet[] = [modalSnippet, formSnippet];
+    const { children, setupCodes } = mergeCodeSnippets(codeSnippets);
     return {
         componentName: 'SFCComponent',
         dir: modalDir,
@@ -134,43 +138,63 @@ function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
 }
 
 export function genUpdateModal(
+    ctx: Context,
     modal: RelationModal,
     modalDir: string,
-): SFCComponent {
+): SFCComponent[] {
     const modalSnippet = genUpdateModalCodeSnippet(modal);
     const formSnippet = genFormCodeSnippet(
         modal.apiSchema,
         modalSnippet.component.id,
     );
+    const codeSnippets: CodeSnippet[] = [modalSnippet, formSnippet];
+    if (isEmpty(modal.viewProps)) {
+        const descriptionsSnippet = genDescriptionsSnippet(
+            modal.viewProps,
+            modalSnippet.component.id,
+        );
+        codeSnippets.push(descriptionsSnippet);
+    }
     const { children, setupCodes } = mergeCodeSnippets([
         modalSnippet,
         formSnippet,
     ]);
-    return {
-        componentName: 'SFCComponent',
-        dir: modalDir,
-        fileName: 'updateModal.vue',
-        children,
-        setupCodes: [...setupCodes],
-        propsDefinition: [
-            {
-                name: 'visible',
-                propType: 'Boolean',
-            },
-            {
-                name: 'data',
-                propType: 'Object',
-            },
-            {
-                name: 'onSuccess',
-                propType: 'Function',
-            },
-        ],
-        emitsDefinition: ['update:visible'],
-    };
+    const result: SFCComponent[] = [
+        {
+            componentName: 'SFCComponent',
+            dir: modalDir,
+            fileName: 'updateModal.vue',
+            children,
+            setupCodes: [...setupCodes],
+            propsDefinition: [
+                {
+                    name: 'visible',
+                    propType: 'Boolean',
+                },
+                {
+                    name: ROW_DATA_PROP_NAME,
+                    propType: 'Object',
+                },
+                {
+                    name: 'onSuccess',
+                    propType: 'Function',
+                },
+            ],
+            emitsDefinition: ['update:visible'],
+        },
+    ];
+
+    if (modal.viewExtraData) {
+        result.push(genViewTableComponent(ctx, modal.viewExtraData, modalDir));
+    }
+
+    return result;
 }
 
-export function genRelationModals(pageConfig: BlockSchema): SFCComponent[] {
+export function genRelationModals(
+    ctx: Context,
+    pageConfig: BlockSchema,
+): SFCComponent[] {
     const modals: SFCComponent[] = [];
     if (hasModal(pageConfig)) {
         const modalDir = genModalDir(pageConfig);
@@ -179,7 +203,7 @@ export function genRelationModals(pageConfig: BlockSchema): SFCComponent[] {
             if (modal.type === 'add') {
                 modals.push(genAddModal(modal, modalDir));
             } else if (modal.type === 'update') {
-                modals.push(genUpdateModal(modal, modalDir));
+                modals.push(...genUpdateModal(ctx, modal, modalDir));
             }
         });
     }
