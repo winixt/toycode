@@ -77,7 +77,7 @@ function genAddModalCodeSnippet(modal: RelationModal): CodeSnippet {
             const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, initData, onConfirm });
             `,
         },
-        component: getModalComponent(modal.title || '新增'),
+        component: getModalComponent(modal.meta.title || '新增'),
     };
 }
 
@@ -106,7 +106,7 @@ function genViewModalCodeSnippet(modal: RelationModal): CodeSnippet {
             id: genComponentId(),
             componentName: 'FModal',
             props: {
-                title: modal.title || '查看',
+                title: modal.meta.title || '查看',
                 maskClosable: false,
                 top: 54,
             },
@@ -191,7 +191,7 @@ function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
             const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, computed(() => props.${ROW_DATA_PROP_NAME}), onConfirm });
             `,
         },
-        component: getModalComponent(modal.title || '编辑'),
+        component: getModalComponent(modal.meta.title || '编辑'),
     };
 }
 

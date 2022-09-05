@@ -75,7 +75,7 @@ function genFormatParams(ctx: Context, apiSchema: APISchema) {
                 }
     
                 return params;
-            }
+            },
             `,
         };
     }
@@ -141,7 +141,7 @@ export function genTableSetupCode(
         content: `
         const { ${result.join(', ')} } = ${functionName}({
             api: '${apiSchema.url}',
-            ${options.isInit === false ? 'isInit: false' : ''},
+            ${options.isInit === false ? 'isInit: false,' : ''}
             ${dataField ? `dataField: '${dataField}',` : ''}
             ${pageField ? `pageField: '${pageField}',` : ''}
             ${apiSchema.params.length ? `params: {...initSearchParams},` : ''}
