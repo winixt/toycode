@@ -14,6 +14,10 @@ export function isReactiveSearch(params: Field[]) {
     return params.length <= 3;
 }
 
+export function genComponentName(fileName: string) {
+    return fileName.replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
+}
+
 export function genSFCFileName(fileName: string) {
     return camelCase(fileName);
 }

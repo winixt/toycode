@@ -4,10 +4,16 @@ import {
     ImportType,
     genComponentId,
     Component,
+    ExtensionType,
 } from '@qlin/toycode-core';
 import { isEmpty } from 'lodash';
-import { RelationModal, BlockSchema, CodeSnippet } from '../type';
-import { hasModal, genModalDir } from '../utils';
+import { RelationModal, BlockSchema, APISchema, CodeSnippet } from '../type';
+import {
+    hasModal,
+    genModalDir,
+    genFileNameByPath,
+    genComponentName,
+} from '../utils';
 import { ROW_DATA_PROP_NAME } from '../constants';
 import { getDefaultValue, mergeCodeSnippets } from './shared';
 import { genFormCodeSnippet } from './form';
@@ -75,6 +81,58 @@ function genAddModalCodeSnippet(modal: RelationModal): CodeSnippet {
     };
 }
 
+function genViewModalCodeSnippet(modal: RelationModal): CodeSnippet {
+    return {
+        setup: {
+            importSources: [
+                {
+                    imported: 'FModal',
+                    type: ImportType.ImportSpecifier,
+                    source: '@fesjs/fes-design',
+                },
+                {
+                    imported: 'useNormalModel',
+                    type: ImportType.ImportSpecifier,
+                    source: '@/common/use/useModel',
+                },
+            ],
+            content: `
+            const [innerVisible, updateVisible]= useNormalModel(props, emit, {
+                prop: 'visible',
+            });
+            `,
+        },
+        component: {
+            id: genComponentId(),
+            componentName: 'FModal',
+            props: {
+                title: modal.title || '查看',
+                maskClosable: false,
+                top: 54,
+            },
+            directives: {
+                'v-model:show': 'innerVisible',
+            },
+            children: [],
+            slots: [
+                {
+                    name: 'footer',
+                    component: {
+                        componentName: 'FButton',
+                        props: {
+                            type: 'primary',
+                        },
+                        events: {
+                            click: 'updateVisible(false)',
+                        },
+                        children: ['关闭'],
+                    },
+                },
+            ],
+        },
+    };
+}
+
 function genInitData(addModal: RelationModal): SetupCode {
     const fieldDefaultValue = addModal.apiSchema.params.map((item) => {
         return `${item.name}: ${getDefaultValue(item)}`;
@@ -130,10 +188,38 @@ function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
                 FMessage.success('新增成功');
                 props.onSuccess(data, res);
             };
-            const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, computed(() => props.data), onConfirm });
+            const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, computed(() => props.${ROW_DATA_PROP_NAME}), onConfirm });
             `,
         },
         component: getModalComponent(modal.title || '编辑'),
+    };
+}
+
+function genViewTableSnippet(apiSchema: APISchema, parentId: string) {
+    const fileName = genFileNameByPath(apiSchema.url);
+    const componentName = genComponentName(fileName);
+    return {
+        setup: {
+            importSources: [
+                {
+                    imported: componentName,
+                    type: ImportType.ImportDefaultSpecifier,
+                    source: `${fileName}.vue`,
+                },
+            ],
+            content: '',
+        },
+        component: {
+            parentId,
+            componentName,
+            props: {
+                [ROW_DATA_PROP_NAME]: {
+                    type: ExtensionType.JSExpression,
+                    value: ROW_DATA_PROP_NAME,
+                },
+                top: 54,
+            },
+        },
     };
 }
 
@@ -148,17 +234,17 @@ export function genUpdateModal(
         modalSnippet.component.id,
     );
     const codeSnippets: CodeSnippet[] = [modalSnippet, formSnippet];
-    if (isEmpty(modal.viewProps)) {
-        const descriptionsSnippet = genDescriptionsSnippet(
-            modal.viewProps,
-            modalSnippet.component.id,
+    if (!isEmpty(modal.viewProps)) {
+        codeSnippets.push(
+            genDescriptionsSnippet(modal.viewProps, modalSnippet.component.id),
         );
-        codeSnippets.push(descriptionsSnippet);
     }
-    const { children, setupCodes } = mergeCodeSnippets([
-        modalSnippet,
-        formSnippet,
-    ]);
+    if (!isEmpty(modal.viewExtraData)) {
+        codeSnippets.push(
+            genViewTableSnippet(modal.viewExtraData, modalSnippet.component.id),
+        );
+    }
+    const { children, setupCodes } = mergeCodeSnippets(codeSnippets);
     const result: SFCComponent[] = [
         {
             componentName: 'SFCComponent',
@@ -191,6 +277,52 @@ export function genUpdateModal(
     return result;
 }
 
+export function genViewModal(
+    ctx: Context,
+    modal: RelationModal,
+    modalDir: string,
+): SFCComponent[] {
+    const modalSnippet = genViewModalCodeSnippet(modal);
+    const codeSnippets: CodeSnippet[] = [modalSnippet];
+    if (!isEmpty(modal.viewProps)) {
+        codeSnippets.push(
+            genDescriptionsSnippet(modal.viewProps, modalSnippet.component.id),
+        );
+    }
+    if (!isEmpty(modal.viewExtraData)) {
+        codeSnippets.push(
+            genViewTableSnippet(modal.viewExtraData, modalSnippet.component.id),
+        );
+    }
+    const { children, setupCodes } = mergeCodeSnippets(codeSnippets);
+    const result: SFCComponent[] = [
+        {
+            componentName: 'SFCComponent',
+            dir: modalDir,
+            fileName: 'viewModal.vue',
+            children,
+            setupCodes: [...setupCodes],
+            propsDefinition: [
+                {
+                    name: 'visible',
+                    propType: 'Boolean',
+                },
+                {
+                    name: ROW_DATA_PROP_NAME,
+                    propType: 'Object',
+                },
+            ],
+            emitsDefinition: ['update:visible'],
+        },
+    ];
+
+    if (modal.viewExtraData) {
+        result.push(genViewTableComponent(ctx, modal.viewExtraData, modalDir));
+    }
+
+    return result;
+}
+
 export function genRelationModals(
     ctx: Context,
     pageConfig: BlockSchema,
@@ -204,6 +336,8 @@ export function genRelationModals(
                 modals.push(genAddModal(modal, modalDir));
             } else if (modal.type === 'update') {
                 modals.push(...genUpdateModal(ctx, modal, modalDir));
+            } else if (modal.type === 'view') {
+                modals.push(...genViewModal(ctx, modal, modalDir));
             }
         });
     }

@@ -62,17 +62,17 @@ export function useAddModal() {
     };
 }
 
-export function useUpdateModal() {
+export function useCommonModal() {
     const visible = ref(false);
-    const data = ref();
+    const rowData = ref();
     const show = (currentData) => {
         visible.value = true;
-        data.value = currentData;
+        rowData.value = currentData;
     };
 
     return {
         visible,
-        data,
+        rowData,
         show,
     };
 }

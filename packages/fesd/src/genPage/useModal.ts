@@ -1,6 +1,7 @@
 import { SFCComponent, ImportType, ExtensionType } from '@qlin/toycode-core';
 import { BlockSchema, RelationModal } from '../type';
 import { insertActionInSearchForm, insertActionInTable } from './shared';
+import { ROW_DATA_PROP_NAME } from '../constants';
 
 export function applyAddModal(sfc: SFCComponent) {
     sfc.setupCodes.push({
@@ -86,7 +87,7 @@ export function applyUpdateModal(sfc: SFCComponent) {
                 source: 'vue',
             },
             {
-                imported: 'useUpdateModal',
+                imported: 'useCommonModal',
                 type: ImportType.ImportSpecifier,
                 source: '@/common/use/useModal',
             },
@@ -97,12 +98,16 @@ export function applyUpdateModal(sfc: SFCComponent) {
             },
         ],
         content: `
-        const updateModal = useUpdateModal();
+        const updateModal = useCommonModal();
         `,
     });
     sfc.children.push({
         componentName: 'UpdateModal',
         props: {
+            [ROW_DATA_PROP_NAME]: {
+                value: 'updateModal.rowData',
+                type: ExtensionType.JSExpression,
+            },
             onSuccess: {
                 value: 'refresh',
                 type: ExtensionType.JSExpression,
@@ -129,6 +134,57 @@ export function applyUpdateModal(sfc: SFCComponent) {
     return sfc;
 }
 
+export function applyViewModal(modal: RelationModal, sfc: SFCComponent) {
+    sfc.setupCodes.push({
+        importSources: [
+            {
+                imported: 'ViewModal',
+                type: ImportType.ImportDefaultSpecifier,
+                source: './components/viewModal.vue',
+            },
+            {
+                imported: 'useCommonModal',
+                type: ImportType.ImportSpecifier,
+                source: '@/common/use/useModal',
+            },
+            {
+                imported: 'FButton',
+                type: ImportType.ImportSpecifier,
+                source: '@fesjs/fes-design',
+            },
+        ],
+        content: `
+        const viewModal = useCommonModal();
+        `,
+    });
+    sfc.children.push({
+        componentName: 'ViewModal',
+        props: {
+            [ROW_DATA_PROP_NAME]: {
+                value: 'viewModal.rowData',
+                type: ExtensionType.JSExpression,
+            },
+        },
+        directives: {
+            'v-model:visible': 'viewModal.visible',
+        },
+    });
+
+    const actionComponent = {
+        componentName: 'FButton',
+        props: {
+            type: 'link',
+        },
+        events: {
+            click: 'viewModal.show(row)',
+        },
+        children: ['查看'],
+    };
+
+    insertActionInTable(sfc.children, actionComponent);
+
+    return sfc;
+}
 export function applyDeleteModal(modal: RelationModal, sfc: SFCComponent) {
     sfc.setupCodes.push({
         importSources: [
@@ -300,6 +356,8 @@ export function applyModal(pageConfig: BlockSchema, sfc: SFCComponent) {
             applyDeleteModal(modal, sfc);
         } else if (modal.type === 'simpleUpdate') {
             applySimpleUpdateModal(modal, sfc);
+        } else if (modal.type === 'view') {
+            applyViewModal(modal, sfc);
         }
     });
 
