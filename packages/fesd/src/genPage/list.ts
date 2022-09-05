@@ -8,14 +8,15 @@ import {
     SetupCode,
 } from '@qlin/toycode-core';
 import { join } from 'path';
-import { APISchema, Field, ModalMeta, ModalConfig } from '../type';
+import { APISchema, Field, BlockMeta, BlockSchema } from '../type';
 import { defaultPageCss } from '../config';
 import {
     genSFCFileName,
     getJsCode,
     getPageField,
     getDataField,
-    genPageDirAndFileName,
+    genDirAndFileName,
+    isGenComponent,
 } from '../utils';
 import { COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
@@ -228,7 +229,7 @@ function genFormatParams(ctx: Context, apiSchema: APISchema) {
     };
 }
 
-function genUseTable(ctx: Context, pageConfig: ModalConfig) {
+function genUseTable(ctx: Context, pageConfig: BlockSchema) {
     const importSources: ImportSource[] = [];
     const apiSchema = pageConfig.apiSchema;
     const result: string[] = ['dataSource'];
@@ -279,7 +280,7 @@ function genUseTable(ctx: Context, pageConfig: ModalConfig) {
     };
 }
 
-function genTableSetupCode(ctx: Context, pageConfig: ModalConfig) {
+function genTableSetupCode(ctx: Context, pageConfig: BlockSchema) {
     const importSources: ImportSource[] = [
         {
             imported: 'FTable',
@@ -301,24 +302,26 @@ function genTableSetupCode(ctx: Context, pageConfig: ModalConfig) {
     };
 }
 
-function genModalMeta(meta: ModalMeta) {
-    const importSources: ImportSource[] = [
-        {
-            imported: 'defineRouteMeta',
-            type: ImportType.ImportSpecifier,
-            source: '@fesjs/fes',
-        },
-    ];
+function genBlockMeta(meta: BlockMeta) {
+    if (!isGenComponent(meta)) {
+        const importSources: ImportSource[] = [
+            {
+                imported: 'defineRouteMeta',
+                type: ImportType.ImportSpecifier,
+                source: '@fesjs/fes',
+            },
+        ];
 
-    return {
-        importSources,
-        content: `
-        defineRouteMeta({
-            name: '${genSFCFileName(meta.name)}',
-            title: '${meta.title}',
-        });
-        `,
-    };
+        return {
+            importSources,
+            content: `
+            defineRouteMeta({
+                name: '${genSFCFileName(meta.name)}',
+                ${meta.title ? `title: '${meta.title}'` : ''},
+            });
+            `,
+        };
+    }
 }
 
 function genSearchFormSetupCode(params: Field[]): SetupCode {
@@ -420,7 +423,7 @@ function genInitSearchParams(params: Field[]): SetupCode {
     };
 }
 
-function genSetupCode(ctx: Context, pageConfig: ModalConfig) {
+function genSetupCode(ctx: Context, pageConfig: BlockSchema) {
     const queryApiSchema = pageConfig.apiSchema;
     const setupCodes: SetupCode[] = [
         genMappingCode(queryApiSchema),
@@ -433,9 +436,9 @@ function genSetupCode(ctx: Context, pageConfig: ModalConfig) {
         setupCodes.push(genSearchFormSetupCode(queryApiSchema.params));
     }
 
-    setupCodes.push(genModalMeta(pageConfig.meta));
+    setupCodes.push(genBlockMeta(pageConfig.meta));
 
-    return setupCodes;
+    return setupCodes.filter(Boolean);
 }
 
 function formatResData(apiSchema: APISchema) {
@@ -447,15 +450,12 @@ function formatResData(apiSchema: APISchema) {
     });
 }
 
-export function genListPageSchema(
-    ctx: Context,
-    pageConfig: ModalConfig,
-): Schema {
+export function genBlockSchema(ctx: Context, pageConfig: BlockSchema): Schema {
     formatResData(pageConfig.apiSchema);
 
     const initSFC: SFCComponent = {
         componentName: 'SFCComponent',
-        ...genPageDirAndFileName(pageConfig),
+        ...genDirAndFileName(pageConfig),
         setupCodes: genSetupCode(ctx, pageConfig),
         children: [
             {

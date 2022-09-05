@@ -68,7 +68,7 @@ export interface APISchema {
     };
 }
 
-export interface ModalMeta {
+export interface BlockMeta {
     name: string;
     type: string;
     title?: string;
@@ -88,8 +88,8 @@ export interface RelationModal {
     viewExtraData?: APISchema;
 }
 
-export interface ModalConfig {
-    meta: ModalMeta;
+export interface BlockSchema {
+    meta: BlockMeta;
     apiSchema: APISchema;
     relationModals?: RelationModal[];
 }

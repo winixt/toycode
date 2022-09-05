@@ -5,7 +5,7 @@ import {
     genComponentId,
     Component,
 } from '@qlin/toycode-core';
-import { RelationModal, ModalConfig, CodeSnippet } from '../type';
+import { RelationModal, BlockSchema, CodeSnippet } from '../type';
 import { hasModal, genModalDir } from '../utils';
 import { getDefaultValue, mergeCodeSnippets } from './shared';
 import { genFormCodeSnippet } from './form';
@@ -170,7 +170,7 @@ export function genUpdateModal(
     };
 }
 
-export function genRelationModals(pageConfig: ModalConfig): SFCComponent[] {
+export function genRelationModals(pageConfig: BlockSchema): SFCComponent[] {
     const modals: SFCComponent[] = [];
     if (hasModal(pageConfig)) {
         const modalDir = genModalDir(pageConfig);

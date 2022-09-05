@@ -3,8 +3,8 @@ import { readdirSync, lstatSync, readFileSync } from 'fs-extra';
 import { JSCode } from '@qlin/toycode-core';
 import { join } from 'path';
 import { camelCase } from 'lodash';
-import { Field, APISchema, ModalConfig } from './type';
-import { PAGE_DIR } from './constants';
+import { Field, APISchema, BlockSchema, BlockMeta } from './type';
+import { COMPONENTS_DIR, PAGE_DIR } from './constants';
 
 export function isPaginationField(field: string) {
     return field === 'pagination' || field === 'page' || field === 'pager';
@@ -18,28 +18,38 @@ export function genSFCFileName(fileName: string) {
     return camelCase(fileName);
 }
 
-export function hasModal(pageConfig: ModalConfig) {
+export function hasModal(pageConfig: BlockSchema) {
     return pageConfig.relationModals?.length > 0;
 }
 
-export function genModalDir(pageConfig: ModalConfig) {
-    if (!hasModal(pageConfig)) {
+export function genModalDir(blockConfig: BlockSchema) {
+    if (!hasModal(blockConfig)) {
         return '';
     }
-    const fileName = genSFCFileName(pageConfig.meta.name);
-    return `${PAGE_DIR}/${fileName}`;
+    const dirPrefix = isGenComponent(blockConfig.meta)
+        ? COMPONENTS_DIR
+        : PAGE_DIR;
+    const fileName = genSFCFileName(blockConfig.meta.name);
+    return `${dirPrefix}/${fileName}`;
 }
 
-export function genPageDirAndFileName(pageConfig: ModalConfig) {
-    const fileName = genSFCFileName(pageConfig.meta.name);
-    if (!hasModal(pageConfig)) {
+export function isGenComponent(meta: BlockMeta) {
+    return meta.type.endsWith('Component');
+}
+
+export function genDirAndFileName(blockConfig: BlockSchema) {
+    const fileName = genSFCFileName(blockConfig.meta.name);
+    const dirPrefix = isGenComponent(blockConfig.meta)
+        ? COMPONENTS_DIR
+        : PAGE_DIR;
+    if (!hasModal(blockConfig)) {
         return {
-            dir: PAGE_DIR,
+            dir: dirPrefix,
             fileName: `${fileName}.vue`,
         };
     }
     return {
-        dir: `${PAGE_DIR}/${fileName}`,
+        dir: `${dirPrefix}/${fileName}`,
         fileName: 'index.vue',
     };
 }
