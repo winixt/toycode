@@ -188,7 +188,7 @@ function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
                 FMessage.success('新增成功');
                 props.onSuccess(data, res);
             };
-            const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, computed(() => props.${ROW_DATA_PROP_NAME}), onConfirm });
+            const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, initData: computed(() => props.${ROW_DATA_PROP_NAME}), onConfirm });
             `,
         },
         component: getModalComponent(modal.meta.title || '编辑'),
@@ -217,7 +217,6 @@ function genViewTableSnippet(apiSchema: APISchema, parentId: string) {
                     type: ExtensionType.JSExpression,
                     value: ROW_DATA_PROP_NAME,
                 },
-                top: 54,
             },
         },
     };

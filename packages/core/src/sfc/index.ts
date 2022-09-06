@@ -125,6 +125,13 @@ function genPropsDefinition(sfc: SFCComponent) {
             .map((item) => {
                 return `${item.name}: ${item.defaultValue}`;
             });
+        if (isEmpty(propsDefaultValue)) {
+            return `
+            const props = defineProps({
+                ${props.join(',')}
+            })
+            `;
+        }
         return `
         const props = withDefaults(defineProps({
             ${props.join(',')}
@@ -140,7 +147,9 @@ function genEmitsDefinition(sfc: SFCComponent) {
     if (!isEmpty(sfc.emitsDefinition)) {
         if (Array.isArray(sfc.emitsDefinition)) {
             return `
-            const emit = defineEmits([${sfc.emitsDefinition.join(', ')}])
+            const emit = defineEmits([${sfc.emitsDefinition
+                .map((item) => JSON.stringify(item))
+                .join(', ')}])
             `;
         }
         return `
