@@ -39,7 +39,7 @@ export function genModalDir(blockConfig: BlockSchema) {
         ? COMPONENTS_DIR
         : PAGE_DIR;
     const fileName = genSFCFileName(blockConfig.meta.name);
-    return `${dirPrefix}/${fileName}`;
+    return `${dirPrefix}/${fileName}/components`;
 }
 
 export function isGenComponent(meta: BlockMeta) {

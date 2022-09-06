@@ -204,7 +204,7 @@ function genViewTableSnippet(apiSchema: APISchema, parentId: string) {
                 {
                     imported: componentName,
                     type: ImportType.ImportDefaultSpecifier,
-                    source: `${fileName}.vue`,
+                    source: `./${fileName}.vue`,
                 },
             ],
             content: '',

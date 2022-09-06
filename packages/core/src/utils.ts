@@ -56,9 +56,11 @@ export function genSingleImport(imports: ImportSource[]) {
 }
 
 export function genImportCode(imports: ImportSource[]) {
+    const sourceSet = new Set<string>();
     const categorizeImports = new Map<string, ImportSource[]>();
 
     for (const imp of imports) {
+        sourceSet.add(imp.source);
         if (categorizeImports.has(imp.source)) {
             categorizeImports.get(imp.source).push(imp);
         } else {
@@ -66,9 +68,45 @@ export function genImportCode(imports: ImportSource[]) {
         }
     }
 
+    const sortedSource = Array.from(sourceSet)
+        .map((item) => {
+            if (/^[a-zA-Z]/.test(item)) {
+                return {
+                    source: item,
+                    priority: 1,
+                };
+            }
+            if (/^@[a-zA-Z]+/.test(item)) {
+                return {
+                    source: item,
+                    priority: 2,
+                };
+            }
+            if (/^@\//.test(item)) {
+                return {
+                    source: item,
+                    priority: 3,
+                };
+            }
+            return {
+                source: item,
+                priority: 4,
+            };
+        })
+        .sort(
+            (
+                a: { source: string; priority: number },
+                b: { source: string; priority: number },
+            ) => {
+                return a.priority - b.priority;
+            },
+        )
+        .map((item) => {
+            return item.source;
+        });
     const result: string[] = [];
-    for (const imps of categorizeImports.values()) {
-        result.push(genSingleImport(imps));
+    for (const source of sortedSource) {
+        result.push(genSingleImport(categorizeImports.get(source)));
     }
 
     return result.join('\n');
