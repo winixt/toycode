@@ -2,7 +2,7 @@
 import { readdirSync, lstatSync, readFileSync } from 'fs-extra';
 import { JSCode } from '@qlin/toycode-core';
 import { join } from 'path';
-import { camelCase } from 'lodash';
+import { camelCase, words } from 'lodash';
 import { Field, APISchema, BlockSchema, BlockMeta } from './type';
 import { COMPONENTS_DIR, PAGE_DIR } from './constants';
 
@@ -16,6 +16,14 @@ export function isReactiveSearch(params: Field[]) {
 
 export function genComponentName(fileName: string) {
     return fileName.replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
+}
+
+export function genFetchName(fieldName: string) {
+    const result = words(fieldName);
+    if (/id/i.test(result[result.length - 1]) && result.length > 1) {
+        return result.slice(0, result.length - 1).join('');
+    }
+    return result.join('');
 }
 
 export function genSFCFileName(fileName: string) {

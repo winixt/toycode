@@ -40,7 +40,7 @@ function compileProps(props?: ComponentProps) {
             ) {
                 return `:${key}="${(propValue as CustomPropType).value}"`;
             }
-            if (propValue) {
+            if (propValue != null) {
                 return `${key}="${propValue}"`;
             }
             return '';

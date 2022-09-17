@@ -13,6 +13,7 @@ import {
     genImportedMappingCode,
 } from './shared';
 import { rulesHandler } from './rules';
+import { genFetchName } from '../utils';
 
 function genImportResources(apiSchema: APISchema): ImportSource[] {
     const importSources: ImportSource[] = [
@@ -54,13 +55,49 @@ function genImportResources(apiSchema: APISchema): ImportSource[] {
     return importSources;
 }
 
-function genSetupCode(apiSchema: APISchema) {
+export function genFetchCode(fields: Field[]) {
+    let fetchCode = '';
+    const importSources: ImportSource[] = [];
+    fields.forEach((field) => {
+        if (field.apiSchema) {
+            importSources.push({
+                imported: 'useFetch',
+                type: ImportType.ImportSpecifier,
+                source: '@/common/use/useFetch',
+            });
+
+            fetchCode += `
+                const ${genFetchName(field.name)} = useFetch('${
+                field.apiSchema.url
+            }', {
+                    defaultValue: () => [],
+                    ${
+                        field.apiSchema.resData.pick?.length
+                            ? `pick: ${JSON.stringify(
+                                  field.apiSchema.resData.pick,
+                              )},`
+                            : ''
+                    }
+                });
+            `;
+        }
+    });
+
     return {
-        importSources: genImportResources(apiSchema),
+        content: fetchCode,
+        importSources,
+    };
+}
+
+function genSetupCode(apiSchema: APISchema) {
+    const { importSources, content } = genFetchCode(apiSchema.params);
+    return {
+        importSources: [...genImportResources(apiSchema), ...importSources],
         content: `
         const formRules = {
             ${genRules(apiSchema.params)}
         };
+        ${content}
         `,
     };
 }
@@ -108,6 +145,11 @@ function genFormItems(fields: Field[]): Component[] {
             };
         } else if (field.options?.length) {
             children = handleComponentOptions(field.options, comp.subName);
+        } else if (field.apiSchema) {
+            renderCompProps.options = {
+                type: ExtensionType.JSExpression,
+                value: `${genFetchName(field.name)}.data`,
+            };
         }
 
         return {

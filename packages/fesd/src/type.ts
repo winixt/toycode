@@ -56,6 +56,7 @@ export interface Field {
     options?: Option[];
     mapFields?: string[];
     component: RenderComponent;
+    apiSchema?: APISchema;
 }
 export interface APISchema {
     url: string;

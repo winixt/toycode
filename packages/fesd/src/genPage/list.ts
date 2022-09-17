@@ -15,6 +15,7 @@ import {
     getJsCode,
     genDirAndFileName,
     isGenComponent,
+    genFetchName,
 } from '../utils';
 import { COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
@@ -27,6 +28,7 @@ import {
     formatResData,
 } from './shared';
 import { genTableSetupCode, genTableTemplate } from './table';
+import { genFetchCode } from './form';
 import { Context } from '../context';
 
 // REFACTOR 抽离 search form 相关代码到独立的文件
@@ -68,6 +70,11 @@ function genSearchForm(params: Field[]) {
                     },
                 });
             }
+        } else if (item.apiSchema) {
+            formCompProps.options = {
+                type: ExtensionType.JSExpression,
+                value: `${genFetchName(item.name)}.data`,
+            };
         }
         form.children.push({
             componentName: 'FFormItem',
@@ -141,28 +148,16 @@ function genSearchFormSetupCode(params: Field[]): SetupCode {
         ...genImportedMappingCode(params),
         ...genAppendAllCode(params),
     ];
-    for (const item of params) {
-        const comp = componentMap(item.component.componentName);
-        importSources.push({
-            imported: comp.name,
-            type: ImportType.ImportSpecifier,
-            source: '@fesjs/fes-design',
-        });
-        if (comp.subName) {
-            importSources.push({
-                imported: comp.subName,
-                type: ImportType.ImportSpecifier,
-                source: '@fesjs/fes-design',
-            });
-        }
-    }
+
+    const fetchCode = genFetchCode(params);
 
     return {
-        importSources,
+        importSources: importSources.concat(fetchCode.importSources),
         content: `
         const searchParams = reactive({
             ...initSearchParams
         });
+        ${fetchCode.content}
         `,
     };
 }

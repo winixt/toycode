@@ -22,3 +22,16 @@ export function findAnotherLabel(options, currentValue) {
 export function appendAll(options) {
     return [{ value: null, label: '全部' }, ...options];
 }
+
+export function pickData(obj, pick = []) {
+    let result = obj;
+    for (const key of pick) {
+        if (Object.prototype.toString.call(result) === '[Object Object]') {
+            result = result[key];
+        } else {
+            result = null;
+            break;
+        }
+    }
+    return result;
+}
