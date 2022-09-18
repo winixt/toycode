@@ -26,7 +26,7 @@ export function appendAll(options) {
 export function pickData(obj, pick = []) {
     let result = obj;
     for (const key of pick) {
-        if (Object.prototype.toString.call(result) === '[Object Object]') {
+        if (Object.prototype.toString.call(result) === '[object Object]') {
             result = result[key];
         } else {
             result = null;

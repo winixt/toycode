@@ -51,28 +51,31 @@ export function useModal({ props, emit, initData, onConfirm }) {
 }
 
 export function useAddModal() {
-    const visible = ref(false);
+    const state = reactive({
+        visible: false,
+    });
     const show = () => {
-        visible.value = true;
+        state.visible = true;
     };
 
     return {
         show,
-        visible,
+        state,
     };
 }
 
 export function useCommonModal() {
-    const visible = ref(false);
-    const rowData = ref();
+    const state = reactive({
+        visible: false,
+        rowDate: null,
+    });
     const show = (currentData) => {
-        visible.value = true;
-        rowData.value = currentData;
+        state.visible = true;
+        state.rowData = currentData;
     };
 
     return {
-        visible,
-        rowData,
+        state,
         show,
     };
 }

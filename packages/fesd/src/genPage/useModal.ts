@@ -46,7 +46,7 @@ export function applyAddModal(sfc: SFCComponent) {
             },
         },
         directives: {
-            'v-model:visible': 'addModal.visible',
+            'v-model:visible': 'addModal.state.visible',
         },
     });
 
@@ -105,7 +105,7 @@ export function applyUpdateModal(sfc: SFCComponent) {
         componentName: 'UpdateModal',
         props: {
             [ROW_DATA_PROP_NAME]: {
-                value: 'updateModal.rowData',
+                value: 'updateModal.state.rowData',
                 type: ExtensionType.JSExpression,
             },
             onSuccess: {
@@ -114,7 +114,7 @@ export function applyUpdateModal(sfc: SFCComponent) {
             },
         },
         directives: {
-            'v-model:visible': 'updateModal.visible',
+            'v-model:visible': 'updateModal.state.visible',
         },
     });
 
@@ -161,12 +161,12 @@ export function applyViewModal(modal: RelationModal, sfc: SFCComponent) {
         componentName: 'ViewModal',
         props: {
             [ROW_DATA_PROP_NAME]: {
-                value: 'viewModal.rowData',
+                value: 'viewModal.state.rowData',
                 type: ExtensionType.JSExpression,
             },
         },
         directives: {
-            'v-model:visible': 'viewModal.visible',
+            'v-model:visible': 'viewModal.state.visible',
         },
     });
 

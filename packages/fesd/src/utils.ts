@@ -18,6 +18,10 @@ export function genComponentName(fileName: string) {
     return fileName.replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
 }
 
+export function genOptionsName(fieldName: string) {
+    return `${genFetchName(fieldName)}List`;
+}
+
 export function genFetchName(fieldName: string) {
     const result = words(fieldName);
     if (/id/i.test(result[result.length - 1]) && result.length > 1) {

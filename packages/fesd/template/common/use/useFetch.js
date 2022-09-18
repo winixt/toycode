@@ -25,11 +25,15 @@ export function useFetch(url, options) {
     const queryDataSource = async () => {
         try {
             pending.value = true;
-            let result = await request(url, options.params);
+            let result = await request(url, options.params || {}, {
+                mergeRequest: true,
+            });
             if (options.pick) {
                 result = pickData(result, options.pick);
             }
-            data.value = options.transform ? options.transform(result) : result;
+            data.value =
+                (options.transform ? options.transform(result) : result) ??
+                options.defaultValue?.();
         } catch (e) {
             console.log(e);
         } finally {

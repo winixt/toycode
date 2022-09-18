@@ -24,14 +24,14 @@ function compileProps(props?: ComponentProps) {
             if (typeof propValue === 'number') {
                 return `:${key}="${propValue}"`;
             }
-            if (typeof propValue === 'boolean' && propValue) {
+            if (typeof propValue === 'boolean') {
                 if (propValue) {
                     return key;
                 }
                 return `:${key}="false"`;
             }
             if (propValue === null) {
-                return `:${key}="null"`;
+                return '';
             }
             if (
                 typeof propValue === 'object' &&

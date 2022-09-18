@@ -13,9 +13,9 @@ import {
     genImportedMappingCode,
 } from './shared';
 import { rulesHandler } from './rules';
-import { genFetchName } from '../utils';
+import { genOptionsName } from '../utils';
 
-function genImportResources(apiSchema: APISchema): ImportSource[] {
+export function genFormImportResources(fields: Field[]): ImportSource[] {
     const importSources: ImportSource[] = [
         {
             imported: 'reactive',
@@ -34,7 +34,7 @@ function genImportResources(apiSchema: APISchema): ImportSource[] {
         },
     ];
 
-    apiSchema.params.forEach((field) => {
+    fields.forEach((field) => {
         const comp = componentMap(field.component.componentName);
         importSources.push({
             imported: comp.name,
@@ -50,7 +50,7 @@ function genImportResources(apiSchema: APISchema): ImportSource[] {
         }
     });
 
-    importSources.push(...genImportedMappingCode(apiSchema.params));
+    importSources.push(...genImportedMappingCode(fields));
 
     return importSources;
 }
@@ -67,7 +67,7 @@ export function genFetchCode(fields: Field[]) {
             });
 
             fetchCode += `
-                const ${genFetchName(field.name)} = useFetch('${
+                const {data: ${genOptionsName(field.name)} } = useFetch('${
                 field.apiSchema.url
             }', {
                     defaultValue: () => [],
@@ -92,7 +92,10 @@ export function genFetchCode(fields: Field[]) {
 function genSetupCode(apiSchema: APISchema) {
     const { importSources, content } = genFetchCode(apiSchema.params);
     return {
-        importSources: [...genImportResources(apiSchema), ...importSources],
+        importSources: [
+            ...genFormImportResources(apiSchema.params),
+            ...importSources,
+        ],
         content: `
         const formRules = {
             ${genRules(apiSchema.params)}
@@ -148,7 +151,7 @@ function genFormItems(fields: Field[]): Component[] {
         } else if (field.apiSchema) {
             renderCompProps.options = {
                 type: ExtensionType.JSExpression,
-                value: `${genFetchName(field.name)}.data`,
+                value: `${genOptionsName(field.name)}`,
             };
         }
 

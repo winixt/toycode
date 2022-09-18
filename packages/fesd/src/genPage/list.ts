@@ -15,20 +15,16 @@ import {
     getJsCode,
     genDirAndFileName,
     isGenComponent,
-    genFetchName,
+    genOptionsName,
 } from '../utils';
 import { COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
 import { applySearchAction } from './searchAction';
 import { genRelationModals } from './modal';
 import { applyModal } from './useModal';
-import {
-    handleComponentOptions,
-    genImportedMappingCode,
-    formatResData,
-} from './shared';
+import { handleComponentOptions, formatResData } from './shared';
 import { genTableSetupCode, genTableTemplate } from './table';
-import { genFetchCode } from './form';
+import { genFetchCode, genFormImportResources } from './form';
 import { Context } from '../context';
 
 // REFACTOR 抽离 search form 相关代码到独立的文件
@@ -71,10 +67,17 @@ function genSearchForm(params: Field[]) {
                 });
             }
         } else if (item.apiSchema) {
-            formCompProps.options = {
-                type: ExtensionType.JSExpression,
-                value: `${genFetchName(item.name)}.data`,
-            };
+            if (item.component.appendAll) {
+                formCompProps.options = {
+                    type: ExtensionType.JSExpression,
+                    value: `appendAll(${genOptionsName(item.name)})`,
+                };
+            } else {
+                formCompProps.options = {
+                    type: ExtensionType.JSExpression,
+                    value: genOptionsName(item.name),
+                };
+            }
         }
         form.children.push({
             componentName: 'FFormItem',
@@ -130,22 +133,7 @@ function genBlockMeta(meta: BlockMeta) {
 
 function genSearchFormSetupCode(params: Field[]): SetupCode {
     const importSources: ImportSource[] = [
-        {
-            imported: 'reactive',
-            type: ImportType.ImportSpecifier,
-            source: 'vue',
-        },
-        {
-            imported: 'FForm',
-            type: ImportType.ImportSpecifier,
-            source: '@fesjs/fes-design',
-        },
-        {
-            imported: 'FFormItem',
-            type: ImportType.ImportSpecifier,
-            source: '@fesjs/fes-design',
-        },
-        ...genImportedMappingCode(params),
+        ...genFormImportResources(params),
         ...genAppendAllCode(params),
     ];
 

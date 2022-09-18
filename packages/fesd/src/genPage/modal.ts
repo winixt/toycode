@@ -181,11 +181,18 @@ export function genAddModal(
 function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
     return {
         setup: {
-            importSources: COMMON_MODAL_IMPORT_SOURCES,
+            importSources: [
+                ...COMMON_MODAL_IMPORT_SOURCES,
+                {
+                    imported: 'computed',
+                    type: ImportType.ImportSpecifier,
+                    source: 'vue',
+                },
+            ],
             content: `
             const onConfirm = async (data) => {
                 const res = await request('${modal.apiSchema.url}', data);
-                FMessage.success('新增成功');
+                FMessage.success('修改成功');
                 props.onSuccess(data, res);
             };
             const { formRefEl, formModel, confirm, innerVisible } = useModal({ props, emit, initData: computed(() => props.${ROW_DATA_PROP_NAME}), onConfirm });
@@ -322,6 +329,14 @@ export function genViewModal(
     return result;
 }
 
+function formatModalApiSchema(modal: RelationModal) {
+    if (modal.apiSchema?.params) {
+        modal.apiSchema.params = modal.apiSchema.params.filter(
+            (item) => item.checked,
+        );
+    }
+}
+
 export function genRelationModals(
     ctx: Context,
     pageConfig: BlockSchema,
@@ -331,6 +346,7 @@ export function genRelationModals(
         const modalDir = genModalDir(pageConfig);
 
         pageConfig.relationModals.forEach((modal) => {
+            formatModalApiSchema(modal);
             if (modal.type === 'add') {
                 modals.push(genAddModal(modal, modalDir));
             } else if (modal.type === 'update') {
