@@ -42,7 +42,7 @@ function genSearchForm(params: Field[]) {
             ...item.component.props,
             ...comp.props,
         };
-        let children = null;
+        let children: Component[];
         if (item.mappingId) {
             if (item.component.appendAll) {
                 formCompProps.options = {
@@ -67,16 +67,20 @@ function genSearchForm(params: Field[]) {
                 });
             }
         } else if (item.apiSchema) {
+            formCompProps.options = {
+                type: ExtensionType.JSExpression,
+                value: genOptionsName(item.name),
+            };
             if (item.component.appendAll) {
-                formCompProps.options = {
-                    type: ExtensionType.JSExpression,
-                    value: `appendAll(${genOptionsName(item.name)})`,
-                };
-            } else {
-                formCompProps.options = {
-                    type: ExtensionType.JSExpression,
-                    value: genOptionsName(item.name),
-                };
+                children = [
+                    {
+                        componentName: comp.subName,
+                        props: {
+                            label: '全部',
+                            value: null,
+                        },
+                    },
+                ];
             }
         }
         form.children.push({
