@@ -7,7 +7,9 @@ import { Field, APISchema, BlockSchema, BlockMeta } from './type';
 import { COMPONENTS_DIR, PAGE_DIR } from './constants';
 
 export function isPaginationField(field: string) {
-    return field === 'pagination' || field === 'page' || field === 'pager';
+    return ['pagination', 'page', 'pager', 'pageInfo', 'pageinfo'].includes(
+        field,
+    );
 }
 
 export function isReactiveSearch(params: Field[]) {

@@ -128,7 +128,7 @@ function genBlockMeta(meta: BlockMeta) {
             content: `
             defineRouteMeta({
                 name: '${genSFCFileName(meta.name)}',
-                ${meta.title ? `title: '${meta.title}'` : ''},
+                ${meta.title ? `title: '${meta.title}',` : ''}
             });
             `,
         };
