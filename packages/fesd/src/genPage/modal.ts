@@ -53,6 +53,7 @@ function getModalComponent(title: string): Component {
             title,
             maskClosable: false,
             top: 54,
+            displayDirective: 'if',
         },
         events: {
             ok: 'confirm',
@@ -91,6 +92,11 @@ function genViewModalCodeSnippet(modal: RelationModal): CodeSnippet {
                     source: '@fesjs/fes-design',
                 },
                 {
+                    imported: 'FButton',
+                    type: ImportType.ImportSpecifier,
+                    source: '@fesjs/fes-design',
+                },
+                {
                     imported: 'useNormalModel',
                     type: ImportType.ImportSpecifier,
                     source: '@/common/use/useModel',
@@ -108,6 +114,7 @@ function genViewModalCodeSnippet(modal: RelationModal): CodeSnippet {
             props: {
                 title: modal.meta.title || '查看',
                 maskClosable: false,
+                displayDirective: 'if',
                 top: 54,
             },
             directives: {

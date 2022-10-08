@@ -1,6 +1,7 @@
 import { ImportType } from '@qlin/toycode-core';
 import { Field, CodeSnippet } from '../type';
 import { ROW_DATA_PROP_NAME } from '../constants';
+import { formatResData } from './shared';
 
 function genSetupCode() {
     return {
@@ -40,6 +41,7 @@ export function genDescriptionsSnippet(
     fields: Field[],
     parentId: string,
 ): CodeSnippet {
+    fields = formatResData(fields);
     return {
         setup: genSetupCode(),
         component: {
