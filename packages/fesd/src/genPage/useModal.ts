@@ -41,7 +41,7 @@ export function applyAddModal(sfc: SFCComponent) {
         componentName: 'AddModal',
         props: {
             onSuccess: {
-                value: 'refresh',
+                value: '() => refresh()',
                 type: ExtensionType.JSExpression,
             },
         },
