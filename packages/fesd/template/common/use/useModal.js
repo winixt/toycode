@@ -14,19 +14,18 @@ export function useModal({ props, emit, initData, onConfirm }) {
         return initData;
     });
 
-    const formModel = reactive({
+    const formModel = ref({
         ..._initData.value,
     });
 
     const resetFormModel = () => {
-        Object.assign(formModel, _initData.value);
+        formModel.value = _initData.value;
     };
 
     const confirm = async () => {
         try {
             await formRefEl.value.validate();
-            console.log(formModel.name);
-            await onConfirm({ ...formModel });
+            await onConfirm({ ...formModel.value });
             updateVisible(false);
         } catch (error) {}
     };
