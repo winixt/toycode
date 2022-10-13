@@ -87,10 +87,10 @@ export function useTable(options) {
     };
     const getParams = (params) => {
         if (params) {
-            preParams = {
+            preParams = innerFormatParams({
                 ...preParams,
-                ...unref(innerFormatParams(params)),
-            };
+                ...unref(params),
+            });
         }
         return {
             ...preParams,
