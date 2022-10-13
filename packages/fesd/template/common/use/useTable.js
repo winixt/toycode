@@ -95,7 +95,7 @@ export function useTable(options) {
         return {
             ...preParams,
             page: {
-                current: pagination.currentPage,
+                currentPage: pagination.currentPage,
                 pageSize: pagination.pageSize,
             },
         };
