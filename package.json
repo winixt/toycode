@@ -36,8 +36,11 @@
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",
     "deepmerge": "^4.2.2",
+    "enquirer": "^2.3.6",
     "execa": "^6.1.0",
     "jest": "^28.1.1",
+    "minimist": "^1.2.7",
+    "semver": "^7.3.8",
     "ts-node": "^10.8.1",
     "yargs-parser": "^21.0.1"
   }
