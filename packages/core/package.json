@@ -1,6 +1,6 @@
 {
   "name": "@qlin/toycode-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "代码生成",
   "main": "lib/index.js",
   "scripts": {

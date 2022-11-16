@@ -158,7 +158,7 @@ const isChangeInCurrentTag = async (pkg, newestTag) => {
 const filterChangedPackages = async () => {
     const { stdout: newestTag } = await run(
         'git',
-        ['describe', '--abbrev=0', '--tags'],
+        ['describe', '--abbrev=0', '--tags', '--always'],
         { stdio: 'pipe' },
     );
 
