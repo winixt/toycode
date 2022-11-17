@@ -12,7 +12,7 @@
   ],
   "keywords": [],
   "dependencies": {
-    "@qlin/toycode-core": "^1.0.0",
+    "@qlin/toycode-core": "^1.0.1",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash": "^4.14.21",
     "fs-extra": "^10.1.0",

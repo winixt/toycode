@@ -18,10 +18,15 @@ import {
     readTextFile,
 } from '../utils';
 
-function getAST(code: string) {
+export function getAST(code: string) {
     return parse(code, {
         sourceType: 'module',
+        plugins: ['typescript'],
     });
+}
+
+export function astToCode(ast: ParseResult<File>) {
+    return generate(ast).code;
 }
 
 function parseImportCode(ast: ParseResult<File>) {
@@ -107,15 +112,29 @@ export function getTopLevelDeclarations(ast: ParseResult<File>) {
                 declaration: getVariableDeclarationNames(node),
                 node,
             });
-        } else if (node.type === 'FunctionDeclaration') {
+        } else if (
+            [
+                'FunctionDeclaration',
+                'TSEnumDeclaration',
+                'TSInterfaceDeclaration',
+                'TSTypeAliasDeclaration',
+            ].includes(node.type)
+        ) {
             result.push({
-                declaration: node.id.name,
+                declaration: (node as any).id.name,
                 node,
             });
         } else if (node.type === 'ExportNamedDeclaration') {
-            if (node.declaration.type === 'FunctionDeclaration') {
+            if (
+                [
+                    'TSTypeAliasDeclaration',
+                    'TSInterfaceDeclaration',
+                    'FunctionDeclaration',
+                    'TSEnumDeclaration',
+                ].includes(node.declaration.type)
+            ) {
                 result.push({
-                    declaration: node.declaration.id.name,
+                    declaration: (node.declaration as any).id.name,
                     node,
                 });
             } else if (node.declaration.type === 'VariableDeclaration') {
@@ -196,9 +215,7 @@ export function genJsCode(
 
                 result.push({
                     file: join(getSrcPath(), filePath),
-                    content: formatCode(
-                        `${importCode} \n ${generate(ast).code}`,
-                    ),
+                    content: formatCode(`${importCode} \n ${astToCode(ast)}`),
                 });
             }
         } else {

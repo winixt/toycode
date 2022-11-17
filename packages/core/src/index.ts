@@ -1,6 +1,7 @@
 export * from './type';
 export * from './compiler';
 export { genComponentId } from './utils';
+export { astToCode, getAST, getTopLevelDeclarations } from './jsCode/index';
 
 /**
  * TODO
