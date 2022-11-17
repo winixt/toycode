@@ -11,7 +11,7 @@ const { prompt } = enquirer;
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const { dry: isDryRun, tag: releaseTag } = minimist(process.argv.slice(2));
-const packages = ['core', 'client'];
+const packages = ['core', 'fesd'];
 
 const versionIncrements = [
     'patch',
@@ -24,7 +24,7 @@ const versionIncrements = [
 ];
 
 const incVersion = (version, i) => {
-    const preId = semver.prerelease(version)[0] || 'alpha';
+    const preId = semver.prerelease(version) || 'alpha';
     return semver.inc(version, i, preId);
 };
 const autoIncVersion = (version) => {
@@ -99,11 +99,7 @@ function writePackageJson(pkg, content) {
 function genRootPackageVersion() {
     const pkgPath = path.resolve(path.resolve(__dirname, '..'), 'package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-    return semver.inc(
-        pkg.version,
-        'prerelease',
-        semver.prerelease(pkg.version) && semver.prerelease(pkg.version)[0],
-    );
+    return semver.inc(pkg.version, 'patch');
 }
 
 function readPackageVersionAndName(pkg) {
