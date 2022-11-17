@@ -49,7 +49,7 @@ const arrToObj = (arr, key) =>
 
 // eslint-disable-next-line no-shadow
 async function publishPackage(pkg, runIfNotDry) {
-    const _releaseTag = releaseTag || 'next';
+    const _releaseTag = releaseTag;
     step(`Publishing ${pkg.name}...`);
     try {
         await runIfNotDry(
