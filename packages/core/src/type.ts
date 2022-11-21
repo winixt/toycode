@@ -8,6 +8,13 @@ export interface Schema {
 
 export interface Config {
     projectDir?: string;
+    path?: {
+        constants?: string;
+        utils?: string;
+        useDir?: string;
+        pagesDir?: string;
+        componentsDir?: string;
+    };
 }
 
 export interface JSCode {

@@ -2,8 +2,9 @@ import { SFCComponent, ImportType, ExtensionType } from '@qlin/toycode-core';
 import { BlockSchema, RelationModal } from '../type';
 import { insertActionInSearchForm, insertActionInTable } from './shared';
 import { ROW_DATA_PROP_NAME } from '../constants';
+import { Context } from '../context';
 
-export function applyAddModal(sfc: SFCComponent) {
+export function applyAddModal(ctx: Context, sfc: SFCComponent) {
     sfc.setupCodes.push({
         importSources: [
             {
@@ -19,7 +20,7 @@ export function applyAddModal(sfc: SFCComponent) {
             {
                 imported: 'useAddModal',
                 type: ImportType.ImportSpecifier,
-                source: '@/common/use/useModal',
+                source: `${ctx.getUseDirImp()}/useModal`,
             },
 
             {
@@ -73,7 +74,7 @@ export function applyAddModal(sfc: SFCComponent) {
     return sfc;
 }
 
-export function applyUpdateModal(sfc: SFCComponent) {
+export function applyUpdateModal(ctx: Context, sfc: SFCComponent) {
     sfc.setupCodes.push({
         importSources: [
             {
@@ -89,7 +90,7 @@ export function applyUpdateModal(sfc: SFCComponent) {
             {
                 imported: 'useCommonModal',
                 type: ImportType.ImportSpecifier,
-                source: '@/common/use/useModal',
+                source: `${ctx.getUseDirImp()}/useModal`,
             },
             {
                 imported: 'FButton',
@@ -134,7 +135,11 @@ export function applyUpdateModal(sfc: SFCComponent) {
     return sfc;
 }
 
-export function applyViewModal(modal: RelationModal, sfc: SFCComponent) {
+export function applyViewModal(
+    ctx: Context,
+    modal: RelationModal,
+    sfc: SFCComponent,
+) {
     sfc.setupCodes.push({
         importSources: [
             {
@@ -145,7 +150,7 @@ export function applyViewModal(modal: RelationModal, sfc: SFCComponent) {
             {
                 imported: 'useCommonModal',
                 type: ImportType.ImportSpecifier,
-                source: '@/common/use/useModal',
+                source: `${ctx.getUseDirImp()}/useModal`,
             },
             {
                 imported: 'FButton',
@@ -252,6 +257,7 @@ export function applyDeleteModal(modal: RelationModal, sfc: SFCComponent) {
 }
 
 export function applySimpleUpdateModal(
+    ctx: Context,
     modal: RelationModal,
     sfc: SFCComponent,
 ) {
@@ -284,17 +290,17 @@ export function applySimpleUpdateModal(
             {
                 imported: 'findAnotherValue',
                 type: ImportType.ImportSpecifier,
-                source: '@/common/utils',
+                source: ctx.getUtilsFilePathImp(),
             },
             {
                 imported: 'findAnotherLabel',
                 type: ImportType.ImportSpecifier,
-                source: '@/common/utils',
+                source: ctx.getUtilsFilePathImp(),
             },
             {
                 imported: targetField.mappingId,
                 type: ImportType.ImportSpecifier,
-                source: '@/common/constants',
+                source: ctx.getConstantsFilePath(),
             },
         ],
         content: `
@@ -346,18 +352,22 @@ export function applySimpleUpdateModal(
     return sfc;
 }
 
-export function applyModal(pageConfig: BlockSchema, sfc: SFCComponent) {
+export function applyModal(
+    ctx: Context,
+    pageConfig: BlockSchema,
+    sfc: SFCComponent,
+) {
     pageConfig.relationModals.forEach((modal) => {
         if (modal.type === 'add') {
-            applyAddModal(sfc);
+            applyAddModal(ctx, sfc);
         } else if (modal.type === 'update') {
-            applyUpdateModal(sfc);
+            applyUpdateModal(ctx, sfc);
         } else if (modal.type === 'delete') {
             applyDeleteModal(modal, sfc);
         } else if (modal.type === 'simpleUpdate') {
-            applySimpleUpdateModal(modal, sfc);
+            applySimpleUpdateModal(ctx, modal, sfc);
         } else if (modal.type === 'view') {
-            applyViewModal(modal, sfc);
+            applyViewModal(ctx, modal, sfc);
         }
     });
 

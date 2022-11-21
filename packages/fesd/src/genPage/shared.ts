@@ -7,6 +7,7 @@ import {
     ImportSource,
 } from '@qlin/toycode-core';
 import { Field, CodeSnippet, Option } from '../type';
+import { Context } from '../context';
 
 export function handleComponentOptions(
     options: Option[],
@@ -159,14 +160,14 @@ export function insertActionInTable(
     }
 }
 
-export function genImportedMappingCode(fields: Field[]) {
+export function genImportedMappingCode(ctx: Context, fields: Field[]) {
     const importSources: ImportSource[] = [];
     fields.forEach((item) => {
         if (item.mappingId) {
             importSources.push({
                 imported: item.mappingId,
                 type: ImportType.ImportSpecifier,
-                source: '@/common/constants',
+                source: ctx.getConstantsFilePathImp(),
             });
         }
     });

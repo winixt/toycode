@@ -1,10 +1,6 @@
-// 跟 api-design fesjs 等强相关共享代码
-import { readdirSync, lstatSync, readFileSync } from 'fs-extra';
-import { JSCode } from '@qlin/toycode-core';
-import { join } from 'path';
 import { camelCase, words } from 'lodash';
 import { Field, APISchema, BlockSchema, BlockMeta } from './type';
-import { COMPONENTS_DIR, PAGE_DIR } from './constants';
+import type { Context } from './context';
 
 export function isPaginationField(field: string) {
     return ['pagination', 'page', 'pager', 'pageInfo', 'pageinfo'].includes(
@@ -45,13 +41,13 @@ export function genFileNameByPath(apiPath: string) {
     return camelCase(splitResult);
 }
 
-export function genModalDir(blockConfig: BlockSchema) {
+export function genModalDir(ctx: Context, blockConfig: BlockSchema) {
     if (!hasModal(blockConfig)) {
         return '';
     }
     const dirPrefix = isGenComponent(blockConfig.meta)
-        ? COMPONENTS_DIR
-        : PAGE_DIR;
+        ? ctx.getComponentsDir()
+        : ctx.getPagesDir();
     const fileName = genSFCFileName(blockConfig.meta.name);
     return `${dirPrefix}/${fileName}/components`;
 }
@@ -60,11 +56,11 @@ export function isGenComponent(meta: BlockMeta) {
     return meta.type.endsWith('Component');
 }
 
-export function genDirAndFileName(blockConfig: BlockSchema) {
+export function genDirAndFileName(ctx: Context, blockConfig: BlockSchema) {
     const fileName = genSFCFileName(blockConfig.meta.name);
     const dirPrefix = isGenComponent(blockConfig.meta)
-        ? COMPONENTS_DIR
-        : PAGE_DIR;
+        ? ctx.getComponentsDir()
+        : ctx.getPagesDir();
     if (!hasModal(blockConfig)) {
         return {
             dir: dirPrefix,
@@ -75,25 +71,6 @@ export function genDirAndFileName(blockConfig: BlockSchema) {
         dir: `${dirPrefix}/${fileName}`,
         fileName: 'index.vue',
     };
-}
-
-export function getJsCode(rootDir: string, subDir = '', result: JSCode[] = []) {
-    const dir = join(rootDir, subDir);
-    const files = readdirSync(dir);
-    for (const file of files) {
-        const filePath = join(dir, file);
-        const fileStats = lstatSync(filePath);
-        if (fileStats.isDirectory()) {
-            getJsCode(rootDir, join(subDir, file), result);
-        } else if (fileStats.isFile()) {
-            result.push({
-                content: readFileSync(filePath, 'utf8'),
-                dir: subDir,
-                fileName: file,
-            });
-        }
-    }
-    return result;
 }
 
 // TODO pick 支持数组

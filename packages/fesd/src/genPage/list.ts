@@ -7,17 +7,14 @@ import {
     ImportSource,
     SetupCode,
 } from '@qlin/toycode-core';
-import { join } from 'path';
 import { APISchema, Field, BlockMeta, BlockSchema } from '../type';
 import { defaultPageCss } from '../config';
 import {
     genSFCFileName,
-    getJsCode,
     genDirAndFileName,
     isGenComponent,
     genOptionsName,
 } from '../utils';
-import { COMMON_DIR } from '../constants';
 import { componentMap } from '../componentMap';
 import { applySearchAction } from './searchAction';
 import { genRelationModals } from './modal';
@@ -25,6 +22,7 @@ import { applyModal } from './useModal';
 import { handleComponentOptions, formatResData } from './shared';
 import { genTableSetupCode, genTableTemplate } from './table';
 import { genFetchCode, genFormImportResources } from './form';
+import { getCommonJsCode } from '../genCommonCode/index';
 import { Context } from '../context';
 
 // REFACTOR 抽离 search form 相关代码到独立的文件
@@ -135,13 +133,13 @@ function genBlockMeta(meta: BlockMeta) {
     }
 }
 
-function genSearchFormSetupCode(params: Field[]): SetupCode {
+function genSearchFormSetupCode(ctx: Context, params: Field[]): SetupCode {
     const importSources: ImportSource[] = [
-        ...genFormImportResources(params),
-        ...genAppendAllCode(params),
+        ...genFormImportResources(ctx, params),
+        ...genAppendAllCode(ctx, params),
     ];
 
-    const fetchCode = genFetchCode(params);
+    const fetchCode = genFetchCode(ctx, params);
 
     return {
         importSources: importSources.concat(fetchCode.importSources),
@@ -154,13 +152,13 @@ function genSearchFormSetupCode(params: Field[]): SetupCode {
     };
 }
 
-function genAppendAllCode(fields: Field[]) {
+function genAppendAllCode(ctx: Context, fields: Field[]) {
     const importSources: ImportSource[] = [];
     if (fields.find((item) => item.component.appendAll)) {
         importSources.push({
             imported: 'appendAll',
             type: ImportType.ImportSpecifier,
-            source: '@/common/utils',
+            source: ctx.getUtilsFilePathImp(),
         });
     }
 
@@ -197,7 +195,7 @@ function genSetupCode(ctx: Context, pageConfig: BlockSchema) {
     ];
 
     if (queryApiSchema.params.length) {
-        setupCodes.push(genSearchFormSetupCode(queryApiSchema.params));
+        setupCodes.push(genSearchFormSetupCode(ctx, queryApiSchema.params));
     }
 
     setupCodes.push(genBlockMeta(pageConfig.meta));
@@ -212,7 +210,7 @@ export function genBlockSchema(ctx: Context, pageConfig: BlockSchema): Schema {
 
     const initSFC: SFCComponent = {
         componentName: 'SFCComponent',
-        ...genDirAndFileName(pageConfig),
+        ...genDirAndFileName(ctx, pageConfig),
         setupCodes: genSetupCode(ctx, pageConfig),
         children: [
             {
@@ -226,15 +224,13 @@ export function genBlockSchema(ctx: Context, pageConfig: BlockSchema): Schema {
     };
 
     const sfc = [applySearchAction, applyModal].reduce((acc, action) => {
-        return action(pageConfig, acc);
+        return action(ctx, pageConfig, acc);
     }, initSFC);
-
-    const jsCodes = getJsCode(join(__dirname, '../../template'), COMMON_DIR);
 
     return {
         componentsTree: [sfc, ...genRelationModals(ctx, pageConfig)],
         css: defaultPageCss,
-        jsCodes,
+        jsCodes: getCommonJsCode(ctx),
         dependencies: ctx.dependence.getPackages(),
     };
 }

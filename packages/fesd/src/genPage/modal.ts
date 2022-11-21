@@ -18,32 +18,34 @@ import { ROW_DATA_PROP_NAME } from '../constants';
 import { getDefaultValue, mergeCodeSnippets } from './shared';
 import { genFormCodeSnippet } from './form';
 import { genDescriptionsSnippet } from './descriptions';
-import { Context } from '../context';
+import type { Context } from '../context';
 
 import { genViewTableComponent } from './table';
 
-const COMMON_MODAL_IMPORT_SOURCES = [
-    {
-        imported: 'FModal',
-        type: ImportType.ImportSpecifier,
-        source: '@fesjs/fes-design',
-    },
-    {
-        imported: 'FMessage',
-        type: ImportType.ImportSpecifier,
-        source: '@fesjs/fes-design',
-    },
-    {
-        imported: 'useModal',
-        type: ImportType.ImportSpecifier,
-        source: '@/common/use/useModal',
-    },
-    {
-        imported: 'request',
-        type: ImportType.ImportSpecifier,
-        source: '@fesjs/fes',
-    },
-];
+const getCommonModalImportSource = (ctx: Context) => {
+    return [
+        {
+            imported: 'FModal',
+            type: ImportType.ImportSpecifier,
+            source: '@fesjs/fes-design',
+        },
+        {
+            imported: 'FMessage',
+            type: ImportType.ImportSpecifier,
+            source: '@fesjs/fes-design',
+        },
+        {
+            imported: 'useModal',
+            type: ImportType.ImportSpecifier,
+            source: `${ctx.getUseDirImp()}/useModal`,
+        },
+        {
+            imported: 'request',
+            type: ImportType.ImportSpecifier,
+            source: '@fesjs/fes',
+        },
+    ];
+};
 
 function getModalComponent(title: string): Component {
     return {
@@ -65,10 +67,13 @@ function getModalComponent(title: string): Component {
     };
 }
 
-function genAddModalCodeSnippet(modal: RelationModal): CodeSnippet {
+function genAddModalCodeSnippet(
+    ctx: Context,
+    modal: RelationModal,
+): CodeSnippet {
     return {
         setup: {
-            importSources: COMMON_MODAL_IMPORT_SOURCES,
+            importSources: getCommonModalImportSource(ctx),
             content: `
             const onConfirm = async (data) => {
                 const res = await request('${modal.apiSchema.url}', data);
@@ -82,7 +87,10 @@ function genAddModalCodeSnippet(modal: RelationModal): CodeSnippet {
     };
 }
 
-function genViewModalCodeSnippet(modal: RelationModal): CodeSnippet {
+function genViewModalCodeSnippet(
+    ctx: Context,
+    modal: RelationModal,
+): CodeSnippet {
     return {
         setup: {
             importSources: [
@@ -99,7 +107,7 @@ function genViewModalCodeSnippet(modal: RelationModal): CodeSnippet {
                 {
                     imported: 'useNormalModel',
                     type: ImportType.ImportSpecifier,
-                    source: '@/common/use/useModel',
+                    source: `${ctx.getUseDirImp()}/useModel`,
                 },
             ],
             content: `
@@ -155,11 +163,13 @@ function genInitData(addModal: RelationModal): SetupCode {
 }
 
 export function genAddModal(
+    ctx: Context,
     addModal: RelationModal,
     modalDir: string,
 ): SFCComponent {
-    const modalSnippet = genAddModalCodeSnippet(addModal);
+    const modalSnippet = genAddModalCodeSnippet(ctx, addModal);
     const formSnippet = genFormCodeSnippet(
+        ctx,
         addModal.apiSchema,
         modalSnippet.component.id,
     );
@@ -185,11 +195,14 @@ export function genAddModal(
     };
 }
 
-function genUpdateModalCodeSnippet(modal: RelationModal): CodeSnippet {
+function genUpdateModalCodeSnippet(
+    ctx: Context,
+    modal: RelationModal,
+): CodeSnippet {
     return {
         setup: {
             importSources: [
-                ...COMMON_MODAL_IMPORT_SOURCES,
+                ...getCommonModalImportSource(ctx),
                 {
                     imported: 'computed',
                     type: ImportType.ImportSpecifier,
@@ -241,8 +254,9 @@ export function genUpdateModal(
     modal: RelationModal,
     modalDir: string,
 ): SFCComponent[] {
-    const modalSnippet = genUpdateModalCodeSnippet(modal);
+    const modalSnippet = genUpdateModalCodeSnippet(ctx, modal);
     const formSnippet = genFormCodeSnippet(
+        ctx,
         modal.apiSchema,
         modalSnippet.component.id,
     );
@@ -295,7 +309,7 @@ export function genViewModal(
     modal: RelationModal,
     modalDir: string,
 ): SFCComponent[] {
-    const modalSnippet = genViewModalCodeSnippet(modal);
+    const modalSnippet = genViewModalCodeSnippet(ctx, modal);
     const codeSnippets: CodeSnippet[] = [modalSnippet];
     if (!isEmpty(modal.viewProps)) {
         codeSnippets.push(
@@ -350,12 +364,12 @@ export function genRelationModals(
 ): SFCComponent[] {
     const modals: SFCComponent[] = [];
     if (hasModal(pageConfig)) {
-        const modalDir = genModalDir(pageConfig);
+        const modalDir = genModalDir(ctx, pageConfig);
 
         pageConfig.relationModals.forEach((modal) => {
             formatModalApiSchema(modal);
             if (modal.type === 'add') {
-                modals.push(genAddModal(modal, modalDir));
+                modals.push(genAddModal(ctx, modal, modalDir));
             } else if (modal.type === 'update') {
                 modals.push(...genUpdateModal(ctx, modal, modalDir));
             } else if (modal.type === 'view') {

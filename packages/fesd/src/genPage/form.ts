@@ -14,8 +14,12 @@ import {
 } from './shared';
 import { rulesHandler } from './rules';
 import { genOptionsName } from '../utils';
+import { Context } from '../context';
 
-export function genFormImportResources(fields: Field[]): ImportSource[] {
+export function genFormImportResources(
+    ctx: Context,
+    fields: Field[],
+): ImportSource[] {
     const importSources: ImportSource[] = [
         {
             imported: 'reactive',
@@ -50,12 +54,12 @@ export function genFormImportResources(fields: Field[]): ImportSource[] {
         }
     });
 
-    importSources.push(...genImportedMappingCode(fields));
+    importSources.push(...genImportedMappingCode(ctx, fields));
 
     return importSources;
 }
 
-export function genFetchCode(fields: Field[]) {
+export function genFetchCode(ctx: Context, fields: Field[]) {
     let fetchCode = '';
     const importSources: ImportSource[] = [];
     fields.forEach((field) => {
@@ -63,7 +67,7 @@ export function genFetchCode(fields: Field[]) {
             importSources.push({
                 imported: 'useFetch',
                 type: ImportType.ImportSpecifier,
-                source: '@/common/use/useFetch',
+                source: `${ctx.getUseDirImp()}/useFetch`,
             });
 
             fetchCode += `
@@ -89,11 +93,11 @@ export function genFetchCode(fields: Field[]) {
     };
 }
 
-function genSetupCode(apiSchema: APISchema) {
-    const { importSources, content } = genFetchCode(apiSchema.params);
+function genSetupCode(ctx: Context, apiSchema: APISchema) {
+    const { importSources, content } = genFetchCode(ctx, apiSchema.params);
     return {
         importSources: [
-            ...genFormImportResources(apiSchema.params),
+            ...genFormImportResources(ctx, apiSchema.params),
             ...importSources,
         ],
         content: `
@@ -176,11 +180,12 @@ function genFormItems(fields: Field[]): Component[] {
 }
 
 export function genFormCodeSnippet(
+    ctx: Context,
     apiSchema: APISchema,
     parentId: string,
 ): CodeSnippet {
     return {
-        setup: genSetupCode(apiSchema),
+        setup: genSetupCode(ctx, apiSchema),
         component: {
             parentId,
             componentName: 'FForm',

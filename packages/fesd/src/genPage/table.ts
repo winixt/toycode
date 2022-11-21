@@ -11,7 +11,7 @@ import { getPageField, getDataField, genFileNameByPath } from '../utils';
 import { genImportedMappingCode, formatResData } from './shared';
 import { ROW_DATA_PROP_NAME } from '../constants';
 
-function genTransform(apiSchema: APISchema) {
+function genTransform(ctx: Context, apiSchema: APISchema) {
     const code = apiSchema.resData.fields
         .map((item) => {
             if (item.mappingId) {
@@ -26,9 +26,9 @@ function genTransform(apiSchema: APISchema) {
                 {
                     imported: 'getTargetLabel',
                     type: ImportType.ImportSpecifier,
-                    source: '@/common/utils',
+                    source: ctx.getUtilsFilePathImp(),
                 },
-                ...genImportedMappingCode(apiSchema.resData.fields),
+                ...genImportedMappingCode(ctx, apiSchema.resData.fields),
             ],
             content: `transform(data) {
                 return data.map((item) => {
@@ -126,10 +126,10 @@ export function genTableSetupCode(
     importSources.push({
         imported: functionName,
         type: ImportType.ImportSpecifier,
-        source: '@/common/use/useTable',
+        source: `${ctx.getUseDirImp()}/useTable`,
     });
 
-    const transformCode = genTransform(apiSchema);
+    const transformCode = genTransform(ctx, apiSchema);
     const formatCode = genFormatParams(ctx, apiSchema);
 
     return {
