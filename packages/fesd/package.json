@@ -1,6 +1,6 @@
 {
   "name": "@qlin/toycode-fesd",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   ],
   "keywords": [],
   "dependencies": {
-    "@qlin/toycode-core": "1.0.2",
+    "@qlin/toycode-core": "1.0.3",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash": "^4.14.21",
     "fs-extra": "^10.1.0",
