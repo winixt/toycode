@@ -23,11 +23,9 @@ export function useModal({ props, emit, initData, onConfirm }) {
     };
 
     const confirm = async () => {
-        try {
-            await formRefEl.value.validate();
-            await onConfirm({ ...formModel.value });
-            updateVisible(false);
-        } catch (error) {}
+        await formRefEl.value.validate();
+        await onConfirm({ ...formModel.value });
+        updateVisible(false);
     };
 
     watch(innerVisible, () => {
@@ -66,7 +64,7 @@ export function useAddModal() {
 export function useCommonModal() {
     const state = reactive({
         visible: false,
-        rowDate: null,
+        rowData: null,
     });
     const show = (currentData) => {
         state.visible = true;
