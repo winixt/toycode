@@ -62,11 +62,11 @@ export interface APISchema {
     url: string;
     method: string;
     headers: Record<string, string>;
-    params: Field[];
+    params: Field[]; // 请求参数字段描述
     resData: {
         type: string;
         pick: string[];
-        fields: Field[];
+        fields: Field[]; // 响应参数字段描述
     };
     pagination?: {
         pick: string[];

@@ -76,8 +76,8 @@ export function useTable(options: UseTableOptions) {
     });
 
     const innerFormatParams = (params) => {
-        if (params) {
-            return options.formatParams ? options.formatParams(params) : params;
+        if (params && options.formatParams) {
+            return options.formatParams(params);
         }
         return params;
     };

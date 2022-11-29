@@ -8,10 +8,7 @@ export function useModal({ props, emit, initData, onConfirm }) {
 
     const formRefEl = ref();
     const _initData = computed(() => {
-        if (isRef(initData)) {
-            return initData.value;
-        }
-        return initData;
+        return isRef(initData) ? initData.value : initData;
     });
 
     const formModel = ref({
@@ -19,7 +16,9 @@ export function useModal({ props, emit, initData, onConfirm }) {
     });
 
     const resetFormModel = () => {
-        formModel.value = _initData.value;
+        formModel.value = {
+            ..._initData.value,
+        };
     };
 
     const confirm = async () => {
