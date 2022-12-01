@@ -78,7 +78,7 @@ export interface BlockMeta {
     name: string;
     type: string;
     title?: string;
-    path?: string;
+    outputDir?: string;
 }
 
 /**

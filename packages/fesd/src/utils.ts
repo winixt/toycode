@@ -41,15 +41,22 @@ export function genFileNameByPath(apiPath: string) {
     return camelCase(splitResult);
 }
 
+export function genOutputDir(ctx: Context, blockConfig: BlockSchema) {
+    if (blockConfig.meta.outputDir) {
+        return blockConfig.meta.outputDir;
+    }
+    return isGenComponent(blockConfig.meta)
+        ? ctx.getComponentsDir()
+        : ctx.getPagesDir();
+}
+
 export function genModalDir(ctx: Context, blockConfig: BlockSchema) {
     if (!hasModal(blockConfig)) {
         return '';
     }
-    const dirPrefix = isGenComponent(blockConfig.meta)
-        ? ctx.getComponentsDir()
-        : ctx.getPagesDir();
+    const outputDir = genOutputDir(ctx, blockConfig);
     const fileName = genSFCFileName(blockConfig.meta.name);
-    return `${dirPrefix}/${fileName}/components`;
+    return `${outputDir}/${fileName}/components`;
 }
 
 export function isGenComponent(meta: BlockMeta) {
@@ -58,17 +65,15 @@ export function isGenComponent(meta: BlockMeta) {
 
 export function genDirAndFileName(ctx: Context, blockConfig: BlockSchema) {
     const fileName = genSFCFileName(blockConfig.meta.name);
-    const dirPrefix = isGenComponent(blockConfig.meta)
-        ? ctx.getComponentsDir()
-        : ctx.getPagesDir();
+    const outputDir = genOutputDir(ctx, blockConfig);
     if (!hasModal(blockConfig)) {
         return {
-            dir: dirPrefix,
+            dir: outputDir,
             fileName: `${fileName}.vue`,
         };
     }
     return {
-        dir: `${dirPrefix}/${fileName}`,
+        dir: `${outputDir}/${fileName}`,
         fileName: 'index.vue',
     };
 }
