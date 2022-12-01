@@ -12,6 +12,10 @@ export interface Config {
         constants?: string;
         utils?: string;
         useDir?: string;
+        useTable?: string;
+        useFetch?: string;
+        useModal?: string;
+        useModel?: string;
         pagesDir?: string;
         componentsDir?: string;
     };

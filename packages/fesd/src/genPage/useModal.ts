@@ -13,14 +13,9 @@ export function applyAddModal(ctx: Context, sfc: SFCComponent) {
                 source: './components/addModal.vue',
             },
             {
-                imported: 'ref',
-                type: ImportType.ImportSpecifier,
-                source: 'vue',
-            },
-            {
                 imported: 'useAddModal',
                 type: ImportType.ImportSpecifier,
-                source: `${ctx.getUseDirImp()}/useModal`,
+                source: ctx.getUseModalImp(),
             },
 
             {
@@ -83,14 +78,9 @@ export function applyUpdateModal(ctx: Context, sfc: SFCComponent) {
                 source: './components/updateModal.vue',
             },
             {
-                imported: 'ref',
-                type: ImportType.ImportSpecifier,
-                source: 'vue',
-            },
-            {
                 imported: 'useCommonModal',
                 type: ImportType.ImportSpecifier,
-                source: `${ctx.getUseDirImp()}/useModal`,
+                source: ctx.getUseModalImp(),
             },
             {
                 imported: 'FButton',
@@ -150,7 +140,7 @@ export function applyViewModal(
             {
                 imported: 'useCommonModal',
                 type: ImportType.ImportSpecifier,
-                source: `${ctx.getUseDirImp()}/useModal`,
+                source: ctx.getUseModalImp(),
             },
             {
                 imported: 'FButton',

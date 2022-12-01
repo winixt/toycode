@@ -57,7 +57,8 @@ export function genLabelWidth(fields: Field[]): number {
             charNum = field.title.length;
         }
     });
-    return charNum * 16;
+    const extraWidth = fields.find((field) => field.component.required) ? 8 : 0;
+    return charNum * 16 + extraWidth;
 }
 
 export function mergeCodeSnippets(codeSnippets: CodeSnippet[]) {
@@ -175,11 +176,25 @@ export function genImportedMappingCode(ctx: Context, fields: Field[]) {
     return importSources;
 }
 
+export function formReqData(fields: Field[]) {
+    return fields.filter((item) => item.checked);
+}
+
 export function formatResData(fields: Field[]) {
     return fields.map((item) => {
-        return {
-            alias: item.mappingId ? `${item.name}Text` : null,
-            ...item,
-        };
+        if (item.mappingId) {
+            return {
+                alias: `${item.name}Text`,
+                ...item,
+            };
+        }
+        if (item.name.endsWith('Time')) {
+            return {
+                alias: `${item.name}Text`,
+                ...item,
+            };
+        }
+
+        return item;
     });
 }

@@ -10,29 +10,53 @@ import { Context } from '../context';
 import { getPageField, getDataField, genFileNameByPath } from '../utils';
 import { genImportedMappingCode, formatResData } from './shared';
 import { ROW_DATA_PROP_NAME } from '../constants';
+import { dateFnsDependency } from '../config';
 
 function genTransform(ctx: Context, apiSchema: APISchema) {
-    const code = apiSchema.resData.fields
+    const importSources: ImportSource[] = [];
+    const mappingCode = apiSchema.resData.fields
         .map((item) => {
             if (item.mappingId) {
                 return `item.${item.alias} = getTargetLabel(${item.mappingId}, item.${item.name})`;
             }
             return null;
         })
-        .filter(Boolean);
-    if (code.length) {
+        .filter(Boolean)
+        .join(';\n');
+    if (mappingCode) {
+        importSources.push(
+            {
+                imported: 'getTargetLabel',
+                type: ImportType.ImportSpecifier,
+                source: ctx.getUtilsFilePathImp(),
+            },
+            ...genImportedMappingCode(ctx, apiSchema.resData.fields),
+        );
+    }
+    const timeCode = apiSchema.resData.fields
+        .map((item) => {
+            if (item.name.endsWith('Time')) {
+                return `item.${item.alias} = item.${item.name} ? format(${item.name}, 'yyyy-MM-dd HH:mm:ss') : ''`;
+            }
+            return null;
+        })
+        .filter(Boolean)
+        .join(';\n');
+    if (timeCode) {
+        importSources.push({
+            imported: 'format',
+            type: ImportType.ImportSpecifier,
+            source: 'date-fns',
+        });
+        ctx.dependence.addPackage(dateFnsDependency);
+    }
+    if (timeCode || mappingCode) {
         return {
-            importSources: [
-                {
-                    imported: 'getTargetLabel',
-                    type: ImportType.ImportSpecifier,
-                    source: ctx.getUtilsFilePathImp(),
-                },
-                ...genImportedMappingCode(ctx, apiSchema.resData.fields),
-            ],
+            importSources: importSources,
             content: `transform(data) {
                 return data.map((item) => {
-                    ${code.join(';\n')}
+                    ${mappingCode}
+                    ${timeCode}
                     return item;
                 })
             },`,
@@ -48,10 +72,7 @@ function genTransform(ctx: Context, apiSchema: APISchema) {
 function genFormatParams(ctx: Context, apiSchema: APISchema) {
     const targetField = apiSchema.params.find((item) => !!item.mapFields);
     if (targetField) {
-        ctx.dependence.addPackage({
-            package: 'date-fns',
-            version: '2.29.2',
-        });
+        ctx.dependence.addPackage(dateFnsDependency);
 
         const format =
             targetField.component.props.type === 'daterangetime'
@@ -126,7 +147,7 @@ export function genTableSetupCode(
     importSources.push({
         imported: functionName,
         type: ImportType.ImportSpecifier,
-        source: `${ctx.getUseDirImp()}/useTable`,
+        source: ctx.getUseTableImp(),
     });
 
     const transformCode = genTransform(ctx, apiSchema);

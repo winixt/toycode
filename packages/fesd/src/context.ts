@@ -1,4 +1,5 @@
 import { Config } from '@qlin/toycode-core';
+import { basename, dirname } from 'path';
 import { defaultDependencies } from './config';
 import { Dependence } from './dependence';
 
@@ -44,6 +45,44 @@ export class Context {
     }
     getUseDirImp() {
         return `${SOURCE_CODE_PATH_IMPORT}/${this.getUseDir()}`;
+    }
+    getUseDirAndFileName(fileName: string) {
+        const useFile = fileName.split('.')[0];
+        const userPathConfig = (this.config.path || {}) as any;
+        if (userPathConfig[useFile]) {
+            return {
+                dir: dirname(userPathConfig[useFile]),
+                fileName: basename(userPathConfig[useFile]),
+            };
+        }
+        return {
+            dir: this.getUseDir(),
+            fileName,
+        };
+    }
+    getUseTableImp() {
+        if (this.config.path?.useTable) {
+            return `${SOURCE_CODE_PATH_IMPORT}/${this.config.path?.useTable}`;
+        }
+        return `${this.getUseDirImp()}/useTable`;
+    }
+    getUseFetchImp() {
+        if (this.config.path?.useFetch) {
+            return `${SOURCE_CODE_PATH_IMPORT}/${this.config.path?.useFetch}`;
+        }
+        return `${this.getUseDirImp()}/useFetch`;
+    }
+    getUseModelImp() {
+        if (this.config.path?.useModel) {
+            return `${SOURCE_CODE_PATH_IMPORT}/${this.config.path?.useModel}`;
+        }
+        return `${this.getUseDirImp()}/useModel`;
+    }
+    getUseModalImp() {
+        if (this.config.path?.useModal) {
+            return `${SOURCE_CODE_PATH_IMPORT}/${this.config.path?.useModal}`;
+        }
+        return `${this.getUseDirImp()}/useModal`;
     }
 
     getPagesDir() {

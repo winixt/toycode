@@ -18,8 +18,7 @@ function getUseCode(ctx: Context, rootDir: string): JSCode[] {
     return files.map((file) => {
         return {
             content: readFileSync(join(useDir, file), 'utf8'),
-            dir: ctx.getUseDir(),
-            fileName: file,
+            ...ctx.getUseDirAndFileName(file),
         };
     });
 }

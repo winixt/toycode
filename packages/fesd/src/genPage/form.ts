@@ -22,11 +22,6 @@ export function genFormImportResources(
 ): ImportSource[] {
     const importSources: ImportSource[] = [
         {
-            imported: 'reactive',
-            type: ImportType.ImportSpecifier,
-            source: 'vue',
-        },
-        {
             imported: 'FForm',
             type: ImportType.ImportSpecifier,
             source: '@fesjs/fes-design',
@@ -67,7 +62,7 @@ export function genFetchCode(ctx: Context, fields: Field[]) {
             importSources.push({
                 imported: 'useFetch',
                 type: ImportType.ImportSpecifier,
-                source: `${ctx.getUseDirImp()}/useFetch`,
+                source: ctx.getUseFetchImp(),
             });
 
             fetchCode += `

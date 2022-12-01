@@ -43,3 +43,8 @@ export const defaultDependencies = [
         version: '0.6.3',
     },
 ];
+
+export const dateFnsDependency = {
+    package: 'date-fns',
+    version: '2.29.2',
+};

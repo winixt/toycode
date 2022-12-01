@@ -37,7 +37,7 @@ const getCommonModalImportSource = (ctx: Context) => {
         {
             imported: 'useModal',
             type: ImportType.ImportSpecifier,
-            source: `${ctx.getUseDirImp()}/useModal`,
+            source: ctx.getUseModalImp(),
         },
         {
             imported: 'request',
@@ -107,7 +107,7 @@ function genViewModalCodeSnippet(
                 {
                     imported: 'useNormalModel',
                     type: ImportType.ImportSpecifier,
-                    source: `${ctx.getUseDirImp()}/useModel`,
+                    source: ctx.getUseModelImp(),
                 },
             ],
             content: `

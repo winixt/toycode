@@ -19,7 +19,7 @@ import { componentMap } from '../componentMap';
 import { applySearchAction } from './searchAction';
 import { genRelationModals } from './modal';
 import { applyModal } from './useModal';
-import { handleComponentOptions, formatResData } from './shared';
+import { handleComponentOptions, formReqData, formatResData } from './shared';
 import { genTableSetupCode, genTableTemplate } from './table';
 import { genFetchCode, genFormImportResources } from './form';
 import { getCommonJsCode } from '../genCommonCode/index';
@@ -137,6 +137,11 @@ function genSearchFormSetupCode(ctx: Context, params: Field[]): SetupCode {
     const importSources: ImportSource[] = [
         ...genFormImportResources(ctx, params),
         ...genAppendAllCode(ctx, params),
+        {
+            imported: 'reactive',
+            type: ImportType.ImportSpecifier,
+            source: 'vue',
+        },
     ];
 
     const fetchCode = genFetchCode(ctx, params);
@@ -204,6 +209,9 @@ function genSetupCode(ctx: Context, pageConfig: BlockSchema) {
 }
 
 export function genBlockSchema(ctx: Context, pageConfig: BlockSchema): Schema {
+    pageConfig.apiSchema.params = formReqData(
+        pageConfig.apiSchema.params || [],
+    );
     pageConfig.apiSchema.resData.fields = formatResData(
         pageConfig.apiSchema.resData.fields,
     );
