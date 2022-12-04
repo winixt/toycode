@@ -59,16 +59,22 @@ export function genFetchCode(ctx: Context, fields: Field[]) {
     const importSources: ImportSource[] = [];
     fields.forEach((field) => {
         if (field.apiSchema) {
-            importSources.push({
-                imported: 'useFetch',
-                type: ImportType.ImportSpecifier,
-                source: ctx.getUseFetchImp(),
+            const relateParams = fields.filter((item) => {
+                return (field.apiSchema.params || []).find(
+                    (param) => param.name === item.name,
+                );
             });
 
-            fetchCode += `
+            if (!relateParams.length) {
+                importSources.push({
+                    imported: 'useFetch',
+                    type: ImportType.ImportSpecifier,
+                    source: ctx.getUseFetchImp(),
+                });
+                fetchCode += `
                 const {data: ${genOptionsName(field.name)} } = useFetch('${
-                field.apiSchema.url
-            }', {
+                    field.apiSchema.url
+                }', {
                     defaultValue: () => [],
                     ${
                         field.apiSchema.resData.pick?.length
@@ -79,6 +85,50 @@ export function genFetchCode(ctx: Context, fields: Field[]) {
                     }
                 });
             `;
+            } else {
+                importSources.push({
+                    imported: 'request',
+                    type: ImportType.ImportSpecifier,
+                    source: '@fesjs/fes',
+                });
+                importSources.push({
+                    imported: 'ref',
+                    type: ImportType.ImportSpecifier,
+                    source: 'vue',
+                });
+                importSources.push({
+                    imported: 'watch',
+                    type: ImportType.ImportSpecifier,
+                    source: 'vue',
+                });
+                const relateParamsValues = relateParams.map((item) => {
+                    return `searchParams.${item.name}`;
+                });
+                fetchCode += `
+                const ${genOptionsName(field.name)} = ref([]);
+                watch(() => [${relateParamsValues.join(', ')}], async () => {
+                    searchParams.${field.name} = null;
+                    ${genOptionsName(field.name)}.value = [];
+                    if (${relateParamsValues.join(' != null && ')} != null) {
+                        const result = await request('${field.apiSchema.url}', {
+                            ${relateParamsValues
+                                .map((item) => {
+                                    return `${item.split('.')[1]}: ${item}`;
+                                })
+                                .join(',')}
+                        });
+                        ${genOptionsName(field.name)}.value = ${
+                    field.apiSchema.resData.pick
+                        ? `result.${field.apiSchema.resData.pick[0]}`
+                        : 'result'
+                }
+                        
+                    }
+                }, {
+                    immediate: true
+                });
+                `;
+            }
         }
     });
 

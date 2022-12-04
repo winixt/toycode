@@ -246,7 +246,7 @@ export function applyDeleteModal(modal: RelationModal, sfc: SFCComponent) {
     return sfc;
 }
 
-export function applySimpleUpdateModal(
+export function applySwitchStatusModal(
     ctx: Context,
     modal: RelationModal,
     sfc: SFCComponent,
@@ -354,8 +354,8 @@ export function applyModal(
             applyUpdateModal(ctx, sfc);
         } else if (modal.type === 'delete') {
             applyDeleteModal(modal, sfc);
-        } else if (modal.type === 'simpleUpdate') {
-            applySimpleUpdateModal(ctx, modal, sfc);
+        } else if (modal.type === 'switchStatus') {
+            applySwitchStatusModal(ctx, modal, sfc);
         } else if (modal.type === 'view') {
             applyViewModal(ctx, modal, sfc);
         }
