@@ -29,8 +29,12 @@ export function useModal({ props, emit, initData, onConfirm }) {
 
     watch(innerVisible, () => {
         if (!innerVisible.value) {
-            resetFormModel();
-            nextTick(() => formRefEl.value.clearValidate());
+            nextTick(() => {
+                resetFormModel();
+                nextTick(() => {
+                    formRefEl.value.clearValidate();
+                });
+            });
         }
     });
 
