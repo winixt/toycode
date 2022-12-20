@@ -36,7 +36,7 @@ function genTransform(ctx: Context, apiSchema: APISchema) {
     const timeCode = apiSchema.resData.fields
         .map((item) => {
             if (item.name.endsWith('Time')) {
-                return `item.${item.alias} = item.${item.name} ? format(${item.name}, 'yyyy-MM-dd HH:mm:ss') : ''`;
+                return `item.${item.alias} = item.${item.name} ? format(item.${item.name}, 'yyyy-MM-dd HH:mm:ss') : ''`;
             }
             return null;
         })

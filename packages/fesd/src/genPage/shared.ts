@@ -181,20 +181,22 @@ export function formReqData(fields: Field[]) {
 }
 
 export function formatResData(fields: Field[]) {
-    return fields.map((item) => {
-        if (item.mappingId) {
-            return {
-                alias: `${item.name}Text`,
-                ...item,
-            };
-        }
-        if (item.name.endsWith('Time')) {
-            return {
-                alias: `${item.name}Text`,
-                ...item,
-            };
-        }
+    return fields
+        .map((item) => {
+            if (item.mappingId) {
+                return {
+                    alias: `${item.name}Text`,
+                    ...item,
+                };
+            }
+            if (item.name.endsWith('Time')) {
+                return {
+                    alias: `${item.name}Text`,
+                    ...item,
+                };
+            }
 
-        return item;
-    });
+            return item;
+        })
+        .filter((item) => item.checked);
 }

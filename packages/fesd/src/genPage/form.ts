@@ -40,7 +40,13 @@ export function genFormImportResources(
             type: ImportType.ImportSpecifier,
             source: '@fesjs/fes-design',
         });
-        if (comp.subName) {
+        if (comp.name === 'FSelect' && field.options?.length) {
+            importSources.push({
+                imported: comp.subName,
+                type: ImportType.ImportSpecifier,
+                source: '@fesjs/fes-design',
+            });
+        } else if (comp.name !== 'FSelect' && comp.subName) {
             importSources.push({
                 imported: comp.subName,
                 type: ImportType.ImportSpecifier,

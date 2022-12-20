@@ -18,14 +18,24 @@ export function useSimpleTable(options) {
     };
     const dataSource = ref([]);
 
+    const innerFormatParams = (params) => {
+        if (params && options.formatParams) {
+            return options.formatParams(params);
+        }
+        return params;
+    };
+
+    let preParams = {
+        ...innerFormatParams(options.params),
+    };
     const getParams = (params) => {
-        const newParams = {
-            ...options.params,
-            ...unref(params),
-        };
-        return options.formatParams
-            ? options.formatParams(newParams)
-            : newParams;
+        if (params) {
+            preParams = innerFormatParams({
+                ...preParams,
+                ...unref(params),
+            });
+        }
+        return preParams;
     };
 
     const queryDataSource = (params) => {

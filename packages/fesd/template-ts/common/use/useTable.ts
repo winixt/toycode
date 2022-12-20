@@ -18,16 +18,25 @@ export function useSimpleTable(options: UseTableOptions) {
     };
     const dataSource = ref([]);
 
-    const getParams = (params) => {
-        const newParams = {
-            ...options.params,
-            ...unref(params),
-        };
-        return options.formatParams
-            ? options.formatParams(newParams)
-            : newParams;
+    const innerFormatParams = (params) => {
+        if (params && options.formatParams) {
+            return options.formatParams(params);
+        }
+        return params;
     };
 
+    let preParams = {
+        ...innerFormatParams(options.params),
+    };
+    const getParams = (params) => {
+        if (params) {
+            preParams = innerFormatParams({
+                ...preParams,
+                ...unref(params),
+            });
+        }
+        return preParams;
+    };
     const queryDataSource = (params?: Record<string, any>) => {
         request(options.api, getParams(params)).then((res) => {
             const result = options.dataField ? res[options.dataField] : res;

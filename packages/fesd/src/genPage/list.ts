@@ -159,7 +159,13 @@ function genSearchFormSetupCode(ctx: Context, params: Field[]): SetupCode {
 
 function genAppendAllCode(ctx: Context, fields: Field[]) {
     const importSources: ImportSource[] = [];
-    if (fields.find((item) => item.component.appendAll)) {
+    if (
+        fields.find(
+            (item) =>
+                item.component.appendAll &&
+                (item.mappingId || item.options?.length),
+        )
+    ) {
         importSources.push({
             imported: 'appendAll',
             type: ImportType.ImportSpecifier,
