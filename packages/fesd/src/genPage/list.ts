@@ -215,6 +215,8 @@ function genSetupCode(ctx: Context, pageConfig: BlockSchema) {
 }
 
 export function genBlockSchema(ctx: Context, pageConfig: BlockSchema): Schema {
+    console.log('========== genBlockSchema enter!');
+
     pageConfig.apiSchema.params = formReqData(
         pageConfig.apiSchema.params || [],
     );

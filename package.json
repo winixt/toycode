@@ -32,7 +32,7 @@
     "@babel/preset-typescript": "^7.17.12",
     "@types/jest": "^28.1.1",
     "@types/node": "^17.0.42",
-    "@webank/eslint-config-ts": "^1.0.8",
+    "@webank/eslint-config-ts": "^1.0.13",
     "babel-jest": "^28.1.1",
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",

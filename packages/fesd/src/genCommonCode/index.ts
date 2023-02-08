@@ -6,7 +6,11 @@ import { Context } from '../context';
 
 function getUtilsCode(ctx: Context, rootDir: string): JSCode {
     return {
-        content: readFileSync(join(rootDir, 'utils.js'), 'utf-8'),
+        content: readFileSync(
+            // join(rootDir, `utils.${ctx.getScriptLanguage()}`),
+            join(rootDir, `utils.ts`),
+            'utf-8',
+        ),
         dir: dirname(ctx.getUtilsFilePath()),
         fileName: basename(ctx.getUtilsFilePath()),
     };
@@ -24,6 +28,9 @@ function getUseCode(ctx: Context, rootDir: string): JSCode[] {
 }
 
 export function getCommonJsCode(ctx: Context) {
-    const rootDir = join(__dirname, '../../template/common');
+    const templateDir = `../../template-${ctx.getScriptLanguage()}/common`;
+    const rootDir = join(__dirname, templateDir);
+    console.log('========== getCommonJsCode rootDir', rootDir);
+
     return getUseCode(ctx, rootDir).concat(getUtilsCode(ctx, rootDir));
 }

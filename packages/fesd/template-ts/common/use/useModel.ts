@@ -1,4 +1,4 @@
-import { ref, watch, computed, WritableComputedRef } from 'vue';
+import { ref, watch, computed, Ref, WritableComputedRef } from 'vue';
 import { isEqual as isEqualFunc, isUndefined } from 'lodash-es';
 
 type UseNormalModelOptions = {
@@ -18,9 +18,9 @@ export const useNormalModel = (
         deep = false,
         isEqual = false,
         defaultValue,
-    } = config;
-    const usingProp = prop;
-    const currentValue = ref(
+    }: UseNormalModelOptions = config;
+    const usingProp: string = prop;
+    const currentValue: Ref<boolean> = ref(
         !isUndefined(props[usingProp]) ? props[usingProp] : defaultValue,
     );
     const pureUpdateCurrentValue = (value: any) => {

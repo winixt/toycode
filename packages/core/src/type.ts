@@ -8,6 +8,7 @@ export interface Schema {
 
 export interface Config {
     projectDir?: string;
+    scriptLanguage?: string;
     path?: {
         constants?: string;
         utils?: string;

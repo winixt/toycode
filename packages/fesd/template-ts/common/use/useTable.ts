@@ -1,5 +1,5 @@
 import { request } from '@fesjs/fes';
-import { ref, unref, reactive } from 'vue';
+import { ref, unref, reactive, Ref } from 'vue';
 
 export interface UseTableOptions {
     api: string;
@@ -16,9 +16,9 @@ export function useSimpleTable(options: UseTableOptions) {
         isInit: true,
         ...options,
     };
-    const dataSource = ref([]);
+    const dataSource: Ref<[]> = ref([]);
 
-    const innerFormatParams = (params) => {
+    const innerFormatParams = (params: Record<string, any>) => {
         if (params && options.formatParams) {
             return options.formatParams(params);
         }
@@ -28,7 +28,7 @@ export function useSimpleTable(options: UseTableOptions) {
     let preParams = {
         ...innerFormatParams(options.params),
     };
-    const getParams = (params) => {
+    const getParams = (params: Record<string, any>) => {
         if (params) {
             preParams = innerFormatParams({
                 ...preParams,
@@ -76,7 +76,7 @@ export function useTable(options: UseTableOptions) {
         pageField: 'page',
         ...options,
     };
-    const dataSource = ref([]);
+    const dataSource: Ref<[]> = ref([]);
 
     const pagination = reactive({
         currentPage: 1,
@@ -84,7 +84,7 @@ export function useTable(options: UseTableOptions) {
         totalCount: 0,
     });
 
-    const innerFormatParams = (params) => {
+    const innerFormatParams = (params: Record<string, any>) => {
         if (params && options.formatParams) {
             return options.formatParams(params);
         }
@@ -94,7 +94,7 @@ export function useTable(options: UseTableOptions) {
     let preParams = {
         ...innerFormatParams(options.params),
     };
-    const getParams = (params) => {
+    const getParams = (params: Record<string, any>) => {
         if (params) {
             preParams = innerFormatParams({
                 ...preParams,
@@ -112,9 +112,9 @@ export function useTable(options: UseTableOptions) {
 
     const queryDataSource = (params?: Record<string, any>) => {
         request(options.api, getParams(params)).then((res) => {
-            const result = res[options.dataField];
+            const result = options.dataField ? res[options.dataField] : res;
             dataSource.value = options.transform
-                ? options.transform(result, res)
+                ? options.transform(result)
                 : result;
             pagination.totalCount = res[options.pageField].totalCount;
         });

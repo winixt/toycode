@@ -3,11 +3,12 @@ import { basename, dirname } from 'path';
 import { defaultDependencies } from './config';
 import { Dependence } from './dependence';
 
+export const SCRIPT_LANGUAGE = 'js'; // 枚举值: js、ts
 export const SOURCE_CODE_PATH = 'src';
 export const SOURCE_CODE_PATH_IMPORT = '@';
 export const USE_DIR = 'common/use';
-export const CONSTANTS_FILE_PATH = 'common/constants.js';
-export const UTILS_FILE_PATH = 'common/utils.js';
+export const CONSTANTS_FILE_PATH = 'common/constants';
+export const UTILS_FILE_PATH = 'common/utils';
 export const PAGES_DIR = 'pages';
 export const COMPONENTS_DIR = 'components';
 
@@ -22,8 +23,16 @@ export class Context {
         this.config = config;
         this.dependence = new Dependence(defaultDependencies);
     }
+
+    getScriptLanguage() {
+        return this.config?.scriptLanguage || SCRIPT_LANGUAGE;
+    }
+
     getConstantsFilePath() {
-        return this.config.path?.constants || CONSTANTS_FILE_PATH;
+        return (
+            this.config.path?.constants ||
+            `${CONSTANTS_FILE_PATH}.${this.getScriptLanguage()}`
+        );
     }
     getConstantsFilePathImp() {
         return handleImpPath(
@@ -32,7 +41,10 @@ export class Context {
     }
 
     getUtilsFilePath() {
-        return this.config.path?.utils || UTILS_FILE_PATH;
+        return (
+            this.config.path?.utils ||
+            `${UTILS_FILE_PATH}.${this.getScriptLanguage()}`
+        );
     }
     getUtilsFilePathImp() {
         return handleImpPath(
