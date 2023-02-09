@@ -2,23 +2,24 @@
   "name": "@qlin/toycode-core",
   "version": "1.0.4",
   "description": "代码生成",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "files": [
-    "lib"
-  ],
+  "author": "winixt",
+  "license": "ISC",
+  "homepage": "https://github.com/winixt/toycode#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/winixt/toycode.git"
   },
-  "author": "winixt",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/winixt/toycode/issues"
   },
-  "homepage": "https://github.com/winixt/toycode#readme",
+  "main": "lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "@babel/generator": "^7.18.2",
     "@babel/parser": "^7.18.5",
@@ -26,7 +27,7 @@
     "@types/babel__generator": "^7.6.4",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash": "^4.14.21",
-    "@types/node": "^17.0.42",
+    "@types/node": "^18.0.0",
     "@types/prettier": "^2.6.3",
     "fs-extra": "^10.1.0",
     "lodash": "^4.17.21",
@@ -34,6 +35,5 @@
     "postcss": "^8.4.14",
     "prettier": "^2.7.1",
     "typescript": "^4.7.3"
-  },
-  "types": "./lib/index.d.ts"
+  }
 }

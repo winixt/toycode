@@ -1,0 +1,87 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@qlin/toycode-core': 1.0.4
+  '@types/fs-extra': ^9.0.13
+  '@types/lodash': ^4.14.21
+  fs-extra: ^10.1.0
+  lodash: ^4.17.21
+  typescript: ^4.7.3
+
+dependencies:
+  '@qlin/toycode-core': link:node_modules/@qlin/toycode-core
+  '@types/fs-extra': 10.107.103.115+8001/@types/fs-extra/9.0.13
+  '@types/lodash': 10.107.103.115+8001/@types/lodash/4.14.191
+  fs-extra: 10.107.103.115+8001/fs-extra/10.1.0
+  lodash: 10.107.103.115+8001/lodash/4.17.21
+  typescript: 10.107.103.115+8001/typescript/4.9.5
+
+packages:
+
+  10.107.103.115+8001/@types/fs-extra/9.0.13:
+    resolution: {integrity: sha1-dZT7rgT+fxkYzos9IT90/0SsH0U=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/fs-extra/download/@types/fs-extra-9.0.13.tgz}
+    name: '@types/fs-extra'
+    version: 9.0.13
+    dependencies:
+      '@types/node': 10.107.103.115+8001/@types/node/18.13.0
+    dev: false
+
+  10.107.103.115+8001/@types/lodash/4.14.191:
+    resolution: {integrity: sha1-CVEef3y6J1rNi0Gd2sjammp54vo=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/lodash/download/@types/lodash-4.14.191.tgz}
+    name: '@types/lodash'
+    version: 4.14.191
+    dev: false
+
+  10.107.103.115+8001/@types/node/18.13.0:
+    resolution: {integrity: sha1-BADR5s6H6dMDLBnrbFggWw0/eFA=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/node/download/@types/node-18.13.0.tgz}
+    name: '@types/node'
+    version: 18.13.0
+    dev: false
+
+  10.107.103.115+8001/fs-extra/10.1.0:
+    resolution: {integrity: sha1-Aoc8+8QITd4SfqpfmQXu8jJdGr8=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/fs-extra/download/fs-extra-10.1.0.tgz}
+    name: fs-extra
+    version: 10.1.0
+    engines: {node: '>=12'}
+    dependencies:
+      graceful-fs: 10.107.103.115+8001/graceful-fs/4.2.10
+      jsonfile: 10.107.103.115+8001/jsonfile/6.1.0
+      universalify: 10.107.103.115+8001/universalify/2.0.0
+    dev: false
+
+  10.107.103.115+8001/graceful-fs/4.2.10:
+    resolution: {integrity: sha1-FH06AG2kyjzhRyjHrvwofDZ9emw=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/graceful-fs/download/graceful-fs-4.2.10.tgz}
+    name: graceful-fs
+    version: 4.2.10
+    dev: false
+
+  10.107.103.115+8001/jsonfile/6.1.0:
+    resolution: {integrity: sha1-vFWyY0eTxnnsZAMJTrE2mKbsCq4=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/jsonfile/download/jsonfile-6.1.0.tgz}
+    name: jsonfile
+    version: 6.1.0
+    dependencies:
+      universalify: 10.107.103.115+8001/universalify/2.0.0
+    optionalDependencies:
+      graceful-fs: 10.107.103.115+8001/graceful-fs/4.2.10
+    dev: false
+
+  10.107.103.115+8001/lodash/4.17.21:
+    resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/lodash/download/lodash-4.17.21.tgz}
+    name: lodash
+    version: 4.17.21
+    dev: false
+
+  10.107.103.115+8001/typescript/4.9.5:
+    resolution: {integrity: sha1-CVl5+bzA0J2jJNWNA86Pg3TL5lo=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/typescript/download/typescript-4.9.5.tgz}
+    name: typescript
+    version: 4.9.5
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: false
+
+  10.107.103.115+8001/universalify/2.0.0:
+    resolution: {integrity: sha1-daSYTv7cSwiXXFrrc/Uw0C3yVxc=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/universalify/download/universalify-2.0.0.tgz}
+    name: universalify
+    version: 2.0.0
+    engines: {node: '>= 10.0.0'}
+    dev: false

@@ -2,14 +2,14 @@
 
 type OptionValue = number | string | boolean;
 export interface Option {
-    value: OptionValue;
-    label: string;
+    value: OptionValue
+    label: string
 }
 export function getTargetLabel(
     options: Option[],
     value: OptionValue,
 ): OptionValue {
-    const target: Option = options.find((item) => item.value === value);
+    const target: Option = options.find(item => item.value === value);
 
     return target ? target.label : value;
 }
@@ -19,7 +19,7 @@ export function findAnotherValue(
     options: Option[],
     currentValue: OptionValue,
 ): OptionValue {
-    const result: Option = options.find((item) => item.value !== currentValue);
+    const result: Option = options.find(item => item.value !== currentValue);
 
     return result ? result.value : null;
 }
@@ -28,7 +28,7 @@ export function findAnotherLabel(
     options: Option[],
     currentValue: OptionValue,
 ): string {
-    const result: Option = options.find((item) => item.value !== currentValue);
+    const result: Option = options.find(item => item.value !== currentValue);
 
     return result ? result.label : null;
 }
@@ -45,7 +45,8 @@ export function pickData(
     for (const key of pick) {
         if (Object.prototype.toString.call(result) === '[object Object]') {
             result = result[key];
-        } else {
+        }
+        else {
             result = null;
             break;
         }

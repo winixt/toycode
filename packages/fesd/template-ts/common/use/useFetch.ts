@@ -1,13 +1,14 @@
-import { ref, Ref } from 'vue';
+import type { Ref } from 'vue';
+import { ref } from 'vue';
 import { request } from '@fesjs/fes';
 import { pickData } from '../utils';
 
 export interface FetchOptions {
-    params?: Record<string, any>;
-    immediate?: boolean;
-    transform?: <T>(input: T) => T;
-    defaultValue: () => Record<string, any>;
-    pick?: string[];
+    params?: Record<string, any>
+    immediate?: boolean
+    transform?: <T>(input: T) => T
+    defaultValue: () => Record<string, any>
+    pick?: string[]
 }
 
 /**
@@ -31,22 +32,23 @@ export function useFetch(url: string, options: FetchOptions) {
             let result = await request(url, options.params || {}, {
                 mergeRequest: true,
             });
-            if (options.pick) {
+            if (options.pick)
                 result = pickData(result, options.pick);
-            }
-            data.value =
-                (options.transform ? options.transform(result) : result) ??
-                options.defaultValue?.();
-        } catch (e) {
-            console.log(e);
-        } finally {
+
+            data.value
+                = (options.transform ? options.transform(result) : result)
+                ?? options.defaultValue?.();
+        }
+        catch (e) {
+            console.error(e);
+        }
+        finally {
             pending.value = false;
         }
     };
 
-    if (options.immediate) {
+    if (options.immediate)
         queryDataSource();
-    }
 
     return {
         data,

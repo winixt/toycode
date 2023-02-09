@@ -1,21 +1,23 @@
-import {
-    ref,
-    isRef,
-    reactive,
-    computed,
-    nextTick,
-    watch,
+import type {
     ComputedRef,
     WritableComputedRef,
 } from 'vue';
+import {
+    computed,
+    isRef,
+    nextTick,
+    reactive,
+    ref,
+    watch,
+} from 'vue';
 import { useNormalModel } from './useModel';
 
-type useModalOptions = {
-    props: Record<string, any>;
-    emit: any;
-    initData?: ComputedRef<any>;
-    onConfirm?: any;
-};
+interface useModalOptions {
+    props: Record<string, any>
+    emit: any
+    initData?: ComputedRef<any>
+    onConfirm?: any
+}
 
 export function useModal({
     props,
@@ -89,8 +91,8 @@ export function useAddModal() {
 }
 
 export interface ModalState {
-    visible: boolean;
-    rowData: Record<string, any>;
+    visible: boolean
+    rowData: Record<string, any>
 }
 export function useCommonModal() {
     const state = reactive<ModalState>({

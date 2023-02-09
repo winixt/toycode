@@ -1,0 +1,258 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@babel/generator': ^7.18.2
+  '@babel/parser': ^7.18.5
+  '@babel/types': ^7.18.4
+  '@types/babel__generator': ^7.6.4
+  '@types/fs-extra': ^9.0.13
+  '@types/lodash': ^4.14.21
+  '@types/node': ^18.0.0
+  '@types/prettier': ^2.6.3
+  fs-extra: ^10.1.0
+  lodash: ^4.17.21
+  nanoid: ^3.3.4
+  postcss: ^8.4.14
+  prettier: ^2.7.1
+  typescript: ^4.7.3
+
+dependencies:
+  '@babel/generator': 10.107.103.115+8001/@babel/generator/7.20.14
+  '@babel/parser': 10.107.103.115+8001/@babel/parser/7.20.15
+  '@babel/types': 10.107.103.115+8001/@babel/types/7.20.7
+  '@types/babel__generator': 10.107.103.115+8001/@types/babel__generator/7.6.4
+  '@types/fs-extra': 10.107.103.115+8001/@types/fs-extra/9.0.13
+  '@types/lodash': 10.107.103.115+8001/@types/lodash/4.14.191
+  '@types/node': 10.107.103.115+8001/@types/node/18.13.0
+  '@types/prettier': 10.107.103.115+8001/@types/prettier/2.7.2
+  fs-extra: 10.107.103.115+8001/fs-extra/10.1.0
+  lodash: 10.107.103.115+8001/lodash/4.17.21
+  nanoid: 10.107.103.115+8001/nanoid/3.3.4
+  postcss: 10.107.103.115+8001/postcss/8.4.21
+  prettier: 10.107.103.115+8001/prettier/2.8.3
+  typescript: 10.107.103.115+8001/typescript/4.9.5
+
+packages:
+
+  10.107.103.115+8001/@babel/generator/7.20.14:
+    resolution: {integrity: sha1-n6dyyfhqRsasmzIQOUAHErlvZM4=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@babel/generator/download/@babel/generator-7.20.14.tgz}
+    name: '@babel/generator'
+    version: 7.20.14
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/types': 10.107.103.115+8001/@babel/types/7.20.7
+      '@jridgewell/gen-mapping': 10.107.103.115+8001/@jridgewell/gen-mapping/0.3.2
+      jsesc: 10.107.103.115+8001/jsesc/2.5.2
+    dev: false
+
+  10.107.103.115+8001/@babel/helper-string-parser/7.19.4:
+    resolution: {integrity: sha1-ONOstlS0cBqbd/sGFalvd1w6nmM=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@babel/helper-string-parser/download/@babel/helper-string-parser-7.19.4.tgz}
+    name: '@babel/helper-string-parser'
+    version: 7.19.4
+    engines: {node: '>=6.9.0'}
+    dev: false
+
+  10.107.103.115+8001/@babel/helper-validator-identifier/7.19.1:
+    resolution: {integrity: sha1-fuqDTPMpAf/cGn7lVeL5wn4knKI=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@babel/helper-validator-identifier/download/@babel/helper-validator-identifier-7.19.1.tgz}
+    name: '@babel/helper-validator-identifier'
+    version: 7.19.1
+    engines: {node: '>=6.9.0'}
+    dev: false
+
+  10.107.103.115+8001/@babel/parser/7.20.15:
+    resolution: {integrity: sha1-7snzbY6vCUi7iMh6RnhLXun9DIk=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@babel/parser/download/@babel/parser-7.20.15.tgz}
+    name: '@babel/parser'
+    version: 7.20.15
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+    dependencies:
+      '@babel/types': 10.107.103.115+8001/@babel/types/7.20.7
+    dev: false
+
+  10.107.103.115+8001/@babel/types/7.20.7:
+    resolution: {integrity: sha1-VOx14lIxhCP8B/tkTcalimTAm38=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@babel/types/download/@babel/types-7.20.7.tgz}
+    name: '@babel/types'
+    version: 7.20.7
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/helper-string-parser': 10.107.103.115+8001/@babel/helper-string-parser/7.19.4
+      '@babel/helper-validator-identifier': 10.107.103.115+8001/@babel/helper-validator-identifier/7.19.1
+      to-fast-properties: 10.107.103.115+8001/to-fast-properties/2.0.0
+    dev: false
+
+  10.107.103.115+8001/@jridgewell/gen-mapping/0.3.2:
+    resolution: {integrity: sha1-wa7cYehT8rufXf5tRELTtWWyU7k=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@jridgewell/gen-mapping/download/@jridgewell/gen-mapping-0.3.2.tgz}
+    name: '@jridgewell/gen-mapping'
+    version: 0.3.2
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@jridgewell/set-array': 10.107.103.115+8001/@jridgewell/set-array/1.1.2
+      '@jridgewell/sourcemap-codec': 10.107.103.115+8001/@jridgewell/sourcemap-codec/1.4.14
+      '@jridgewell/trace-mapping': 10.107.103.115+8001/@jridgewell/trace-mapping/0.3.17
+    dev: false
+
+  10.107.103.115+8001/@jridgewell/resolve-uri/3.1.0:
+    resolution: {integrity: sha1-IgOxGMFXchrd/mnUe3BGVGMGbXg=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@jridgewell/resolve-uri/download/@jridgewell/resolve-uri-3.1.0.tgz}
+    name: '@jridgewell/resolve-uri'
+    version: 3.1.0
+    engines: {node: '>=6.0.0'}
+    dev: false
+
+  10.107.103.115+8001/@jridgewell/set-array/1.1.2:
+    resolution: {integrity: sha1-fGz5mNbSC5FMClWpGuko/yWWXnI=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@jridgewell/set-array/download/@jridgewell/set-array-1.1.2.tgz}
+    name: '@jridgewell/set-array'
+    version: 1.1.2
+    engines: {node: '>=6.0.0'}
+    dev: false
+
+  10.107.103.115+8001/@jridgewell/sourcemap-codec/1.4.14:
+    resolution: {integrity: sha1-rdTJjTQUcqKJGQtCTvvbCWmRuyQ=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@jridgewell/sourcemap-codec/download/@jridgewell/sourcemap-codec-1.4.14.tgz}
+    name: '@jridgewell/sourcemap-codec'
+    version: 1.4.14
+    dev: false
+
+  10.107.103.115+8001/@jridgewell/trace-mapping/0.3.17:
+    resolution: {integrity: sha1-eTBBJ3r5BzsJUaf+Dw2MTJjDaYU=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@jridgewell/trace-mapping/download/@jridgewell/trace-mapping-0.3.17.tgz}
+    name: '@jridgewell/trace-mapping'
+    version: 0.3.17
+    dependencies:
+      '@jridgewell/resolve-uri': 10.107.103.115+8001/@jridgewell/resolve-uri/3.1.0
+      '@jridgewell/sourcemap-codec': 10.107.103.115+8001/@jridgewell/sourcemap-codec/1.4.14
+    dev: false
+
+  10.107.103.115+8001/@types/babel__generator/7.6.4:
+    resolution: {integrity: sha1-HyDOTFsZkLN5ALY/BQGC0owkObc=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/babel__generator/download/@types/babel__generator-7.6.4.tgz}
+    name: '@types/babel__generator'
+    version: 7.6.4
+    dependencies:
+      '@babel/types': 10.107.103.115+8001/@babel/types/7.20.7
+    dev: false
+
+  10.107.103.115+8001/@types/fs-extra/9.0.13:
+    resolution: {integrity: sha1-dZT7rgT+fxkYzos9IT90/0SsH0U=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/fs-extra/download/@types/fs-extra-9.0.13.tgz}
+    name: '@types/fs-extra'
+    version: 9.0.13
+    dependencies:
+      '@types/node': 10.107.103.115+8001/@types/node/18.13.0
+    dev: false
+
+  10.107.103.115+8001/@types/lodash/4.14.191:
+    resolution: {integrity: sha1-CVEef3y6J1rNi0Gd2sjammp54vo=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/lodash/download/@types/lodash-4.14.191.tgz}
+    name: '@types/lodash'
+    version: 4.14.191
+    dev: false
+
+  10.107.103.115+8001/@types/node/18.13.0:
+    resolution: {integrity: sha1-BADR5s6H6dMDLBnrbFggWw0/eFA=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/node/download/@types/node-18.13.0.tgz}
+    name: '@types/node'
+    version: 18.13.0
+    dev: false
+
+  10.107.103.115+8001/@types/prettier/2.7.2:
+    resolution: {integrity: sha1-bCMkZBzEugUKjHELKyUbN3WB+/A=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/@types/prettier/download/@types/prettier-2.7.2.tgz}
+    name: '@types/prettier'
+    version: 2.7.2
+    dev: false
+
+  10.107.103.115+8001/fs-extra/10.1.0:
+    resolution: {integrity: sha1-Aoc8+8QITd4SfqpfmQXu8jJdGr8=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/fs-extra/download/fs-extra-10.1.0.tgz}
+    name: fs-extra
+    version: 10.1.0
+    engines: {node: '>=12'}
+    dependencies:
+      graceful-fs: 10.107.103.115+8001/graceful-fs/4.2.10
+      jsonfile: 10.107.103.115+8001/jsonfile/6.1.0
+      universalify: 10.107.103.115+8001/universalify/2.0.0
+    dev: false
+
+  10.107.103.115+8001/graceful-fs/4.2.10:
+    resolution: {integrity: sha1-FH06AG2kyjzhRyjHrvwofDZ9emw=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/graceful-fs/download/graceful-fs-4.2.10.tgz}
+    name: graceful-fs
+    version: 4.2.10
+    dev: false
+
+  10.107.103.115+8001/jsesc/2.5.2:
+    resolution: {integrity: sha1-gFZNLkg9rPbo7yCWUKZ98/DCg6Q=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/jsesc/download/jsesc-2.5.2.tgz}
+    name: jsesc
+    version: 2.5.2
+    engines: {node: '>=4'}
+    hasBin: true
+    dev: false
+
+  10.107.103.115+8001/jsonfile/6.1.0:
+    resolution: {integrity: sha1-vFWyY0eTxnnsZAMJTrE2mKbsCq4=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/jsonfile/download/jsonfile-6.1.0.tgz}
+    name: jsonfile
+    version: 6.1.0
+    dependencies:
+      universalify: 10.107.103.115+8001/universalify/2.0.0
+    optionalDependencies:
+      graceful-fs: 10.107.103.115+8001/graceful-fs/4.2.10
+    dev: false
+
+  10.107.103.115+8001/lodash/4.17.21:
+    resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/lodash/download/lodash-4.17.21.tgz}
+    name: lodash
+    version: 4.17.21
+    dev: false
+
+  10.107.103.115+8001/nanoid/3.3.4:
+    resolution: {integrity: sha1-cwtn480J4t6s8DwCfIHJ2dvF6Ks=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/nanoid/download/nanoid-3.3.4.tgz}
+    name: nanoid
+    version: 3.3.4
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+    dev: false
+
+  10.107.103.115+8001/picocolors/1.0.0:
+    resolution: {integrity: sha1-y1vcdP8/UYkiNur3nWi8RFZKuBw=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/picocolors/download/picocolors-1.0.0.tgz}
+    name: picocolors
+    version: 1.0.0
+    dev: false
+
+  10.107.103.115+8001/postcss/8.4.21:
+    resolution: {integrity: sha1-xjm3GaV+/DGHsToddlZ1SF9BNPQ=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/postcss/download/postcss-8.4.21.tgz}
+    name: postcss
+    version: 8.4.21
+    engines: {node: ^10 || ^12 || >=14}
+    dependencies:
+      nanoid: 10.107.103.115+8001/nanoid/3.3.4
+      picocolors: 10.107.103.115+8001/picocolors/1.0.0
+      source-map-js: 10.107.103.115+8001/source-map-js/1.0.2
+    dev: false
+
+  10.107.103.115+8001/prettier/2.8.3:
+    resolution: {integrity: sha1-q2l7HT3Ub7Rib74vVDr+DMmNhjI=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/prettier/download/prettier-2.8.3.tgz}
+    name: prettier
+    version: 2.8.3
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: false
+
+  10.107.103.115+8001/source-map-js/1.0.2:
+    resolution: {integrity: sha1-rbw2HZxi3zgBJefxYfccgm8eSQw=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/source-map-js/download/source-map-js-1.0.2.tgz}
+    name: source-map-js
+    version: 1.0.2
+    engines: {node: '>=0.10.0'}
+    dev: false
+
+  10.107.103.115+8001/to-fast-properties/2.0.0:
+    resolution: {integrity: sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/to-fast-properties/download/to-fast-properties-2.0.0.tgz}
+    name: to-fast-properties
+    version: 2.0.0
+    engines: {node: '>=4'}
+    dev: false
+
+  10.107.103.115+8001/typescript/4.9.5:
+    resolution: {integrity: sha1-CVl5+bzA0J2jJNWNA86Pg3TL5lo=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/typescript/download/typescript-4.9.5.tgz}
+    name: typescript
+    version: 4.9.5
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: false
+
+  10.107.103.115+8001/universalify/2.0.0:
+    resolution: {integrity: sha1-daSYTv7cSwiXXFrrc/Uw0C3yVxc=, registry: http://wnpm.weoa.com:8001/, tarball: http://10.107.103.115:8001/universalify/download/universalify-2.0.0.tgz}
+    name: universalify
+    version: 2.0.0
+    engines: {node: '>= 10.0.0'}
+    dev: false

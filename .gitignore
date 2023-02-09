@@ -19,4 +19,4 @@ example/node/tmp
 test.js
 test.ts
 
-pnpm-global
+.vscode

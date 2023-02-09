@@ -1,5 +1,5 @@
 import { request } from '@fesjs/fes';
-import { ref, unref, reactive } from 'vue';
+import { reactive, ref, unref } from 'vue';
 /**
  *
  * @param {
@@ -19,9 +19,9 @@ export function useSimpleTable(options) {
     const dataSource = ref([]);
 
     const innerFormatParams = (params) => {
-        if (params && options.formatParams) {
+        if (params && options.formatParams)
             return options.formatParams(params);
-        }
+
         return params;
     };
 
@@ -47,9 +47,8 @@ export function useSimpleTable(options) {
         });
     };
 
-    if (options.isInit) {
+    if (options.isInit)
         queryDataSource();
-    }
 
     return {
         dataSource,
@@ -86,9 +85,9 @@ export function useTable(options) {
     });
 
     const innerFormatParams = (params) => {
-        if (params && options.formatParams) {
+        if (params && options.formatParams)
             return options.formatParams(params);
-        }
+
         return params;
     };
 
@@ -136,9 +135,8 @@ export function useTable(options) {
         queryDataSource(params);
     };
 
-    if (options.isInit) {
+    if (options.isInit)
         refresh();
-    }
 
     return {
         dataSource,

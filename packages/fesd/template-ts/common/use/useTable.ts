@@ -1,14 +1,15 @@
 import { request } from '@fesjs/fes';
-import { ref, unref, reactive, Ref } from 'vue';
+import type { Ref } from 'vue';
+import { reactive, ref, unref } from 'vue';
 
 export interface UseTableOptions {
-    api: string;
-    params?: Record<string, any>;
-    formatParams?: <T>(params: T) => T;
-    transform?: <T>(input: T) => T;
-    dataField?: string;
-    pageField?: string;
-    isInit?: boolean;
+    api: string
+    params?: Record<string, any>
+    formatParams?: <T>(params: T) => T
+    transform?: <T>(input: T) => T
+    dataField?: string
+    pageField?: string
+    isInit?: boolean
 }
 
 export function useSimpleTable(options: UseTableOptions) {
@@ -19,9 +20,9 @@ export function useSimpleTable(options: UseTableOptions) {
     const dataSource: Ref<[]> = ref([]);
 
     const innerFormatParams = (params: Record<string, any>) => {
-        if (params && options.formatParams) {
+        if (params && options.formatParams)
             return options.formatParams(params);
-        }
+
         return params;
     };
 
@@ -46,9 +47,8 @@ export function useSimpleTable(options: UseTableOptions) {
         });
     };
 
-    if (options.isInit) {
+    if (options.isInit)
         queryDataSource();
-    }
 
     return {
         dataSource,
@@ -85,9 +85,9 @@ export function useTable(options: UseTableOptions) {
     });
 
     const innerFormatParams = (params: Record<string, any>) => {
-        if (params && options.formatParams) {
+        if (params && options.formatParams)
             return options.formatParams(params);
-        }
+
         return params;
     };
 
@@ -135,9 +135,8 @@ export function useTable(options: UseTableOptions) {
         queryDataSource(params);
     };
 
-    if (options.isInit) {
+    if (options.isInit)
         refresh();
-    }
 
     return {
         dataSource,

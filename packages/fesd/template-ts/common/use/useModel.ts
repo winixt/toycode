@@ -1,12 +1,13 @@
-import { ref, watch, computed, Ref, WritableComputedRef } from 'vue';
+import type { Ref, WritableComputedRef } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { isEqual as isEqualFunc, isUndefined } from 'lodash-es';
 
-type UseNormalModelOptions = {
-    prop?: string;
-    isEqual?: boolean;
-    deep?: boolean;
-    defaultValue?: any;
-};
+interface UseNormalModelOptions {
+    prop?: string
+    isEqual?: boolean
+    deep?: boolean
+    defaultValue?: any
+}
 
 export const useNormalModel = (
     props: Record<string, any>,
@@ -25,11 +26,11 @@ export const useNormalModel = (
     );
     const pureUpdateCurrentValue = (value: any) => {
         if (
-            value === currentValue.value ||
-            (isEqual && isEqualFunc(value, currentValue.value))
-        ) {
+            value === currentValue.value
+            || (isEqual && isEqualFunc(value, currentValue.value))
+        )
             return;
-        }
+
         currentValue.value = value;
     };
     const updateCurrentValue = (value: any) => {
@@ -40,9 +41,9 @@ export const useNormalModel = (
     watch(
         () => props[usingProp],
         (val) => {
-            if (val === currentValue.value) {
+            if (val === currentValue.value)
                 return;
-            }
+
             currentValue.value = val;
         },
         {
