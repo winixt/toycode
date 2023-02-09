@@ -3,8 +3,8 @@ import { request } from '@fesjs/fes';
 import { pickData } from '../utils';
 
 /**
- * 
- * @param {*} url 
+ *
+ * @param {*} url
  * @param {*} options
         params?: SearchParams
         immediate?: boolean
@@ -28,22 +28,23 @@ export function useFetch(url, options) {
             let result = await request(url, options.params || {}, {
                 mergeRequest: true,
             });
-            if (options.pick) {
+            if (options.pick)
                 result = pickData(result, options.pick);
-            }
-            data.value =
-                (options.transform ? options.transform(result) : result) ??
-                options.defaultValue?.();
-        } catch (e) {
-            console.log(e);
-        } finally {
+
+            data.value
+                = (options.transform ? options.transform(result) : result)
+                ?? options.defaultValue?.();
+        }
+        catch (e) {
+            console.error('Error info:', e);
+        }
+        finally {
             pending.value = false;
         }
     };
 
-    if (options.immediate) {
+    if (options.immediate)
         queryDataSource();
-    }
 
     return {
         data,

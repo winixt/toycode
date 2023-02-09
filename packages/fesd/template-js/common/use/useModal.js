@@ -1,4 +1,4 @@
-import { ref, isRef, reactive, computed, nextTick, watch } from 'vue';
+import { computed, isRef, nextTick, reactive, ref, watch } from 'vue';
 import { useNormalModel } from './useModel';
 
 export function useModal({ props, emit, initData, onConfirm }) {

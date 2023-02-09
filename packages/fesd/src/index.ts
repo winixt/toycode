@@ -1,5 +1,6 @@
-import { compileSchema, Config } from '@qlin/toycode-core';
-import { BlockSchema } from './type';
+import type { Config } from '@qlin/toycode-core';
+import { compileSchema } from '@qlin/toycode-core';
+import type { BlockSchema } from './type';
 import { genBlockSchema } from './genPage/list';
 import { Context } from './context';
 

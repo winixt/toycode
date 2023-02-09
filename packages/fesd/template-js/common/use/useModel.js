@@ -1,4 +1,4 @@
-import { ref, watch, computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
 
 export const useNormalModel = (
@@ -11,9 +11,8 @@ export const useNormalModel = (
     const usingProp = config?.prop ?? 'modelValue';
     const currentValue = ref(props[usingProp]);
     const pureUpdateCurrentValue = (value) => {
-        if (!isEqual(value, currentValue.value)) {
+        if (!isEqual(value, currentValue.value))
             currentValue.value = value;
-        }
     };
     const updateCurrentValue = (value) => {
         pureUpdateCurrentValue(value);

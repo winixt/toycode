@@ -1,13 +1,18 @@
 {
   "name": "@fesjs/template",
   "version": "3.0.0-beta.0",
+  "private": true,
   "description": "fes项目模版",
-  "scripts": {
-    "build": "fes build",
-    "prod": "FES_ENV=prod fes build",
-    "analyze": "ANALYZE=1 fes build",
-    "dev": "fes dev",
-    "test:unit": "fes test:unit"
+  "author": "harrywan",
+  "license": "MIT",
+  "homepage": "https://github.com/WeBankFinTech/fes.js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WeBankFinTech/fes.js.git",
+    "directory": "packages/fes-template"
+  },
+  "bugs": {
+    "url": "https://github.com/WeBankFinTech/fes.js/issues"
   },
   "keywords": [
     "管理端",
@@ -28,22 +33,15 @@
     "/src",
     "/config"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WeBankFinTech/fes.js.git",
-    "directory": "packages/fes-template"
+  "scripts": {
+    "build": "fes build",
+    "prod": "FES_ENV=prod fes build",
+    "analyze": "ANALYZE=1 fes build",
+    "dev": "fes dev",
+    "test:unit": "fes test:unit"
   },
-  "author": "harrywan",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/WeBankFinTech/fes.js/issues"
-  },
-  "homepage": "https://github.com/WeBankFinTech/fes.js#readme",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@vue/compiler-sfc": "^3.2.37"
   },
   "dependencies": {
     "@fesjs/builder-vite": "^3.0.0-rc.1",
@@ -53,5 +51,7 @@
     "core-js": "^3.19.2",
     "vue": "^3.2.37"
   },
-  "private": true
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.2.37"
+  }
 }

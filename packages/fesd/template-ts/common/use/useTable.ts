@@ -1,14 +1,15 @@
 import { request } from '@fesjs/fes';
-import { ref, unref, reactive } from 'vue';
+import type { Ref } from 'vue';
+import { reactive, ref, unref } from 'vue';
 
 export interface UseTableOptions {
-    api: string;
-    params?: Record<string, any>;
-    formatParams?: <T>(params: T) => T;
-    transform?: <T>(input: T) => T;
-    dataField?: string;
-    pageField?: string;
-    isInit?: boolean;
+    api: string
+    params?: Record<string, any>
+    formatParams?: <T>(params: T) => T
+    transform?: <T>(input: T) => T
+    dataField?: string
+    pageField?: string
+    isInit?: boolean
 }
 
 export function useSimpleTable(options: UseTableOptions) {
@@ -16,19 +17,19 @@ export function useSimpleTable(options: UseTableOptions) {
         isInit: true,
         ...options,
     };
-    const dataSource = ref([]);
+    const dataSource: Ref<[]> = ref([]);
 
-    const innerFormatParams = (params) => {
-        if (params && options.formatParams) {
+    const innerFormatParams = (params: Record<string, any>) => {
+        if (params && options.formatParams)
             return options.formatParams(params);
-        }
+
         return params;
     };
 
     let preParams = {
         ...innerFormatParams(options.params),
     };
-    const getParams = (params) => {
+    const getParams = (params: Record<string, any>) => {
         if (params) {
             preParams = innerFormatParams({
                 ...preParams,
@@ -46,9 +47,8 @@ export function useSimpleTable(options: UseTableOptions) {
         });
     };
 
-    if (options.isInit) {
+    if (options.isInit)
         queryDataSource();
-    }
 
     return {
         dataSource,
@@ -76,7 +76,7 @@ export function useTable(options: UseTableOptions) {
         pageField: 'page',
         ...options,
     };
-    const dataSource = ref([]);
+    const dataSource: Ref<[]> = ref([]);
 
     const pagination = reactive({
         currentPage: 1,
@@ -84,17 +84,17 @@ export function useTable(options: UseTableOptions) {
         totalCount: 0,
     });
 
-    const innerFormatParams = (params) => {
-        if (params && options.formatParams) {
+    const innerFormatParams = (params: Record<string, any>) => {
+        if (params && options.formatParams)
             return options.formatParams(params);
-        }
+
         return params;
     };
 
     let preParams = {
         ...innerFormatParams(options.params),
     };
-    const getParams = (params) => {
+    const getParams = (params: Record<string, any>) => {
         if (params) {
             preParams = innerFormatParams({
                 ...preParams,
@@ -112,9 +112,9 @@ export function useTable(options: UseTableOptions) {
 
     const queryDataSource = (params?: Record<string, any>) => {
         request(options.api, getParams(params)).then((res) => {
-            const result = res[options.dataField];
+            const result = options.dataField ? res[options.dataField] : res;
             dataSource.value = options.transform
-                ? options.transform(result, res)
+                ? options.transform(result)
                 : result;
             pagination.totalCount = res[options.pageField].totalCount;
         });
@@ -135,9 +135,8 @@ export function useTable(options: UseTableOptions) {
         queryDataSource(params);
     };
 
-    if (options.isInit) {
+    if (options.isInit)
         refresh();
-    }
 
     return {
         dataSource,

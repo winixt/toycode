@@ -63,7 +63,7 @@ export function removeImportCode(ast: ParseResult<File>) {
     return ast;
 }
 
-export function parsetJsCodes(jsCodes: JSCode[] = []) {
+export function parsetScriptCodes(jsCodes: JSCode[] = []) {
     const codesAst = jsCodes.map((jsCode) => {
         return getAST(jsCode.content);
     });
@@ -81,8 +81,8 @@ export function parsetJsCodes(jsCodes: JSCode[] = []) {
     };
 }
 
-export function genJSFile(jsCodes: JSCode[] = []) {
-    const { importCodes, codes } = parsetJsCodes(jsCodes);
+export function genScriptFile(jsCodes: JSCode[] = []) {
+    const { importCodes, codes } = parsetScriptCodes(jsCodes);
 
     return `${importCodes} \n ${codes.join('\n')}`;
 }
@@ -149,7 +149,7 @@ export function getTopLevelDeclarations(ast: ParseResult<File>) {
     return result;
 }
 
-function getJsCodeDeclaration(jsCodes: JSCode[]) {
+function getScriptCodeDeclaration(jsCodes: JSCode[]) {
     return jsCodes.map((jsCode) => {
         const declarations = getTopLevelDeclarations(getAST(jsCode.content));
         return {
@@ -159,7 +159,12 @@ function getJsCodeDeclaration(jsCodes: JSCode[]) {
     });
 }
 
-export function genJsCode(
+// js 使用 babel; ts 使用 typescript
+function getCodeFormatParser(scriptLanguage: string) {
+    return scriptLanguage === 'ts' ? 'typescript' : 'babel';
+}
+
+export function genScriptCode(
     jsCodes: JSCode[] = [],
     config: Config = {},
 ): PreChangeFile[] {
@@ -179,7 +184,7 @@ export function genJsCode(
         if (existsSync(absFilePath)) {
             // 已有文件
             const ast = getAST(readTextFile(absFilePath));
-            const jsCodeDeclaration = getJsCodeDeclaration(value);
+            const jsCodeDeclaration = getScriptCodeDeclaration(value);
 
             const importCodes = parseImportCode(ast);
             const topLevelDeclarations = getTopLevelDeclarations(ast);
@@ -215,13 +220,19 @@ export function genJsCode(
 
                 result.push({
                     file: join(getSrcPath(), filePath),
-                    content: formatCode(`${importCode} \n ${astToCode(ast)}`),
+                    content: formatCode(
+                        `${importCode} \n ${astToCode(ast)}`,
+                        getCodeFormatParser(config.scriptLanguage),
+                    ),
                 });
             }
         } else {
             result.push({
                 file: join(getSrcPath(), filePath),
-                content: formatCode(genJSFile(value)),
+                content: formatCode(
+                    genScriptFile(value),
+                    getCodeFormatParser(config.scriptLanguage),
+                ),
             });
         }
     }

@@ -18,3 +18,5 @@ example/node/tmp
 
 test.js
 test.ts
+
+.vscode

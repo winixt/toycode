@@ -1,29 +1,31 @@
-import {
-    Schema,
-    SFCComponent,
+import type {
     Component,
-    ExtensionType,
-    ImportType,
     ImportSource,
+    SFCComponent,
+    Schema,
     SetupCode,
 } from '@qlin/toycode-core';
-import { APISchema, Field, BlockMeta, BlockSchema } from '../type';
+import {
+    ExtensionType,
+    ImportType,
+} from '@qlin/toycode-core';
+import type { APISchema, BlockMeta, BlockSchema, Field } from '../type';
 import { defaultPageCss } from '../config';
 import {
-    genSFCFileName,
     genDirAndFileName,
-    isGenComponent,
     genOptionsName,
+    genSFCFileName,
+    isGenComponent,
 } from '../utils';
 import { componentMap } from '../componentMap';
+import { getCommonJsCode } from '../genCommonCode/index';
+import type { Context } from '../context';
 import { applySearchAction } from './searchAction';
 import { genRelationModals } from './modal';
 import { applyModal } from './useModal';
-import { handleComponentOptions, formReqData, formatResData } from './shared';
+import { formReqData, formatResData, handleComponentOptions } from './shared';
 import { genTableSetupCode, genTableTemplate } from './table';
 import { genFetchCode, genFormImportResources } from './form';
-import { getCommonJsCode } from '../genCommonCode/index';
-import { Context } from '../context';
 
 // REFACTOR 抽离 search form 相关代码到独立的文件
 function genSearchForm(params: Field[]) {
@@ -47,13 +49,15 @@ function genSearchForm(params: Field[]) {
                     type: ExtensionType.JSExpression,
                     value: `appendAll(${item.mappingId})`,
                 };
-            } else {
+            }
+            else {
                 formCompProps.options = {
                     type: ExtensionType.JSExpression,
                     value: item.mappingId,
                 };
             }
-        } else if (item.options?.length) {
+        }
+        else if (item.options?.length) {
             children = handleComponentOptions(item.options, comp.subName);
             if (item.component.appendAll) {
                 children.unshift({
@@ -64,7 +68,8 @@ function genSearchForm(params: Field[]) {
                     },
                 });
             }
-        } else if (item.apiSchema) {
+        }
+        else if (item.apiSchema) {
             formCompProps.options = {
                 type: ExtensionType.JSExpression,
                 value: genOptionsName(item.name),
@@ -104,9 +109,8 @@ function genSearchForm(params: Field[]) {
 function genTemplate(apiSchema: APISchema) {
     const children: Component[] = [];
 
-    if (apiSchema.params?.length) {
+    if (apiSchema.params?.length)
         children.push(genSearchForm(apiSchema.params));
-    }
 
     return [...children, ...genTableTemplate(apiSchema)];
 }
@@ -161,9 +165,9 @@ function genAppendAllCode(ctx: Context, fields: Field[]) {
     const importSources: ImportSource[] = [];
     if (
         fields.find(
-            (item) =>
-                item.component.appendAll &&
-                (item.mappingId || item.options?.length),
+            item =>
+                item.component.appendAll
+                && (item.mappingId || item.options?.length),
         )
     ) {
         importSources.push({
@@ -205,9 +209,8 @@ function genSetupCode(ctx: Context, pageConfig: BlockSchema) {
         }),
     ];
 
-    if (queryApiSchema.params.length) {
+    if (queryApiSchema.params.length)
         setupCodes.push(genSearchFormSetupCode(ctx, queryApiSchema.params));
-    }
 
     setupCodes.push(genBlockMeta(pageConfig.meta));
 
