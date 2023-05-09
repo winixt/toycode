@@ -7,13 +7,14 @@ import { ref, unref, reactive } from 'vue';
  *  params: object | reactiveObject,
  *  formatParams: function 格式化请求参数
  *  transform: function 格式化响应内容,
- *  dataField: string;
+ *  dataField: string ;
  * } options
  *
  */
 export function useSimpleTable(options) {
     options = {
         isInit: true,
+        dataField: 'cycle',
         ...options,
     };
     const dataSource = ref([]);
@@ -40,7 +41,7 @@ export function useSimpleTable(options) {
 
     const queryDataSource = (params) => {
         request(options.api, getParams(params)).then((res) => {
-            const result = options.dataField ? res[options.dataField] : res;
+            const result = Array.isArray(res) ? res : res[options.dataField];
             dataSource.value = options.transform
                 ? options.transform(result)
                 : result;
