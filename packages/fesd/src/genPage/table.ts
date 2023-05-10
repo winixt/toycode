@@ -166,6 +166,11 @@ export function genTableSetupCode(
             ${dataField ? `dataField: '${dataField}',` : ''}
             ${pageField ? `pageField: '${pageField}',` : ''}
             ${apiSchema.params.length ? `params: {...initSearchParams},` : ''}
+            ${
+                /post/i.test(apiSchema.method)
+                    ? ''
+                    : `method: '${apiSchema.method}',`
+            }
             ${formatCode.content}
             ${transformCode.content}
         })
